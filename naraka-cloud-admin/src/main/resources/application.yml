@@ -7,7 +7,6 @@ management:
       exposure:
         include: '*'
 
-
 spring:
   application:
     name: naraka-cloud-admin
