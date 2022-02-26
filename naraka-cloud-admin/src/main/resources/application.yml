@@ -1,0 +1,18 @@
+logging:
+  level:
+    root: debug
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+
+spring:
+  application:
+    name: naraka-cloud-admin
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+        server-addr: localhost:8848
