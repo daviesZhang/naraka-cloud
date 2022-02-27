@@ -1,0 +1,28 @@
+logging:
+  level:
+    root: debug
+spring:
+  datasource:
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+    url: jdbc:p6spy:mysql://localhost:3306/naraka
+    username: root
+    password: 12345678
+app:
+  redisson:
+    address: redis://127.0.0.1:6379
+  jwt:
+    token:
+      expire: 1800
+  data:
+    encrypt:
+      defaultKey: 3DA@231$%aswsdas
+      keyMap:
+        phone: dsadas$#@$@#
+
+mybatis-plus:
+  # 支持统配符 * 或者 ; 分割
+  typeEnumsPackage: com.start.naraka.common.enums
+naraka:
+  security:
+    enable: true
+    jackson: true

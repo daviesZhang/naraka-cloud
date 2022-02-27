@@ -10,8 +10,6 @@ import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.handler.AsyncPredicate;
 import org.springframework.cloud.gateway.handler.predicate.AbstractRoutePredicateFactory;
-import org.springframework.cloud.gateway.handler.predicate.GatewayPredicate;
-import org.springframework.cloud.gateway.handler.predicate.ReadBodyRoutePredicateFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -35,9 +33,9 @@ public class TokenRoutePredicateFactory extends AbstractRoutePredicateFactory<To
     private String serviceIssuer;
 
 
-    public TokenRoutePredicateFactory(@Value("${jwt.token.secret}") String secret) {
+    public TokenRoutePredicateFactory(Algorithm algorithm) {
         super(TokenRoutePredicateFactory.Config.class);
-        this.jwtVerifier = JWT.require(Algorithm.HMAC512(secret)).build();
+        this.jwtVerifier = JWT.require(algorithm).build();
     }
 
     @Override
@@ -50,15 +48,18 @@ public class TokenRoutePredicateFactory extends AbstractRoutePredicateFactory<To
         return new AsyncPredicate<ServerWebExchange>() {
             @Override
             public Publisher<Boolean> apply(ServerWebExchange exchange) {
+
                 String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
                 if (Strings.isNullOrEmpty(token)) {
                     return Mono.just(false);
                 }
                 try {
                     DecodedJWT decoded = jwtVerifier.verify(token);
+                    //当签发者属于serviceIssuer,意味着是服务间互相调用,直接允许通过
                     if(Objects.equals(serviceIssuer, decoded.getIssuer())){
                         return Mono.just(true);
                     }else{
+                        String key = exchange.getRequest().getURI().getPath() + exchange.getRequest().getMethodValue();
                         //todo 根据url和 decoded.getSubject() 通过redis查询鉴权数据,判断是否允许
                         return Mono.just(false);
                     }

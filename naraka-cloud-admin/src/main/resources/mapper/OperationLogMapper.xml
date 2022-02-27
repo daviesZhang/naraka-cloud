@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.davies.narakacloudadmin.mapper.OperationLogMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.davies.naraka.domain.entity.OperationLog">
+        <id column="ID" property="id" />
+        <result column="OPERATOR" property="operator" />
+        <result column="CRUD_TYPE" property="crudType" />
+        <result column="CLIENT_IP" property="clientIp" />
+        <result column="SUCCESS" property="success" />
+        <result column="DATA_CLASS" property="dataClass" />
+        <result column="DIFFERENCE" property="difference" />
+        <result column="CREATED_BY" property="createdBy" />
+        <result column="CREATED_TIME" property="createdTime" />
+        <result column="UPDATED_BY" property="updatedBy" />
+        <result column="UPDATED_TIME" property="updatedTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ID, OPERATOR, CRUD_TYPE, CLIENT_IP, SUCCESS, DATA_CLASS, DIFFERENCE, CREATED_BY, CREATED_TIME, UPDATED_BY, UPDATED_TIME
+    </sql>
+
+</mapper>

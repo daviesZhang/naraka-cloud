@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.davies.narakacloudadmin.mapper.UserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.davies.naraka.domain.entity.User">
+        <id column="ID" property="id" />
+        <result column="USERNAME" property="username" />
+        <result column="EMAIL" property="email" />
+        <result column="PHONE" property="phone" />
+        <result column="PASSWORD" property="password" />
+        <result column="TYPE" property="type" />
+        <result column="STATUS" property="status" />
+        <result column="TWO_VERIFICATION" property="twoVerification" />
+        <result column="REMARK" property="remark" />
+        <result column="CREATED_BY" property="createdBy" />
+        <result column="CREATED_TIME" property="createdTime" />
+        <result column="UPDATED_BY" property="updatedBy" />
+        <result column="UPDATED_TIME" property="updatedTime" />
+        <result column="PASSWORD_EXPIRE_TIME" property="updatedTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ID, USERNAME, EMAIL, PHONE, PASSWORD,PASSWORD_EXPIRE_TIME, TYPE, STATUS, TWO_VERIFICATION, REMARK, CREATED_BY, CREATED_TIME, UPDATED_BY, UPDATED_TIME
+    </sql>
+
+    <select id="selectUserAndRolePage" resultType="com.davies.naraka.domain.bo.UserAndRoleBO">
+        SELECT u.ID
+             , u.username
+             , email
+             , phone
+             , password
+             , password_expire_time
+             , u.type
+             , u.status
+             ,ro.NAME as role
+             ,r.CODE as roleCode
+             , two_verification
+             , u.remark
+             , u.created_by
+             , u.created_time
+             , u.updated_by
+             , u.updated_time
+        FROM t_user u left join t_user_role r on u.USERNAME = r.USERNAME
+        left join t_role ro on ro.CODE=r.CODE
+            ${ew.customSqlSegment}
+    </select>
+</mapper>

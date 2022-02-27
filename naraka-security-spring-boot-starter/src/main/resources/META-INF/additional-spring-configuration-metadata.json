@@ -1,0 +1,34 @@
+{
+  "properties": [
+    {
+      "name": "naraka.security.enable",
+      "type": "java.lang.Boolean",
+      "description": "启用security starter"
+    },
+    {
+      "name": "naraka.security.remoteUser",
+      "type": "java.lang.Boolean",
+      "description": "把header authorization的内容作为remoteUser"
+    },
+    {
+      "name": "naraka.security.expiresAt",
+      "type": "java.lang.Integer",
+      "description": "jwt token的过期时间(分钟)"
+    },
+    {
+      "name": "naraka.security.jwtSecret",
+      "type": "java.lang.String",
+      "description": "jwt token的密钥,如果不设置有一个默认值"
+    },
+    {
+      "name": "naraka.security.dateTimePattern",
+      "type": "java.lang.String",
+      "description": "jackson序列化的时间格式,默认yyyy-MM-dd HH:mm:ss"
+    },
+    {
+      "name": "naraka.security.jackson",
+      "type": "java.lang.Boolean",
+      "description": "是否启用jackson的一系列自动配置"
+    }
+  ]
+}

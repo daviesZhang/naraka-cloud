@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.davies.narakacloudadmin.mapper.AuthorityMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.davies.naraka.domain.entity.Authority">
+        <id column="ID" property="id" />
+        <result column="RESOURCE" property="resource" />
+        <result column="RESOURCE_TYPE" property="resourceType" />
+        <result column="PROCESSOR" property="processor" />
+        <result column="PROCESSOR_VALUE" property="processorValue" />
+        <result column="CREATED_BY" property="createdBy" />
+        <result column="CREATED_TIME" property="createdTime" />
+        <result column="UPDATED_BY" property="updatedBy" />
+        <result column="UPDATED_TIME" property="updatedTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ID, RESOURCE, RESOURCE_TYPE, PROCESSOR, PROCESSOR_VALUE, CREATED_BY, CREATED_TIME, UPDATED_BY, UPDATED_TIME
+    </sql>
+    <select id="selectAuthorityPage" resultType="com.davies.naraka.domain.entity.Authority">
+        select a.* from t_authority a left join t_authority_role r on r.AUTHORITY=a.ID
+            ${ew.customSqlSegment}
+    </select>
+
+</mapper>

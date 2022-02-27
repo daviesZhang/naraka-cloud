@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.davies.narakacloudadmin.mapper.LoginLogMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.davies.naraka.domain.entity.LoginLog">
+        <id column="ID" property="id" />
+        <result column="USERNAME" property="username" />
+        <result column="CLIENT_HOST" property="clientHost" />
+        <result column="LOGIN_TIME" property="loginTime" />
+        <result column="SUCCESS" property="success" />
+        <result column="CLIENT_MAC" property="clientMac" />
+        <result column="DEVICE" property="device" />
+        <result column="REFERER" property="referer" />
+        <result column="USER_AGENT" property="userAgent" />
+        <result column="CREATED_BY" property="createdBy" />
+        <result column="CREATED_TIME" property="createdTime" />
+        <result column="UPDATED_BY" property="updatedBy" />
+        <result column="UPDATED_TIME" property="updatedTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ID, USERNAME, CLIENT_HOST, LOGIN_TIME, SUCCESS, CLIENT_MAC, DEVICE, REFERER, USER_AGENT, CREATED_BY, CREATED_TIME, UPDATED_BY, UPDATED_TIME
+    </sql>
+
+</mapper>

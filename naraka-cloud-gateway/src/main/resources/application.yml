@@ -16,4 +16,9 @@ spring:
       discovery:
         enabled: true
         server-addr: localhost:8848
+naraka:
+  security:
+    jackson: false
+    enable: true
+    remoteUser: false
 
