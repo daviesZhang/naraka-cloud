@@ -1,6 +1,7 @@
 package com.davies.naraka.admin.annotation;
 
-import com.davies.naraka.admin.domain.enums.QueryFilterType;
+
+import com.davies.naraka.cloud.common.enums.QueryFilterType;
 
 import java.lang.annotation.*;
 

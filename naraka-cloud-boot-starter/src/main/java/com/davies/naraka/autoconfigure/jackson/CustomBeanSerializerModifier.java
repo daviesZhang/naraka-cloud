@@ -32,7 +32,9 @@ import java.util.function.Function;
 
 public class CustomBeanSerializerModifier extends BeanSerializerModifier {
 
-    private final BiFunction<AuthorityProcessorType,Function<String, String>, SerializeProcessor> serializeProcessorWrapper;
+    private final BiFunction<AuthorityProcessorType,Function<String, String>,
+            SerializeProcessor>
+            serializeProcessorWrapper;
 
     @Autowired
     private HttpServletRequest request;
@@ -43,7 +45,10 @@ public class CustomBeanSerializerModifier extends BeanSerializerModifier {
 
     private final CurrentUserNameSupplier currentUserNameSupplier;
 
-    public CustomBeanSerializerModifier(BiFunction<AuthorityProcessorType, Function<String, String>, SerializeProcessor> serializeProcessorWrapper, ProcessorFunction processorFunction, CurrentUserNameSupplier currentUserNameSupplier) {
+    public CustomBeanSerializerModifier(BiFunction<AuthorityProcessorType,
+            Function<String, String>, SerializeProcessor> serializeProcessorWrapper,
+                                        ProcessorFunction processorFunction,
+                                        CurrentUserNameSupplier currentUserNameSupplier) {
         this.serializeProcessorWrapper = serializeProcessorWrapper;
         this.processorFunction = processorFunction;
         this.currentUserNameSupplier = currentUserNameSupplier;
@@ -93,16 +98,16 @@ public class CustomBeanSerializerModifier extends BeanSerializerModifier {
 
 
     private Function<String, String> getSerializeProcessor(Set<AuthorityProcessorType> authorityProcessorTypes){
-        Function<String, String> serializeProcessorWrapper = null;
+        Function<String, String> wrapper = null;
         for (AuthorityProcessorType processor : authorityProcessorTypes) {
             //过滤策略直接跳过序列化动作
             if (processor == AuthorityProcessorType.FILTER) {
                 return null;
             }
 
-            serializeProcessorWrapper = this.serializeProcessorWrapper.apply(processor, serializeProcessorWrapper);
+            wrapper = this.serializeProcessorWrapper.apply(processor, wrapper);
         }
-        return serializeProcessorWrapper;
+        return wrapper;
     }
 
 

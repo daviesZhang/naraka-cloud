@@ -5,13 +5,13 @@ import com.davies.naraka.admin.annotation.Crypto;
 import com.davies.naraka.admin.annotation.QueryFilter;
 import com.davies.naraka.admin.domain.enums.UserStatus;
 import com.davies.naraka.admin.domain.enums.UserType;
-import com.davies.naraka.admin.domain.dto.QueryField;
+import com.davies.naraka.cloud.common.domain.QueryField;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.davies.naraka.admin.domain.enums.QueryFilterType.*;
+import static com.davies.naraka.cloud.common.enums.QueryFilterType.*;
 
 /**
  *

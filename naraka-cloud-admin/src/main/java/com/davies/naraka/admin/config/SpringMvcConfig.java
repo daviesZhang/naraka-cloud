@@ -4,6 +4,7 @@ import com.davies.naraka.autoconfigure.jackson.MappingJacksonHttpMessageConverte
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.HandlerTypePredicate;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
@@ -25,7 +26,8 @@ public class SpringMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
-        configurer.addPathPrefix("/system", HandlerTypePredicate.forBasePackage("com.davies.naraka.admin.controller.system"));
+        configurer.addPathPrefix("/admin/system", HandlerTypePredicate.forBasePackage("com.davies.naraka.admin.controller.system"));
+        configurer.addPathPrefix("/admin", HandlerTypePredicate.forAnnotation(RestController.class));
     }
 
 

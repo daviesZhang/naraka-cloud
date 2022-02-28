@@ -1,6 +1,6 @@
 package com.davies.naraka.admin.common;
 
-import com.davies.naraka.admin.domain.enums.AuthorityProcessorType;
+import com.davies.naraka.cloud.common.enums.AuthorityProcessorType;
 
 import java.util.*;
 

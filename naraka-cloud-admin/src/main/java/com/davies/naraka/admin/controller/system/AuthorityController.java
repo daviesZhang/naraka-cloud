@@ -2,8 +2,8 @@ package com.davies.naraka.admin.controller.system;
 
 import com.davies.naraka.admin.common.ClassUtils;
 import com.davies.naraka.admin.common.QueryUtils;
-import com.davies.naraka.admin.domain.dto.PageDTO;
-import com.davies.naraka.admin.domain.dto.QueryPageDTO;
+import com.davies.naraka.cloud.common.domain.PageDTO;
+import com.davies.naraka.cloud.common.domain.QueryPageDTO;
 import com.davies.naraka.admin.domain.dto.system.AuthorityCreateDTO;
 import com.davies.naraka.admin.domain.dto.system.AuthorityDTO;
 import com.davies.naraka.admin.domain.dto.system.AuthorityQueryDTO;

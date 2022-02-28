@@ -9,13 +9,14 @@ import com.davies.naraka.admin.domain.dto.system.CurrentUserDTO;
 import com.davies.naraka.admin.domain.dto.system.LoginDTO;
 import com.davies.naraka.admin.domain.entity.Authority;
 import com.davies.naraka.admin.domain.entity.User;
-import com.davies.naraka.admin.domain.enums.AuthorityProcessorType;
+
 import com.davies.naraka.admin.domain.enums.ResourceType;
 import com.davies.naraka.autoconfigure.GeneratorTokenBiFunction;
 import com.davies.naraka.autoconfigure.SecurityHelper;
 import com.davies.naraka.autoconfigure.properties.SecurityProperties;
 import com.davies.naraka.admin.service.IUserService;
 import com.davies.naraka.admin.service.exception.UserNotFoundException;
+import com.davies.naraka.cloud.common.enums.AuthorityProcessorType;
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;

@@ -1,6 +1,6 @@
 package com.davies.naraka.admin.domain.dto.system;
 
-import com.davies.naraka.admin.domain.enums.AuthorityProcessorType;
+import com.davies.naraka.cloud.common.enums.AuthorityProcessorType;
 import com.davies.naraka.admin.domain.enums.ResourceType;
 import lombok.Data;
 

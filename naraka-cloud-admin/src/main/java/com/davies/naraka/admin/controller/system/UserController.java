@@ -2,8 +2,7 @@ package com.davies.naraka.admin.controller.system;
 
 import com.davies.naraka.admin.common.ClassUtils;
 import com.davies.naraka.admin.common.QueryUtils;
-import com.davies.naraka.admin.domain.dto.PageDTO;
-import com.davies.naraka.admin.domain.dto.QueryPageDTO;
+
 import com.davies.naraka.admin.domain.dto.system.UserCreateDTO;
 import com.davies.naraka.admin.domain.dto.system.UserDTO;
 import com.davies.naraka.admin.domain.dto.system.UserQueryDTO;
@@ -12,6 +11,8 @@ import com.davies.naraka.admin.domain.entity.User;
 import com.davies.naraka.admin.domain.entity.UserRole;
 import com.davies.naraka.admin.service.IUserRoleService;
 import com.davies.naraka.admin.service.IUserService;
+import com.davies.naraka.cloud.common.domain.PageDTO;
+import com.davies.naraka.cloud.common.domain.QueryPageDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;

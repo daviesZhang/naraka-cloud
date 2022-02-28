@@ -1,6 +1,7 @@
 package com.davies.naraka.admin.controller;
 
-import com.davies.naraka.admin.domain.dto.ErrorResponseDTO;
+
+import com.davies.naraka.cloud.common.domain.ErrorResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;

@@ -28,7 +28,7 @@ import java.time.format.DateTimeFormatter;
 @ConditionalOnClass(name = "javax.servlet.http.HttpServletRequest")
 public class ServletAutoConfiguration {
 
-    @Value("${naraka.datetime.pattern:'yyyy-MM-dd HH:mm:ss'}")
+    @Value("${naraka.datetime.pattern:yyyy-MM-dd HH:mm:ss}")
     private String datetimePattern;
 
 

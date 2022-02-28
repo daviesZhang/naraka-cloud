@@ -1,8 +1,9 @@
 package com.davies.naraka.admin.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
-import com.davies.naraka.admin.domain.enums.AuthorityProcessorType;
+
 import com.davies.naraka.admin.domain.enums.ResourceType;
+import com.davies.naraka.cloud.common.enums.AuthorityProcessorType;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

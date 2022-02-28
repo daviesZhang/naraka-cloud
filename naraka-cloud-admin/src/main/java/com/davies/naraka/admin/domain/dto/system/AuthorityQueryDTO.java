@@ -1,15 +1,15 @@
 package com.davies.naraka.admin.domain.dto.system;
 
 import com.davies.naraka.admin.annotation.QueryFilter;
-import com.davies.naraka.admin.domain.enums.AuthorityProcessorType;
+import com.davies.naraka.cloud.common.enums.AuthorityProcessorType;
 import com.davies.naraka.admin.domain.enums.ResourceType;
-import com.davies.naraka.admin.domain.dto.QueryField;
+import com.davies.naraka.cloud.common.domain.QueryField;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.davies.naraka.admin.domain.enums.QueryFilterType.*;
+import static com.davies.naraka.cloud.common.enums.QueryFilterType.*;
 
 /**
  * @author davies
