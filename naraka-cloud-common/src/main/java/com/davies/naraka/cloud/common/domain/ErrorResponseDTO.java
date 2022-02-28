@@ -2,13 +2,15 @@ package com.davies.naraka.cloud.common.domain;
 
 
 
+import lombok.ToString;
+
 import java.time.LocalDateTime;
 
 /**
  * @author davies
  * @date 2022/2/19 2:25 PM
  */
-
+@ToString
 public class ErrorResponseDTO {
 
     private LocalDateTime timestamp;

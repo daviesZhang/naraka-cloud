@@ -3,7 +3,7 @@ package com.davies.naraka.admin.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.google.common.base.Preconditions;
-import com.davies.naraka.admin.common.ClassUtils;
+import com.davies.naraka.autoconfigure.ClassUtils;
 import com.davies.naraka.admin.domain.enums.CategoryType;
 import com.davies.naraka.admin.domain.entity.CategoryTree;
 import org.springframework.transaction.annotation.Transactional;

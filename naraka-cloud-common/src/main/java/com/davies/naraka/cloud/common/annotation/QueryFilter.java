@@ -1,4 +1,4 @@
-package com.davies.naraka.admin.annotation;
+package com.davies.naraka.cloud.common.annotation;
 
 
 import com.davies.naraka.cloud.common.enums.QueryFilterType;
@@ -7,8 +7,6 @@ import java.lang.annotation.*;
 
 /**
  * 查询条件运算规则
- * @see com.davies.naraka.admin.domain.dto.system.UserQueryDTO
- * @see com.davies.naraka.admin.common.QueryUtils
  * @author davies
  * @date 2022/1/30 10:56 AM
  */

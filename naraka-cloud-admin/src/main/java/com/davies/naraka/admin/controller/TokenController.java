@@ -1,10 +1,10 @@
 package com.davies.naraka.admin.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.davies.naraka.admin.annotation.HasUser;
-import com.davies.naraka.admin.common.ClassUtils;
+
+import com.davies.naraka.autoconfigure.ClassUtils;
 import com.davies.naraka.admin.common.ListMapCollector;
-import com.davies.naraka.admin.common.StringUtils;
+
 import com.davies.naraka.admin.domain.dto.system.CurrentUserDTO;
 import com.davies.naraka.admin.domain.dto.system.LoginDTO;
 import com.davies.naraka.admin.domain.entity.Authority;
@@ -16,6 +16,8 @@ import com.davies.naraka.autoconfigure.SecurityHelper;
 import com.davies.naraka.autoconfigure.properties.SecurityProperties;
 import com.davies.naraka.admin.service.IUserService;
 import com.davies.naraka.admin.service.exception.UserNotFoundException;
+import com.davies.naraka.autoconfigure.security.HasUser;
+import com.davies.naraka.cloud.common.StringUtils;
 import com.davies.naraka.cloud.common.enums.AuthorityProcessorType;
 import com.google.common.base.Function;
 import com.google.common.base.Strings;

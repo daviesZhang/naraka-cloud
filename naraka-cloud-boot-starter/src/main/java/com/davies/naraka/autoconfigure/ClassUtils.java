@@ -1,4 +1,4 @@
-package com.davies.naraka.admin.common;
+package com.davies.naraka.autoconfigure;
 
 
 import org.springframework.beans.BeanUtils;

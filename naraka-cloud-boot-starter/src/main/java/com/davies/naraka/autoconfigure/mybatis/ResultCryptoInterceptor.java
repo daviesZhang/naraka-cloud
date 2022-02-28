@@ -1,9 +1,9 @@
-package com.davies.naraka.admin.config.mybatis;
+package com.davies.naraka.autoconfigure.mybatis;
 
+import com.davies.naraka.autoconfigure.properties.EncryptProperties;
+import com.davies.naraka.cloud.common.AesEncryptorUtils;
+import com.davies.naraka.cloud.common.annotation.Crypto;
 import com.google.common.base.Strings;
-import com.davies.naraka.admin.annotation.Crypto;
-import com.davies.naraka.admin.common.AesEncryptorUtils;
-import com.davies.naraka.admin.config.properties.EncryptProperties;
 import org.apache.ibatis.executor.resultset.ResultSetHandler;
 import org.apache.ibatis.plugin.*;
 import org.springframework.stereotype.Component;
@@ -27,7 +27,7 @@ import java.util.Properties;
  * @author davies
  * @date 2022/1/30 9:36 PM
  */
-@Component
+
 @Intercepts({
         @Signature(type = ResultSetHandler.class, method = "handleResultSets", args = {Statement.class})
 })

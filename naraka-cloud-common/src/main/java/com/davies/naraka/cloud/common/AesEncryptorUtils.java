@@ -1,7 +1,7 @@
-package com.davies.naraka.admin.common;
+package com.davies.naraka.cloud.common;
 
 import com.google.common.base.Charsets;
-import org.springframework.security.crypto.codec.Hex;
+import com.google.common.io.BaseEncoding;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
@@ -25,9 +25,12 @@ public class AesEncryptorUtils {
         cipher.init(Cipher.ENCRYPT_MODE, key);
         byte[] cleartext = password.getBytes(Charsets.UTF_8);
         byte[] ciphertextBytes = cipher.doFinal(cleartext);
-        return new String(Hex.encode(ciphertextBytes));
+
+        return BaseEncoding.base16().lowerCase().encode(ciphertextBytes);
 
     }
+
+
 
     /**
      *
@@ -45,7 +48,7 @@ public class AesEncryptorUtils {
         SecretKey key = new SecretKeySpec(keyBytes, "AES");
         Cipher cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.DECRYPT_MODE, key);
-        byte[] ciphertextBytes = cipher.doFinal(Hex.decode(password));
+        byte[] ciphertextBytes = cipher.doFinal(BaseEncoding.base16().lowerCase().decode(password));
         return new String(ciphertextBytes);
     }
 

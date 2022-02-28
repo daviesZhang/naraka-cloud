@@ -1,7 +1,7 @@
 package com.davies.naraka.admin.controller.system;
 
 
-import com.davies.naraka.admin.common.ClassUtils;
+import com.davies.naraka.autoconfigure.ClassUtils;
 import com.davies.naraka.admin.domain.enums.CategoryType;
 import com.davies.naraka.admin.domain.dto.system.MenuCreateDTO;
 import com.davies.naraka.admin.domain.dto.system.MenuDTO;

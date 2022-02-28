@@ -1,7 +1,5 @@
 package com.davies.naraka.admin.controller.system;
 
-import com.davies.naraka.admin.common.ClassUtils;
-import com.davies.naraka.admin.common.QueryUtils;
 
 import com.davies.naraka.admin.domain.dto.system.UserCreateDTO;
 import com.davies.naraka.admin.domain.dto.system.UserDTO;
@@ -11,6 +9,8 @@ import com.davies.naraka.admin.domain.entity.User;
 import com.davies.naraka.admin.domain.entity.UserRole;
 import com.davies.naraka.admin.service.IUserRoleService;
 import com.davies.naraka.admin.service.IUserService;
+import com.davies.naraka.autoconfigure.ClassUtils;
+import com.davies.naraka.autoconfigure.mybatis.MyBatisQueryUtils;
 import com.davies.naraka.cloud.common.domain.PageDTO;
 import com.davies.naraka.cloud.common.domain.QueryPageDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -41,14 +41,14 @@ public class UserController {
     private final IUserRoleService userRoleService;
 
 
-    private final QueryUtils queryUtils;
+    private final MyBatisQueryUtils queryUtils;
 
     @Value("${user.password.timeout:365}")
     private Integer passwordExpireDay;
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserController(IUserService userService, IUserRoleService userRoleService, QueryUtils queryUtils, PasswordEncoder passwordEncoder) {
+    public UserController(IUserService userService, IUserRoleService userRoleService, MyBatisQueryUtils queryUtils, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.userRoleService = userRoleService;
         this.queryUtils = queryUtils;

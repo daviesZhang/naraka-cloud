@@ -1,10 +1,10 @@
 package com.davies.naraka.admin.domain.dto.system;
 
-import com.davies.naraka.admin.annotation.ColumnName;
-import com.davies.naraka.admin.annotation.Crypto;
-import com.davies.naraka.admin.annotation.QueryFilter;
 import com.davies.naraka.admin.domain.enums.UserStatus;
 import com.davies.naraka.admin.domain.enums.UserType;
+import com.davies.naraka.cloud.common.annotation.ColumnName;
+import com.davies.naraka.cloud.common.annotation.Crypto;
+import com.davies.naraka.cloud.common.annotation.QueryFilter;
 import com.davies.naraka.cloud.common.domain.QueryField;
 import lombok.Data;
 

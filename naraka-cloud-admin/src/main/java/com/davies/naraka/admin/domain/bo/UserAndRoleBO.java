@@ -1,6 +1,6 @@
 package com.davies.naraka.admin.domain.bo;
 
-import com.davies.naraka.admin.annotation.Crypto;
+import com.davies.naraka.cloud.common.annotation.Crypto;
 import com.davies.naraka.admin.domain.enums.UserStatus;
 import com.davies.naraka.admin.domain.enums.UserType;
 import lombok.Data;

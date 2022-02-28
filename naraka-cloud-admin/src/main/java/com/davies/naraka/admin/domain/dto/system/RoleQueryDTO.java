@@ -1,6 +1,6 @@
 package com.davies.naraka.admin.domain.dto.system;
 
-import com.davies.naraka.admin.annotation.QueryFilter;
+import com.davies.naraka.cloud.common.annotation.QueryFilter;
 import com.davies.naraka.cloud.common.domain.QueryField;
 import com.davies.naraka.cloud.common.enums.QueryFilterType;
 

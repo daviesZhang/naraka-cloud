@@ -51,7 +51,7 @@ public class RedisAutoConfiguration {
      */
     @Bean(destroyMethod="shutdown")
     @ConditionalOnMissingBean(RedissonClient.class)
-    RedissonClient redisson() throws IOException {
+   public RedissonClient redisson() throws IOException {
         Config config = new Config();
         if (redisProperties.getAddress().size()==1){
             SingleServerConfig singleServerConfig= config.useSingleServer()
@@ -60,7 +60,7 @@ public class RedisAutoConfiguration {
                 singleServerConfig.setPassword(redisProperties.getPassword());
             }
         }else{
-            ClusterServersConfig clusterServersConfig=   config.useClusterServers()
+            ClusterServersConfig clusterServersConfig= config.useClusterServers()
                     .addNodeAddress(redisProperties.getAddress().toArray(new String[]{}));
             if (!Strings.isNullOrEmpty(redisProperties.getPassword())){
                 clusterServersConfig.setPassword(redisProperties.getPassword());

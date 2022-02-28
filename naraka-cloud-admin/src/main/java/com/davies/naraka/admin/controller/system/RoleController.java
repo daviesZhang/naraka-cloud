@@ -1,7 +1,7 @@
 package com.davies.naraka.admin.controller.system;
 
-import com.davies.naraka.admin.common.ClassUtils;
-import com.davies.naraka.admin.common.QueryUtils;
+import com.davies.naraka.autoconfigure.ClassUtils;
+import com.davies.naraka.autoconfigure.mybatis.MyBatisQueryUtils;
 import com.davies.naraka.cloud.common.domain.PageDTO;
 import com.davies.naraka.cloud.common.domain.QueryPageDTO;
 import com.davies.naraka.admin.domain.dto.system.*;
@@ -24,9 +24,9 @@ public class RoleController {
     private final IRoleService roleService;
     private final IAuthorityRoleService authorityRoleService;
 
-    private final QueryUtils queryUtils;
+    private final MyBatisQueryUtils queryUtils;
 
-    public RoleController(IRoleService roleService, IAuthorityRoleService authorityRoleService, QueryUtils queryUtils) {
+    public RoleController(IRoleService roleService, IAuthorityRoleService authorityRoleService, MyBatisQueryUtils queryUtils) {
         this.roleService = roleService;
         this.authorityRoleService = authorityRoleService;
         this.queryUtils = queryUtils;

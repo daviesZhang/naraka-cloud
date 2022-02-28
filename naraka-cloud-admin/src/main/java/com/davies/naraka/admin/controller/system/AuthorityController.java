@@ -1,7 +1,7 @@
 package com.davies.naraka.admin.controller.system;
 
-import com.davies.naraka.admin.common.ClassUtils;
-import com.davies.naraka.admin.common.QueryUtils;
+import com.davies.naraka.autoconfigure.ClassUtils;
+import com.davies.naraka.autoconfigure.mybatis.MyBatisQueryUtils;
 import com.davies.naraka.cloud.common.domain.PageDTO;
 import com.davies.naraka.cloud.common.domain.QueryPageDTO;
 import com.davies.naraka.admin.domain.dto.system.AuthorityCreateDTO;
@@ -26,9 +26,9 @@ public class AuthorityController {
     private final IAuthorityService authorityService;
 
 
-    private final QueryUtils queryUtils;
+    private final MyBatisQueryUtils queryUtils;
 
-    public AuthorityController(IAuthorityService authorityService, QueryUtils queryUtils) {
+    public AuthorityController(IAuthorityService authorityService, MyBatisQueryUtils queryUtils) {
         this.authorityService = authorityService;
 
         this.queryUtils = queryUtils;

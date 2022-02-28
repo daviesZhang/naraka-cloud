@@ -41,6 +41,38 @@
       "name": "naraka.redis.password",
       "type": "java.lang.String",
       "description": "redis密码,没有可以不填"
+    }, {
+      "name": "naraka.mybatis.fillCreatedTime",
+      "type": "java.lang.String",
+      "description": "mybatis 插入时自动填充创建时间的字段名,不希望填充设为空"
+    }, {
+      "name": "naraka.mybatis.fillCreatedBy",
+      "type": "java.lang.String",
+      "description": "mybatis 插入时自动填充创建人的字段名,不希望填充设为空"
+    }, {
+      "name": "naraka.mybatis.fillUpdatedTime",
+      "type": "java.lang.String",
+      "description": "mybatis 更新时自动填充更新时间的字段名,不希望填充设为空"
+    }, {
+      "name": "naraka.mybatis.fillUpdatedBy",
+      "type": "java.lang.String",
+      "description": "mybatis 更新时自动填充更新人的字段名,不希望填充设为空"
+    }, {
+      "name": "naraka.mybatis.metaObjectFill",
+      "type": "java.lang.String",
+      "description": "是否启用自动填充updatedBy,updatedTime,createdBy,createdTime字段"
+    }, {
+      "name": "naraka.encrypt.defaultKey",
+      "type": "java.lang.String",
+      "description": "加解密默认密钥"
+    }, {
+      "name": "naraka.encrypt.keyMap",
+      "type": "java.util.Map",
+      "description": "加解密密钥键值对"
+    },{
+      "name": "naraka.encrypt.enable",
+      "type": "java.lang.Boolean",
+      "description": "是否启用表字段加解密,默认启用"
     }
   ]
 }

@@ -1,8 +1,14 @@
-package com.davies.naraka.admin.common;
+package com.davies.naraka.autoconfigure.mybatis;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.davies.naraka.autoconfigure.ClassUtils;
+import com.davies.naraka.autoconfigure.properties.EncryptProperties;
+import com.davies.naraka.cloud.common.AesEncryptorUtils;
+import com.davies.naraka.cloud.common.annotation.ColumnName;
+import com.davies.naraka.cloud.common.annotation.Crypto;
+import com.davies.naraka.cloud.common.annotation.QueryFilter;
 import com.davies.naraka.cloud.common.domain.PageDTO;
 import com.davies.naraka.cloud.common.domain.QueryField;
 import com.davies.naraka.cloud.common.domain.QueryPageDTO;
@@ -10,14 +16,8 @@ import com.davies.naraka.cloud.common.enums.QueryFilterType;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.davies.naraka.admin.annotation.ColumnName;
-import com.davies.naraka.admin.annotation.Crypto;
-import com.davies.naraka.admin.annotation.QueryFilter;
-import com.davies.naraka.admin.config.properties.EncryptProperties;
-
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Component;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -40,14 +40,14 @@ import static java.util.Locale.ENGLISH;
  * @author davies
  * @date 2022/1/30 2:27 PM
  */
-@Component
-public class QueryUtils {
+
+public class MyBatisQueryUtils {
 
     private static final String READ_METHOD = "get";
 
     private final EncryptProperties encryptProperties;
 
-    public QueryUtils(EncryptProperties encryptProperties) {
+    public MyBatisQueryUtils(EncryptProperties encryptProperties) {
         this.encryptProperties = encryptProperties;
     }
 
@@ -168,6 +168,9 @@ public class QueryUtils {
 
 
     private String getEncryptKey(Field field) {
+        if (!encryptProperties.isEnable()){
+            return null;
+        }
         Crypto crypto = field.getDeclaredAnnotation(Crypto.class);
         String key = null;
         if (crypto != null) {
