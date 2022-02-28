@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.davies.narakacloudadmin.mapper.MenuMapper">
+<mapper namespace="com.davies.naraka.admin.mapper.MenuMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.davies.naraka.domain.entity.Menu">
+    <resultMap id="BaseResultMap" type="com.davies.naraka.admin.domain.entity.Menu">
         <id column="ID" property="id" />
         <result column="URL" property="url" />
         <result column="CODE" property="code" />
@@ -19,7 +19,7 @@
         ID, URL, CODE, REMARK, CREATED_BY, CREATED_TIME, UPDATED_BY, UPDATED_TIME
     </sql>
 
-    <select id="selectMenuTree" resultType="com.davies.naraka.domain.bo.MenuBO">
+    <select id="selectMenuTree" resultType="com.davies.naraka.admin.domain.bo.MenuBO">
         select m.*, c.ANCESTOR as parent
         from t_menu m
                  left join t_category_tree c on c.DESCENDANT = m.ID

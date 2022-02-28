@@ -34,7 +34,7 @@
         <module>naraka-cloud-common</module>
         <module>naraka-cloud-admin</module>
         <module>naraka-cloud-gateway</module>
-        <module>naraka-security-spring-boot-starter</module>
+        <module>naraka-cloud-boot-starter</module>
     </modules>
     <dependencyManagement>
         <dependencies>

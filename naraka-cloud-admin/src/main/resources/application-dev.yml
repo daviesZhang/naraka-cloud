@@ -8,11 +8,6 @@ spring:
     username: root
     password: 12345678
 app:
-  redisson:
-    address: redis://127.0.0.1:6379
-  jwt:
-    token:
-      expire: 1800
   data:
     encrypt:
       defaultKey: 3DA@231$%aswsdas
@@ -21,8 +16,12 @@ app:
 
 mybatis-plus:
   # 支持统配符 * 或者 ; 分割
-  typeEnumsPackage: com.start.naraka.common.enums
+  typeEnumsPackage: com.davies.naraka.admin.domain.enums;com.davies.naraka.cloud.common.enums
 naraka:
+  redis:
+    address: redis://127.0.0.1:6379
   security:
     enable: true
-    jackson: true
+  jackson: true
+  username:
+    header: username

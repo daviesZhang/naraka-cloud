@@ -12,6 +12,21 @@ spring:
   application:
     name: naraka-cloud-gateway
   cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
+    gateway:
+      routes:
+        - id: auth-center
+          uri: lb://naraka-cloud-admin
+          predicates:
+            - Path=/admin/**
+            - Token=useranme
+          filters:
+            - AddRequestHeader=useranme, {useranme}
+    sentinel:
+      transport:
+        dashboard: localhost:8089
     nacos:
       discovery:
         enabled: true
@@ -21,4 +36,6 @@ naraka:
     jackson: false
     enable: true
     remoteUser: false
-
+jwt:
+  token:
+    serviceIssuer: service

@@ -1,0 +1,24 @@
+logging:
+  level:
+    root: debug
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+server:
+  port: 8081
+spring:
+  application:
+    name: naraka-cloud-gateway
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+        server-addr: localhost:8848
+naraka:
+  security:
+    jackson: false
+    enable: true
+    remoteUser: false
+

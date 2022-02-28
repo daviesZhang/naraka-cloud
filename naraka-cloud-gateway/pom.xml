@@ -16,8 +16,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.davies</groupId>
-            <artifactId>naraka-security-spring-boot-starter</artifactId>
+            <artifactId>naraka-cloud-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
 
