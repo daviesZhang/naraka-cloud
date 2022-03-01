@@ -73,4 +73,9 @@ public interface StringConstants {
     String HTML_QUOTE = "&quot;";
     String HTML_LT = "&lt;";
     String HTML_GT = "&gt;";
+
+    /**
+     * 服务端调用时 token的签发人
+     */
+    String SERVICE_TOKEN_ISSUER = "service";
 }

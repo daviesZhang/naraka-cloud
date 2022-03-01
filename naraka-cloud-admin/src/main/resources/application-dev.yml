@@ -2,6 +2,19 @@ logging:
   level:
     root: debug
 spring:
+  application:
+    name: naraka-cloud-admin
+  cloud:
+    nacos:
+      config:
+        refresh-enabled: true
+        server-addr: localhost:8848
+        file-extension: yaml
+        group: DEFAULT_GROUP
+        timeout: 3001
+  config:
+    import:
+      - nacos:naraka-cloud-admin.yaml
   datasource:
     driver-class-name: com.p6spy.engine.spy.P6SpyDriver
     url: jdbc:p6spy:mysql://localhost:3306/naraka

@@ -12,6 +12,18 @@ spring:
   application:
     name: naraka-cloud-gateway
   cloud:
+    nacos:
+      config:
+        refresh-enabled: true
+        server-addr: localhost:8848
+        file-extension: yaml
+        group: DEFAULT_GROUP
+        timeout: 3001
+  config:
+    import:
+      - nacos:naraka-cloud-gateway.yaml
+    discovery:
+      enabled: true
     loadbalancer:
       ribbon:
         enabled: false
@@ -27,15 +39,7 @@ spring:
     sentinel:
       transport:
         dashboard: localhost:8089
-    nacos:
-      discovery:
-        enabled: true
-        server-addr: localhost:8848
 naraka:
   security:
-    jackson: false
     enable: true
-    remoteUser: false
-jwt:
-  token:
-    serviceIssuer: service
+

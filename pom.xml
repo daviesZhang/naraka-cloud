@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.12.RELEASE</version>
+        <version>2.6.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.davies</groupId>
@@ -24,10 +24,11 @@
         <java-jwt.version>3.18.3</java-jwt.version>
         <mysql-connector-java.version>8.0.27</mysql-connector-java.version>
         <jackson-datatype-jsr310.version>2.13.1</jackson-datatype-jsr310.version>
-        <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
-        <spring-cloud-alibaba.version>2.2.7.RELEASE</spring-cloud-alibaba.version>
+        <spring-cloud.version>2021.0.1</spring-cloud.version>
+        <spring-cloud-alibaba.version>2021.0.1.0</spring-cloud-alibaba.version>
         <org.jetbrains.annotations.version>23.0.0</org.jetbrains.annotations.version>
         <redisson.version>3.16.8</redisson.version>
+        <guava.version>31.0.1-jre</guava.version>
         <spring-security-crypto.version>5.6.2</spring-security-crypto.version>
     </properties>
     <modules>
@@ -61,6 +62,11 @@
                 <version>${spring-cloud-alibaba.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains</groupId>

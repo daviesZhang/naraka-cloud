@@ -72,7 +72,6 @@ public class CustomBeanSerializerModifier extends BeanSerializerModifier {
         if (SecurityHelper.isRoot(username)) {
             return beanProperties;
         }
-
         String authorityKey = request.getMethod().toLowerCase() + StringConstants.SPACE + request.getRequestURI();
         Map<String, Set<AuthorityProcessorType>> valueAuthorityMap = processorFunction.apply(authorityKey);
 

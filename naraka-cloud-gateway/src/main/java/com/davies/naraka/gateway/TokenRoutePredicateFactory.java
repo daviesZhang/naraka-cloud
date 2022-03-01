@@ -9,8 +9,6 @@ import com.davies.naraka.cloud.common.StringConstants;
 import com.google.common.base.Strings;
 import com.google.common.net.HttpHeaders;
 import org.reactivestreams.Publisher;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.handler.AsyncPredicate;
 import org.springframework.cloud.gateway.handler.predicate.AbstractRoutePredicateFactory;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
@@ -31,8 +29,7 @@ public class TokenRoutePredicateFactory extends AbstractRoutePredicateFactory<To
 
     private JWTVerifier jwtVerifier;
 
-    @Value("${jwt.token.serviceIssuer:}")
-    private String serviceIssuer;
+
 
     private final HasResources hasResources;
 
@@ -74,7 +71,7 @@ public class TokenRoutePredicateFactory extends AbstractRoutePredicateFactory<To
                         variables.put(config.getName(), decoded.getSubject());
                         ServerWebExchangeUtils.putUriTemplateVariables(exchange, variables);
                         return Mono.fromCompletionStage(hasResources.test(resource, decoded.getSubject()));
-                    } else if (Objects.equals(decoded.getIssuer(), serviceIssuer)) {
+                    } else if (Objects.equals(decoded.getIssuer(), StringConstants.SERVICE_TOKEN_ISSUER)) {
                         variables.put(config.getName(), StringConstants.EMPTY);
                     } else {
                         return Mono.just(false);

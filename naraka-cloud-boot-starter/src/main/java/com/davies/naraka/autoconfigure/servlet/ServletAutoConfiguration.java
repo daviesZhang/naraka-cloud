@@ -10,7 +10,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.key.LocalDateTimeKeyDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -97,7 +96,7 @@ public class ServletAutoConfiguration {
     @Bean
     @ConditionalOnProperty(value = "naraka.jackson.messageConverter", havingValue = "true")
     @ConditionalOnMissingBean(ObjectMapper.class)
-    public ObjectMapper objectMapper(@Autowired(required = false) CustomBeanSerializerModifier customBeanSerializerModifier) {
+    public ObjectMapper objectMapper(CustomBeanSerializerModifier customBeanSerializerModifier) {
         return createObjectMapper(customBeanSerializerModifier);
     }
 
@@ -107,12 +106,11 @@ public class ServletAutoConfiguration {
     @ConditionalOnMissingBean(MappingJacksonHttpMessageConverter.class)
     public MappingJacksonHttpMessageConverter mappingJacksonHttpMessageConverter(
             CurrentUserNameSupplier currentUserNameSupplier,
-            ObjectMapper objectMapper,
             CustomBeanSerializerModifier customBeanSerializerModifier
     ) {
         MappingJacksonHttpMessageConverter converter = new MappingJacksonHttpMessageConverter(createObjectMapper(customBeanSerializerModifier));
         CacheObjectMapper cacheObjectMapper = new CacheObjectMapper(() -> createObjectMapper(customBeanSerializerModifier), currentUserNameSupplier);
-        cacheObjectMapper.setDefaultObjectMapper(objectMapper);
+        cacheObjectMapper.setDefaultObjectMapper(createObjectMapper(null));
         converter.setObjectMapperSupplier(cacheObjectMapper);
         return converter;
     }

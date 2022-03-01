@@ -34,7 +34,7 @@ public class CustomBeanDeserializerModifier extends BeanDeserializerModifier {
 
     @Override
     public JsonDeserializer<?> modifyDeserializer(DeserializationConfig config, BeanDescription beanDesc, JsonDeserializer<?> deserializer) {
-        if (smartQueryParams && beanDesc.getBeanClass().isAssignableFrom(QueryField.class)) {
+        if (smartQueryParams && QueryField.class.isAssignableFrom(beanDesc.getBeanClass())) {
             BeanDeserializer beanDeserializer = (BeanDeserializer) deserializer;
             return new CustomQueryFieldDeserializer(beanDeserializer, beanDesc);
         }

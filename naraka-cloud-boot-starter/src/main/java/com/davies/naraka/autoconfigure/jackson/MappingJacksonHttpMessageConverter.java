@@ -180,6 +180,7 @@ public class MappingJacksonHttpMessageConverter extends AbstractGenericHttpMessa
     }
 
 
+    @Override
     public List<MediaType> getSupportedMediaTypes(Class<?> clazz) {
         List<MediaType> result = null;
         for (Map.Entry<Class<?>, Map<MediaType, ObjectMapper>> entry : getObjectMapperRegistrations().entrySet()) {
