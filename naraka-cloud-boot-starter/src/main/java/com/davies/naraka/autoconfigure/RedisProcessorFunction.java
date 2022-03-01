@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * 从redis里面获取用户拥有的资源细节
  * @author davies
  * @date 2022/2/27 8:55 PM
  */

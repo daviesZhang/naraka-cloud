@@ -2,7 +2,6 @@ package com.davies.naraka.autoconfigure.servlet;
 
 import com.davies.naraka.autoconfigure.*;
 import com.davies.naraka.autoconfigure.jackson.*;
-import com.davies.naraka.cloud.common.domain.QueryField;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +10,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.key.LocalDateTimeKeyDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -68,7 +68,9 @@ public class ServletAutoConfiguration {
         }
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(this.datetimePattern);
         JavaTimeModule defaultModule = new JavaTimeModule();
-        defaultModule.setSerializerModifier(customBeanSerializerModifier);
+        if (customBeanSerializerModifier!=null) {
+            defaultModule.setSerializerModifier(customBeanSerializerModifier);
+        }
         defaultModule.setDeserializerModifier(new CustomBeanDeserializerModifier(this.smartConverter));
         defaultModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(dateTimeFormatter));
         defaultModule.addKeyDeserializer(LocalDateTime.class, LocalDateTimeKeyDeserializer.INSTANCE);
@@ -95,16 +97,8 @@ public class ServletAutoConfiguration {
     @Bean
     @ConditionalOnProperty(value = "naraka.jackson.messageConverter", havingValue = "true")
     @ConditionalOnMissingBean(ObjectMapper.class)
-    public ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(this.datetimePattern);
-        JavaTimeModule javaTimeModule = new JavaTimeModule();
-        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(dateTimeFormatter));
-        javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(dateTimeFormatter));
-        javaTimeModule.addKeyDeserializer(LocalDateTime.class, LocalDateTimeKeyDeserializer.INSTANCE);
-        return objectMapper.registerModule(javaTimeModule)
-                .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
-                .setDateFormat(new SimpleDateFormat(this.datetimePattern));
+    public ObjectMapper objectMapper(@Autowired(required = false) CustomBeanSerializerModifier customBeanSerializerModifier) {
+        return createObjectMapper(customBeanSerializerModifier);
     }
 
 
@@ -113,11 +107,12 @@ public class ServletAutoConfiguration {
     @ConditionalOnMissingBean(MappingJacksonHttpMessageConverter.class)
     public MappingJacksonHttpMessageConverter mappingJacksonHttpMessageConverter(
             CurrentUserNameSupplier currentUserNameSupplier,
+            ObjectMapper objectMapper,
             CustomBeanSerializerModifier customBeanSerializerModifier
     ) {
         MappingJacksonHttpMessageConverter converter = new MappingJacksonHttpMessageConverter(createObjectMapper(customBeanSerializerModifier));
         CacheObjectMapper cacheObjectMapper = new CacheObjectMapper(() -> createObjectMapper(customBeanSerializerModifier), currentUserNameSupplier);
-        cacheObjectMapper.setDefaultObjectMapper(objectMapper());
+        cacheObjectMapper.setDefaultObjectMapper(objectMapper);
         converter.setObjectMapperSupplier(cacheObjectMapper);
         return converter;
     }

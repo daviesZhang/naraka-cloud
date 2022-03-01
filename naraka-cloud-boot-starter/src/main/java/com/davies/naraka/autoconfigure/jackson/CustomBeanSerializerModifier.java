@@ -112,6 +112,7 @@ public class CustomBeanSerializerModifier extends BeanSerializerModifier {
 
 
     private static class ProcessorBeanPropertyWriter extends BeanPropertyWriter {
+        private static final long serialVersionUID = -4632447338147399273L;
         private final Function<String, String> processor;
 
         protected ProcessorBeanPropertyWriter(BeanPropertyWriter base, Function<String, String> processor) {

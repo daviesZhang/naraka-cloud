@@ -6,11 +6,11 @@ package com.davies.naraka.cloud.common.enums;
  */
 public enum QueryFilterType {
     /**
-     * 以开头
+     * 以开头 xxxx%
      */
     STARTS_WITH,
     /**
-     * 以结束
+     * 以结束 %xxx
      */
     ENDS_WITH,
     /**

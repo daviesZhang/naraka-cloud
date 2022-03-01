@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
+ * 把header里面包含的username放到request RemoteUser方法返回里面
  * @author davies
  * @date 2022/2/27 11:55 AM
  */

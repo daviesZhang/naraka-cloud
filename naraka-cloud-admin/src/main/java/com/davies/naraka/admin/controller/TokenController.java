@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
 public class TokenController {
 
 
-    private final BiFunction<String, Date, String> generatorToken;
+    private final BiFunction<String, String, String> generatorToken;
 
     private RedissonClient redissonClient;
 
@@ -115,7 +115,7 @@ public class TokenController {
         Optional<User> optionalUser = userService.findUserByUsername(request.getRemoteUser());
         User user = optionalUser.orElseThrow(UserNotFoundException::new);
         refreshCache(user);
-        String jwt = this.generatorToken.apply(user.getUsername(), new Date());
+        String jwt = this.generatorToken.apply(user.getUsername(), null);
         log.info("[{}]  refresh token", user.getUsername());
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
@@ -138,7 +138,7 @@ public class TokenController {
         User user = optionalUser.orElseThrow(UserNotFoundException::new);
         if (passwordEncoder.matches(password,user.getPassword())) {
             refreshCache(user);
-            String jwt = this.generatorToken.apply(user.getUsername(), new Date());
+            String jwt = this.generatorToken.apply(user.getUsername(), null);
             log.info("[{}] login success", user.getUsername());
 
             return ResponseEntity.ok()

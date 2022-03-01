@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * QueryUserDTO 查询例子
+ *  查询例子
  * {"username": {
  * "type": "LIKE",
  * "filter": "e"},
@@ -25,6 +25,7 @@ import lombok.NoArgsConstructor;
  * }]
  * }
  *
+ *
  * @author davies
  * @date 2022/1/30 10:06 AM
  */
@@ -33,8 +34,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class QueryField<T> {
 
+    /**
+     * 操作类型
+     */
     private QueryFilterType type;
 
+    /**
+     * 具体字段
+     */
     private T filter;
 
 

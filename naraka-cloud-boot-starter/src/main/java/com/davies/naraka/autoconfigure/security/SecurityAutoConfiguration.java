@@ -67,16 +67,16 @@ public class SecurityAutoConfiguration {
     /**
      * 根据用户名构造一个jwt token
      *
-     * @return BiFunction<用户名, 签发时间, token>
+     * @return BiFunction<用户名, 签发人, token>
      */
     @Bean
     @ConditionalOnMissingBean(GeneratorTokenBiFunction.class)
     public GeneratorTokenBiFunction generatorToken(Algorithm algorithm) {
-        return (String username, Date issuedAt) -> JWT.create().withSubject(username)
+        return (String username, String issuedUser) -> JWT.create().withSubject(username)
                 .withExpiresAt(Date.from(LocalDateTime.now().plusMinutes(this.securityProperties.getExpiresAt())
                         .atZone(ZoneOffset.systemDefault()).toInstant()))
-                .withIssuedAt(issuedAt)
-                .withIssuer(username)
+                .withIssuedAt(new Date())
+                .withIssuer(issuedUser)
                 .sign(algorithm);
     }
 }

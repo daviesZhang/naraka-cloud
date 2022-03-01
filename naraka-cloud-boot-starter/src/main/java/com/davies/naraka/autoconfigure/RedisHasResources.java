@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.concurrent.CompletableFuture;
 
 /**
+ * 从redis里面验证用户是否包含资源的方法
  * @author davies
  * @date 2022/2/28 4:14 PM
  */
