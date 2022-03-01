@@ -1,14 +1,23 @@
 package com.davies.naraka.autoconfigure.jackson;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.davies.naraka.cloud.common.domain.QueryField;
+import com.davies.naraka.cloud.common.enums.QueryFilterType;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.deser.BeanDeserializer;
+import com.fasterxml.jackson.databind.deser.BeanDeserializerBase;
 import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
 import com.fasterxml.jackson.databind.deser.std.EnumDeserializer;
+import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
+import com.google.common.base.Strings;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -22,11 +31,23 @@ import java.util.Optional;
  */
 public class CustomBeanDeserializerModifier extends BeanDeserializerModifier {
 
+    private final boolean smartQueryParams;
 
-
-    public CustomBeanDeserializerModifier() {
-
+    public CustomBeanDeserializerModifier(boolean smartQueryParams) {
+        this.smartQueryParams = smartQueryParams;
     }
+
+
+    @Override
+    public JsonDeserializer<?> modifyDeserializer(DeserializationConfig config, BeanDescription beanDesc, JsonDeserializer<?> deserializer) {
+        if (smartQueryParams && beanDesc.getBeanClass().isAssignableFrom(QueryField.class)) {
+            BeanDeserializer beanDeserializer = (BeanDeserializer) deserializer;
+            return new CustomQueryFieldDeserializer(beanDeserializer, beanDesc);
+        }
+
+        return super.modifyDeserializer(config, beanDesc, deserializer);
+    }
+
 
     @Override
     public JsonDeserializer<?> modifyEnumDeserializer(DeserializationConfig config, JavaType type, BeanDescription beanDesc, JsonDeserializer<?> deserializer) {
@@ -44,6 +65,8 @@ public class CustomBeanDeserializerModifier extends BeanDeserializerModifier {
 
     public static class CustomEnumDeserializer extends EnumDeserializer {
 
+
+        private static final long serialVersionUID = -996148722305345048L;
 
         protected CustomEnumDeserializer(EnumDeserializer base, Boolean caseInsensitive) {
             super(base, caseInsensitive);
@@ -66,5 +89,36 @@ public class CustomBeanDeserializerModifier extends BeanDeserializerModifier {
     }
 
 
-    //public static class QueryFilterDeserializer extends
+    public static class CustomQueryFieldDeserializer extends BeanDeserializer {
+
+
+        private static final long serialVersionUID = -6391485381305918252L;
+        BeanDescription beanDesc;
+        BeanDeserializerBase src;
+
+        private static final String QUERY_FIELD_FILTER = "filter";
+
+
+        protected CustomQueryFieldDeserializer(BeanDeserializerBase src, BeanDescription beanDesc) {
+            super(src);
+            this.src = src;
+            this.beanDesc = beanDesc;
+        }
+
+        @Override
+        public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+
+            if (p.currentToken() == JsonToken.START_OBJECT) {
+                return this.src.deserialize(p, ctxt);
+            }
+            if (p.currentToken() == JsonToken.START_ARRAY) {
+                Object value = this.src.findProperty(QUERY_FIELD_FILTER).getValueDeserializer().deserialize(p, ctxt);
+                return new QueryField<Object>(QueryFilterType.CONTAINS, value);
+            }
+            Object value = this.src.findProperty(QUERY_FIELD_FILTER).getValueDeserializer().deserialize(p, ctxt);
+            return new QueryField<Object>(QueryFilterType.EQUALS, value);
+        }
+
+
+    }
 }

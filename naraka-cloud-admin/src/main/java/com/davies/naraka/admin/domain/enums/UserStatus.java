@@ -12,8 +12,9 @@ public enum UserStatus {
     /**
      * 0 启用 1禁用
      */
-    ENABLE(0),
-    DISABLE(1);
+
+    DISABLE(1),
+    ENABLE(0);
 
 
 

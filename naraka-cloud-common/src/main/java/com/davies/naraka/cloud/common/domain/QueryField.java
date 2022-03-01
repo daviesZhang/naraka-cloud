@@ -2,6 +2,9 @@ package com.davies.naraka.cloud.common.domain;
 
 
 import com.davies.naraka.cloud.common.enums.QueryFilterType;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * QueryUserDTO 查询例子
@@ -25,7 +28,9 @@ import com.davies.naraka.cloud.common.enums.QueryFilterType;
  * @author davies
  * @date 2022/1/30 10:06 AM
  */
-
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class QueryField<T> {
 
     private QueryFilterType type;
@@ -33,27 +38,5 @@ public class QueryField<T> {
     private T filter;
 
 
-    public QueryFilterType getType() {
-        return type;
-    }
 
-    public void setType(QueryFilterType type) {
-        this.type = type;
-    }
-
-    public T getFilter() {
-        return filter;
-    }
-
-    public void setFilter(T filter) {
-        this.filter = filter;
-    }
-
-    @Override
-    public String toString() {
-        return "QueryField{" +
-                "type=" + type +
-                ", filter=" + filter +
-                '}';
-    }
 }

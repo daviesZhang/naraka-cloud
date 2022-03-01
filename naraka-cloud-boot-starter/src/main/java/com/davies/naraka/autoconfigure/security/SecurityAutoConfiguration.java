@@ -70,7 +70,7 @@ public class SecurityAutoConfiguration {
      * @return BiFunction<用户名, 签发时间, token>
      */
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(GeneratorTokenBiFunction.class)
     public GeneratorTokenBiFunction generatorToken(Algorithm algorithm) {
         return (String username, Date issuedAt) -> JWT.create().withSubject(username)
                 .withExpiresAt(Date.from(LocalDateTime.now().plusMinutes(this.securityProperties.getExpiresAt())

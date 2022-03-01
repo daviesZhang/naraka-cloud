@@ -1,11 +1,11 @@
 {
   "properties": [
+
     {
       "name": "naraka.security.enable",
       "type": "java.lang.Boolean",
       "description": "启用security starter"
     },
-
     {
       "name": "naraka.security.expiresAt",
       "type": "java.lang.Integer",
@@ -28,9 +28,14 @@
       "description": "jackson序列化的时间格式,默认yyyy-MM-dd HH:mm:ss"
     },
     {
-      "name": "naraka.jackson",
+      "name": "naraka.jackson.messageConverter",
       "type": "java.lang.Boolean",
-      "description": "是否启用jackson的一系列自动配置"
+      "description": "是否启用jackson的一系列消息转换自动配置"
+    },
+    {
+      "name": "naraka.jackson.smartConverter",
+      "type": "java.lang.Boolean",
+      "description": "是否启用高级转换QueryField参数,当要求QueryField时,传入单个值默认转换为new QueryField(EQUALS,value),多个值new QueryField(CONTAINS,value)"
     },
     {
       "name": "naraka.redis.address",
@@ -59,7 +64,7 @@
       "description": "mybatis 更新时自动填充更新人的字段名,不希望填充设为空"
     }, {
       "name": "naraka.mybatis.metaObjectFill",
-      "type": "java.lang.String",
+      "type": "java.lang.Boolean",
       "description": "是否启用自动填充updatedBy,updatedTime,createdBy,createdTime字段"
     }, {
       "name": "naraka.encrypt.defaultKey",
@@ -72,7 +77,7 @@
     },{
       "name": "naraka.encrypt.enable",
       "type": "java.lang.Boolean",
-      "description": "是否启用表字段加解密,默认启用"
+      "description": "是否启用表字段加解密"
     }
   ]
 }

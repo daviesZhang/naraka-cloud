@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * @see com.davies.naraka.admin.annotation.Crypto
+ * @see com.davies.naraka.cloud.common.annotation.Crypto
  * @author davies
  * @date 2022/1/30 8:55 PM
  */
@@ -71,7 +71,6 @@ public class ParamsCryptoInterceptor implements Interceptor {
             }
         }
         return invocation.proceed();
-
         //return null;
     }
 
