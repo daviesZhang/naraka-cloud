@@ -15,21 +15,20 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.Objects;
 
 /**
+ *
  * @author davies
  * @date 2022/3/2 12:05 PM
  */
 @Slf4j
-@Component
 public class TokenFilter implements GlobalFilter, Ordered {
 
-    private JWTVerifier jwtVerifier;
+    private final JWTVerifier jwtVerifier;
 
 
     private final HasResources hasResources;
