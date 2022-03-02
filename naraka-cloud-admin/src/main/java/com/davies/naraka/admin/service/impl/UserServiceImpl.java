@@ -5,9 +5,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.davies.naraka.admin.mapper.UserMapper;
 import com.davies.naraka.admin.domain.bo.UserAndRoleBO;
 import com.davies.naraka.admin.domain.entity.*;
+import com.davies.naraka.admin.domain.enums.ResourceType;
+import com.davies.naraka.admin.mapper.UserMapper;
 import com.davies.naraka.admin.service.*;
 import com.davies.naraka.admin.service.exception.UserEmailExistsException;
 import com.davies.naraka.admin.service.exception.UserNameExistsException;
@@ -53,22 +54,28 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public User createUser(User user) {
         findUserByUsername(user.getUsername())
                 .map(User::getUsername)
-                .ifPresent(username->{throw new UserNameExistsException(String.format("createUser username:[%s] username exists",username));});
+                .ifPresent(username -> {
+                    throw new UserNameExistsException(String.format("createUser username:[%s] username exists", username));
+                });
 
         findUserByPhone(user.getPhone())
                 .map(User::getUsername)
-                .ifPresent(username->{throw new UserPhoneExistsException(String.format("createUser username:[%s] phone exists",username));});
+                .ifPresent(username -> {
+                    throw new UserPhoneExistsException(String.format("createUser username:[%s] phone exists", username));
+                });
 
         findUserByEmail(user.getEmail())
                 .map(User::getUsername)
-                .ifPresent(username->{throw new UserEmailExistsException(String.format("createUser username:[%s] email exists",username));});
+                .ifPresent(username -> {
+                    throw new UserEmailExistsException(String.format("createUser username:[%s] email exists", username));
+                });
         save(user);
         log.info("create user [{}] success", user.getUsername());
         return user;
     }
 
     @Override
-    public List<Authority> getUserAuthorityList(@NotNull String username) {
+    public List<Authority> getUserAuthorityList(@NotNull String username, ResourceType resourceType) {
         List<String> code = userRoleService.list(new QueryWrapper<UserRole>().lambda().eq(UserRole::getUsername, username))
                 .stream().map(UserRole::getCode).collect(Collectors.toList());
         if (code.isEmpty()) {
@@ -79,7 +86,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if (ids.isEmpty()) {
             return Collections.emptyList();
         }
-        return authorityService.list(new LambdaQueryWrapper<Authority>().in(Authority::getId, ids));
+        LambdaQueryWrapper<Authority> lambdaQueryWrapper = new LambdaQueryWrapper<Authority>().in(Authority::getId, ids);
+        if (resourceType != null) {
+            lambdaQueryWrapper.eq(Authority::getResourceType, resourceType);
+        }
+        return authorityService.list(lambdaQueryWrapper);
     }
 
     @Override

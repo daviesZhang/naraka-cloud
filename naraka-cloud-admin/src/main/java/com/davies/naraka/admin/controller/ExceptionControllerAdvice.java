@@ -1,6 +1,7 @@
 package com.davies.naraka.admin.controller;
 
 
+import com.davies.naraka.autoconfigure.security.UserNameMissingException;
 import com.davies.naraka.cloud.common.domain.ErrorResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class ExceptionControllerAdvice {
      */
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseDTO> methodArgumentNotValid(MethodArgumentNotValidException e) {
-        ErrorResponseDTO response= new ErrorResponseDTO();
+        ErrorResponseDTO response = new ErrorResponseDTO();
       /*  if (null != e.getFieldError()) {
             FieldError fieldError = e.getFieldError();
             String message = Strings.lenientFormat("[%s]%s", fieldError.getField(), fieldError.getDefaultMessage());
@@ -41,5 +42,11 @@ public class ExceptionControllerAdvice {
 
         return new ResponseEntity<>(new ErrorResponseDTO(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = UserNameMissingException.class)
+    public ResponseEntity<ErrorResponseDTO> methodArgumentNotValid(UserNameMissingException e) {
+        return new ResponseEntity<>(new ErrorResponseDTO(e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
 
 }

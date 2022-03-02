@@ -85,8 +85,9 @@ public class TokenController {
         return (CurrentUserDTO) redissonClient.getBucket(SecurityHelper.userCacheKey(request.getRemoteUser())).get();
     }
 
+
     private CurrentUserDTO refreshCache(User userInfo) {
-        List<Authority> authorities = userService.getUserAuthorityList(userInfo.getUsername());
+        List<Authority> authorities = userService.getUserAuthorityList(userInfo.getUsername(), ResourceType.URL);
         CurrentUserDTO currentUser = new CurrentUserDTO();
         ClassUtils.copyObject(userInfo, currentUser);
         currentUser.setAuthority(getAuthorityMap(authorities));

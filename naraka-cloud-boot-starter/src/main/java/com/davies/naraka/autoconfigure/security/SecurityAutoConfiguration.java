@@ -3,10 +3,12 @@ package com.davies.naraka.autoconfigure.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Verification;
+import com.davies.naraka.autoconfigure.CurrentUserNameSupplier;
 import com.davies.naraka.autoconfigure.GeneratorTokenBiFunction;
 import com.davies.naraka.autoconfigure.HasResources;
 import com.davies.naraka.autoconfigure.RedisHasResources;
 import com.davies.naraka.autoconfigure.properties.SecurityProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -24,6 +26,7 @@ import java.util.Date;
  * @author davies
  * @date 2022/2/27 6:55 PM
  */
+
 @Configuration
 @ConditionalOnProperty(value = "naraka.security.enable", havingValue = "true")
 @EnableConfigurationProperties(SecurityProperties.class)
@@ -40,7 +43,7 @@ public class SecurityAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(HasResources.class)
     @ConditionalOnClass(name = {"org.redisson.api.RedissonClient"})
-    public HasResources hasResources(){
+    public HasResources hasResources() {
         return new RedisHasResources();
     }
 
@@ -56,6 +59,12 @@ public class SecurityAutoConfiguration {
     public Verification jwtVerifier(Algorithm algorithm) {
         return JWT.require(algorithm);
 
+    }
+
+    @Bean
+    @ConditionalOnClass(name = "org.aspectj.lang.JoinPoint")
+    public CheckHasUserAspect checkHasUserAspect(@Autowired(required = false) CurrentUserNameSupplier currentUserNameSupplier) {
+        return new CheckHasUserAspect(currentUserNameSupplier);
     }
 
     @Bean

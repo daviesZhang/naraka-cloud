@@ -7,7 +7,9 @@ import com.davies.naraka.admin.domain.bo.UserAndRoleBO;
 import com.davies.naraka.admin.domain.entity.Authority;
 import com.davies.naraka.admin.domain.entity.Role;
 import com.davies.naraka.admin.domain.entity.User;
+import com.davies.naraka.admin.domain.enums.ResourceType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +34,7 @@ public interface IUserService extends IService<User> {
      * @param username
      * @return
      */
-    List<Authority> getUserAuthorityList(@NotNull String username);
+    List<Authority> getUserAuthorityList(@NotNull String username, @Nullable ResourceType resourceType);
 
 
     /**
