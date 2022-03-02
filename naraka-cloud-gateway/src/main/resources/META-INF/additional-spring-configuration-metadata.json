@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "naraka.gateway.ignoreAuthorization",
+      "type": "java.util.List",
+      "description": "需要忽略鉴权的url清单 `${method} ${path}`"
+    }
+  ]
+}

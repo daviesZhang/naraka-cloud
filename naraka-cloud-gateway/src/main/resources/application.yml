@@ -9,36 +9,22 @@ management:
 server:
   port: 8081
 spring:
+  config:
+    import:
+      - nacos:naraka-cloud-gateway.yaml
   application:
     name: naraka-cloud-gateway
   cloud:
     nacos:
+      discovery:
+        enabled: true
       config:
         refresh-enabled: true
         server-addr: localhost:8848
         file-extension: yaml
         group: DEFAULT_GROUP
         timeout: 3001
-  config:
-    import:
-      - nacos:naraka-cloud-gateway.yaml
-    discovery:
-      enabled: true
-    loadbalancer:
-      ribbon:
-        enabled: false
-    gateway:
-      routes:
-        - id: auth-center
-          uri: lb://naraka-cloud-admin
-          predicates:
-            - Path=/admin/**
-            - Token=useranme
-          filters:
-            - AddRequestHeader=useranme, {useranme}
-    sentinel:
-      transport:
-        dashboard: localhost:8089
+
 naraka:
   security:
     enable: true

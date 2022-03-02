@@ -6,9 +6,9 @@
 
 `Sentinel` `Nacos` `Spring cloud gateway` `Spring Cloud Feign`  `Redis` `Mybatis`
 
-| Spring Cloud Alibaba Version | Spring Cloud Version | Spring Boot Version | Sentinel Version |    Nacos Version |
-| :---        |:--------------------:|--------------------:|-----------------:|-----------------:|
-| 2021.0.1.0*  |       2021.0.1      |                    2.6.3 |            1.8.3 | 1.4.2  |
+| Spring Cloud Alibaba Version | Spring Cloud Version | Spring Boot Version  | Sentinel Version  | Nacos Version  |
+|:----------------------------:|:--------------------:|:--------------------:|:-----------------:|:--------------:|
+|          2021.0.1.0          |       2021.0.1       |        2.6.3         |       1.8.3       |     1.4.2      |
 
 ## 组件
 
