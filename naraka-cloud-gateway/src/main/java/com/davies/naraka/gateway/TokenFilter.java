@@ -21,7 +21,6 @@ import reactor.core.publisher.Mono;
 import java.util.Objects;
 
 /**
- *
  * @author davies
  * @date 2022/3/2 12:05 PM
  */
@@ -63,13 +62,17 @@ public class TokenFilter implements GlobalFilter, Ordered {
         }
         try {
             DecodedJWT decoded = jwtVerifier.verify(token);
-            if (!Strings.isNullOrEmpty(decoded.getSubject())) {
+            if (Objects.equals(decoded.getIssuer(), StringConstants.SERVICE_TOKEN_ISSUER)) {
+                if (!Strings.isNullOrEmpty(decoded.getSubject())) {
+                    return setUsernameAndNext(exchange, chain, decoded.getSubject());
+                } else {
+                    return chain.filter(exchange);
+                }
+            } else if (!Strings.isNullOrEmpty(decoded.getSubject())) {
                 return Mono.fromCompletionStage(hasResources.test(resource, decoded.getSubject()))
                         .flatMap(aBoolean -> {
                             if (aBoolean) {
-                                ServerHttpRequest request = exchange.getRequest().mutate()
-                                        .headers(httpHeaders -> httpHeaders.set(USERNAME_HEADER_NAME, decoded.getSubject())).build();
-                                return chain.filter(exchange.mutate().request(request).build());
+                                return setUsernameAndNext(exchange, chain, decoded.getSubject());
                             } else {
                                 if (log.isDebugEnabled()) {
                                     log.debug("[{}]-[{}]鉴权失败~", decoded.getSubject(), resource);
@@ -77,8 +80,6 @@ public class TokenFilter implements GlobalFilter, Ordered {
                                 return forbidden(exchange);
                             }
                         });
-            } else if (Objects.equals(decoded.getIssuer(), StringConstants.SERVICE_TOKEN_ISSUER)) {
-                return chain.filter(exchange);
             }
             return unauthorized(exchange);
         } catch (JWTVerificationException e) {
@@ -87,6 +88,12 @@ public class TokenFilter implements GlobalFilter, Ordered {
             }
             return unauthorized(exchange);
         }
+    }
+
+    private Mono<Void> setUsernameAndNext(ServerWebExchange exchange, GatewayFilterChain chain, String username) {
+        ServerHttpRequest request = exchange.getRequest().mutate()
+                .headers(httpHeaders -> httpHeaders.set(USERNAME_HEADER_NAME, username)).build();
+        return chain.filter(exchange.mutate().request(request).build());
     }
 
     private Mono<Void> unauthorized(ServerWebExchange exchange) {
