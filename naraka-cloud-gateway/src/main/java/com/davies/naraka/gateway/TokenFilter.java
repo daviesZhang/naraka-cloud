@@ -65,7 +65,6 @@ public class TokenFilter implements GlobalFilter, Ordered {
         try {
             DecodedJWT decoded = jwtVerifier.verify(token);
             if (!Strings.isNullOrEmpty(decoded.getSubject())) {
-
                 return Mono.fromCompletionStage(hasResources.test(resource, decoded.getSubject()))
                         .flatMap(aBoolean -> {
                             if (aBoolean) {
@@ -73,6 +72,9 @@ public class TokenFilter implements GlobalFilter, Ordered {
                                         .headers(httpHeaders -> httpHeaders.set(USERNAME_HEADER_NAME, decoded.getSubject())).build();
                                 return chain.filter(exchange.mutate().request(request).build());
                             } else {
+                                if (log.isDebugEnabled()) {
+                                    log.debug("[{}]-[{}]鉴权失败~", decoded.getSubject(), resource);
+                                }
                                 return forbidden(exchange);
                             }
                         });
@@ -81,6 +83,9 @@ public class TokenFilter implements GlobalFilter, Ordered {
             }
             return unauthorized(exchange);
         } catch (JWTVerificationException e) {
+            if (log.isDebugEnabled()) {
+                log.debug(e.getMessage(), e);
+            }
             return unauthorized(exchange);
         }
     }
