@@ -5,7 +5,6 @@ import com.davies.naraka.autoconfigure.CurrentUserNameSupplier;
 import com.davies.naraka.autoconfigure.ProcessorFunction;
 import com.davies.naraka.autoconfigure.SecurityHelper;
 import com.davies.naraka.cloud.common.StringConstants;
-import com.davies.naraka.cloud.common.enums.AuthorityProcessorType;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -22,8 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /**
  * @author davies
@@ -32,9 +29,6 @@ import java.util.function.Function;
 
 public class CustomBeanSerializerModifier extends BeanSerializerModifier {
 
-    private final BiFunction<AuthorityProcessorType,Function<String, String>,
-            SerializeProcessor>
-            serializeProcessorWrapper;
 
     @Autowired
     private HttpServletRequest request;
@@ -45,11 +39,13 @@ public class CustomBeanSerializerModifier extends BeanSerializerModifier {
 
     private final CurrentUserNameSupplier currentUserNameSupplier;
 
-    public CustomBeanSerializerModifier(BiFunction<AuthorityProcessorType,
-            Function<String, String>, SerializeProcessor> serializeProcessorWrapper,
+
+    private final SerializeBeanPropertyFactory serializeBeanPropertyFactory;
+
+    public CustomBeanSerializerModifier(SerializeBeanPropertyFactory serializeBeanPropertyFactory,
                                         ProcessorFunction processorFunction,
                                         CurrentUserNameSupplier currentUserNameSupplier) {
-        this.serializeProcessorWrapper = serializeProcessorWrapper;
+        this.serializeBeanPropertyFactory = serializeBeanPropertyFactory;
         this.processorFunction = processorFunction;
         this.currentUserNameSupplier = currentUserNameSupplier;
     }
@@ -57,6 +53,7 @@ public class CustomBeanSerializerModifier extends BeanSerializerModifier {
     /**
      * 已登录用户,根据配置的权限,对待序列化的字段进行处理 AuthorityProcessorType
      * 一个字段允许多种处理策略
+     *
      * @param config
      * @param beanDesc
      * @param beanProperties
@@ -66,14 +63,14 @@ public class CustomBeanSerializerModifier extends BeanSerializerModifier {
     public List<BeanPropertyWriter> changeProperties(SerializationConfig config, BeanDescription beanDesc, List<BeanPropertyWriter> beanProperties) {
 
         String username = currentUserNameSupplier.get();
-        if (Strings.isNullOrEmpty(username)){
+        if (Strings.isNullOrEmpty(username)) {
             return beanProperties;
         }
         if (SecurityHelper.isRoot(username)) {
             return beanProperties;
         }
         String authorityKey = request.getMethod().toLowerCase() + StringConstants.SPACE + request.getRequestURI();
-        Map<String, Set<AuthorityProcessorType>> valueAuthorityMap = processorFunction.apply(authorityKey);
+        Map<String, Set<String>> valueAuthorityMap = processorFunction.apply(authorityKey);
 
         if (valueAuthorityMap.isEmpty()) {
             return beanProperties;
@@ -81,13 +78,13 @@ public class CustomBeanSerializerModifier extends BeanSerializerModifier {
         List<BeanPropertyWriter> propertyWriterList = Lists.newArrayList();
         for (final BeanPropertyWriter writer : beanProperties) {
             String field = writer.getName();
-            Set<AuthorityProcessorType> list = valueAuthorityMap.get(field);
+            Set<String> list = valueAuthorityMap.get(field);
             if (list == null || list.isEmpty()) {
                 propertyWriterList.add(writer);
                 continue;
             }
-            Function<String, String> serializeProcessorWrapper = getSerializeProcessor(list);
-            if (serializeProcessorWrapper==null){
+            SerializeProcessor serializeProcessorWrapper = getSerializeProcessor(list);
+            if (serializeProcessorWrapper == null) {
                 continue;
             }
             propertyWriterList.add(new ProcessorBeanPropertyWriter(writer, serializeProcessorWrapper));
@@ -96,15 +93,15 @@ public class CustomBeanSerializerModifier extends BeanSerializerModifier {
     }
 
 
-    private Function<String, String> getSerializeProcessor(Set<AuthorityProcessorType> authorityProcessorTypes){
-        Function<String, String> wrapper = null;
-        for (AuthorityProcessorType processor : authorityProcessorTypes) {
+    private SerializeProcessor getSerializeProcessor(Set<String> authorityProcessorTypes) {
+        SerializeProcessor wrapper = null;
+        for (String processor : authorityProcessorTypes) {
             //过滤策略直接跳过序列化动作
-            if (processor == AuthorityProcessorType.FILTER) {
+            if (SerializeBeanPropertyFactory.SERIALIZE_SKIP.equals(processor)) {
                 return null;
             }
-
-            wrapper = this.serializeProcessorWrapper.apply(processor, wrapper);
+            SerializeBeanPropertyFunction function = serializeBeanPropertyFactory.apply(processor);
+            wrapper = new SerializeProcessor(function, wrapper);
         }
         return wrapper;
     }
@@ -112,15 +109,15 @@ public class CustomBeanSerializerModifier extends BeanSerializerModifier {
 
     private static class ProcessorBeanPropertyWriter extends BeanPropertyWriter {
         private static final long serialVersionUID = -4632447338147399273L;
-        private final Function<String, String> processor;
+        private final SerializeProcessor processor;
 
-        protected ProcessorBeanPropertyWriter(BeanPropertyWriter base, Function<String, String> processor) {
+        protected ProcessorBeanPropertyWriter(BeanPropertyWriter base, SerializeProcessor processor) {
             super(base);
             this.processor = processor;
         }
 
         /**
-         *拷贝了父类方法
+         * 拷贝了父类方法
          */
         private void serializeAsField(Object bean, JsonGenerator gen,
                                       SerializerProvider prov, Object value) throws Exception {
@@ -171,11 +168,9 @@ public class CustomBeanSerializerModifier extends BeanSerializerModifier {
         @Override
         public void serializeAsField(Object bean, JsonGenerator gen, SerializerProvider prov) throws Exception {
             final Object value = (_accessorMethod == null) ? _field.get(bean) : _accessorMethod.invoke(bean, (Object[]) null);
-            if (value instanceof String) {
-                serializeAsField(bean, gen, prov, this.processor.apply((String) value));
-            } else {
-                serializeAsField(bean, gen, prov, value);
-            }
+
+            serializeAsField(bean, gen, prov, this.processor.apply(value));
+
         }
 
 

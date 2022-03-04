@@ -33,6 +33,11 @@
       "description": "是否启用jackson的一系列消息转换自动配置"
     },
     {
+      "name": "naraka.jackson.objectMapper",
+      "type": "java.lang.Boolean",
+      "description": "是否启用jackson的objectMapper自动配置"
+    },
+    {
       "name": "naraka.jackson.smartConverter",
       "type": "java.lang.Boolean",
       "description": "是否启用高级转换QueryField参数,当要求QueryField时,传入单个值默认转换为new QueryField(EQUALS,value),多个值new QueryField(CONTAINS,value)"

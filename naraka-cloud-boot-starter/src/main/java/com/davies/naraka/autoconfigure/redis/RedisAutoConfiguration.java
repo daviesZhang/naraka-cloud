@@ -1,8 +1,5 @@
 package com.davies.naraka.autoconfigure.redis;
 
-import com.davies.naraka.autoconfigure.CurrentUserNameSupplier;
-import com.davies.naraka.autoconfigure.ProcessorFunction;
-import com.davies.naraka.autoconfigure.RedisProcessorFunction;
 import com.davies.naraka.autoconfigure.properties.RedisProperties;
 import com.google.common.base.Strings;
 import org.redisson.Redisson;
@@ -10,15 +7,12 @@ import org.redisson.api.RedissonClient;
 import org.redisson.config.ClusterServersConfig;
 import org.redisson.config.Config;
 import org.redisson.config.SingleServerConfig;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.core.annotation.Order;
 
 import java.io.IOException;
 

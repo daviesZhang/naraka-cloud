@@ -1,10 +1,8 @@
 package com.davies.naraka.autoconfigure;
 
-import com.davies.naraka.cloud.common.enums.AuthorityProcessorType;
 import com.google.common.base.Strings;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
 import java.util.Map;
@@ -18,22 +16,26 @@ import java.util.Set;
 
 public class RedisProcessorFunction implements ProcessorFunction {
 
-    @Autowired
-    private CurrentUserNameSupplier currentUserNameSupplier;
-    @Autowired
-    private  RedissonClient redissonClient;
 
+    private final CurrentUserNameSupplier currentUserNameSupplier;
 
+    private final RedissonClient redissonClient;
+
+    public RedisProcessorFunction(CurrentUserNameSupplier currentUserNameSupplier, RedissonClient redissonClient) {
+        this.currentUserNameSupplier = currentUserNameSupplier;
+        this.redissonClient = redissonClient;
+    }
 
 
     @Override
-    public Map<String, Set<AuthorityProcessorType>> apply(String key) {
+    public Map<String, Set<String>> apply(String key) {
         String username = currentUserNameSupplier.get();
         if (Strings.isNullOrEmpty(username)) {
             return Collections.emptyMap();
         }
-        RMap<String, Map<String, Set<AuthorityProcessorType>>>
+        RMap<String, Map<String, Set<String>>>
                 rMap = this.redissonClient.getMap(SecurityHelper.userAuthorityCacheKey(username));
+
         return rMap.getOrDefault(key, Collections.emptyMap());
 
     }

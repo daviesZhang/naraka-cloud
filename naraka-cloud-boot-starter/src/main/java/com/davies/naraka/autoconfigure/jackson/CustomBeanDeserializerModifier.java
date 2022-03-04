@@ -1,8 +1,8 @@
 package com.davies.naraka.autoconfigure.jackson;
 
-import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.davies.naraka.cloud.common.domain.QueryField;
 import com.davies.naraka.cloud.common.enums.QueryFilterType;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.*;
@@ -58,7 +58,7 @@ public class CustomBeanDeserializerModifier extends BeanDeserializerModifier {
 
         Optional<Field> fieldOptional = Arrays.stream(enumClass.getDeclaredFields())
 
-                .filter(field -> field.isAnnotationPresent(EnumValue.class))
+                .filter(field -> field.isAnnotationPresent(JsonValue.class))
                 .findFirst();
         if (fieldOptional.isPresent() && deserializer instanceof EnumDeserializer) {
             return new CustomEnumDeserializer((EnumDeserializer) deserializer, true);

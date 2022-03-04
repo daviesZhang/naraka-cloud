@@ -36,6 +36,7 @@ naraka:
   security:
     enable: true
   jackson:
+    objectMapper: true
     messageConverter: true
     smartConverter: true
   username:

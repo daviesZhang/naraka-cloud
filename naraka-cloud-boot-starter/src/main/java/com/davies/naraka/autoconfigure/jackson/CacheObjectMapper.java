@@ -29,7 +29,6 @@ public class CacheObjectMapper implements Supplier<ObjectMapper> {
 
 
     private final CurrentUserNameSupplier currentUserNameSupplier;
-    private ObjectMapper defaultObjectMapper = null;
 
     public CacheObjectMapper(Supplier<ObjectMapper> supplier, CurrentUserNameSupplier currentUserNameSupplier) {
         this.currentUserNameSupplier = currentUserNameSupplier;
@@ -46,14 +45,8 @@ public class CacheObjectMapper implements Supplier<ObjectMapper> {
                 throw new RuntimeException(e);
             }
         }
-        return getDefaultObjectMapper();
+        return null;
     }
 
-    public ObjectMapper getDefaultObjectMapper() {
-        return defaultObjectMapper;
-    }
 
-    public void setDefaultObjectMapper(ObjectMapper defaultObjectMapper) {
-        this.defaultObjectMapper = defaultObjectMapper;
-    }
 }

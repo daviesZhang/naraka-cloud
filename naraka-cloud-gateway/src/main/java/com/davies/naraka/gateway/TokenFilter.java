@@ -35,7 +35,7 @@ public class TokenFilter implements GlobalFilter, Ordered {
     private static final String USERNAME_HEADER_NAME = "username";
 
     private final NarakaGatewayProperties narakaGatewayProperties;
-    //ignore
+
 
     public TokenFilter(Algorithm algorithm, HasResources hasResources, NarakaGatewayProperties narakaGatewayProperties) {
         this.jwtVerifier = JWT.require(algorithm).build();

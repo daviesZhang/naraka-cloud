@@ -1,14 +1,14 @@
 package com.davies.naraka.admin.controller.system;
 
-import com.davies.naraka.autoconfigure.ClassUtils;
-import com.davies.naraka.autoconfigure.mybatis.MyBatisQueryUtils;
-import com.davies.naraka.cloud.common.domain.PageDTO;
-import com.davies.naraka.cloud.common.domain.QueryPageDTO;
+import com.davies.naraka.admin.domain.dto.QueryPageDTO;
 import com.davies.naraka.admin.domain.dto.system.AuthorityCreateDTO;
 import com.davies.naraka.admin.domain.dto.system.AuthorityDTO;
 import com.davies.naraka.admin.domain.dto.system.AuthorityQueryDTO;
 import com.davies.naraka.admin.domain.entity.Authority;
 import com.davies.naraka.admin.service.IAuthorityService;
+import com.davies.naraka.autoconfigure.ClassUtils;
+import com.davies.naraka.autoconfigure.mybatis.MyBatisQueryUtils;
+import com.davies.naraka.cloud.common.domain.PageDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

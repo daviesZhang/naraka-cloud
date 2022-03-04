@@ -1,7 +1,8 @@
-package com.davies.naraka.cloud.common.enums;
+package com.davies.naraka.admin.domain.enums;
 
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * @author davies
@@ -24,6 +25,7 @@ public enum AuthorityProcessorType {
      * 状态
      */
     @EnumValue
+    @JsonValue
     private final int code;
 
     AuthorityProcessorType(int code) {

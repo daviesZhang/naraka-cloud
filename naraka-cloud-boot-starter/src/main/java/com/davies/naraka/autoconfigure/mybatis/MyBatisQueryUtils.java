@@ -11,7 +11,6 @@ import com.davies.naraka.cloud.common.annotation.Crypto;
 import com.davies.naraka.cloud.common.annotation.QueryFilter;
 import com.davies.naraka.cloud.common.domain.PageDTO;
 import com.davies.naraka.cloud.common.domain.QueryField;
-import com.davies.naraka.cloud.common.domain.QueryPageDTO;
 import com.davies.naraka.cloud.common.enums.QueryFilterType;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
@@ -68,12 +67,12 @@ public class MyBatisQueryUtils {
      * @param <Q>         QueryDTO
      * @return PageDTO
      */
-    public <T, E, Q> PageDTO<T> pageQuery(Supplier<T> supplier, QueryPageDTO<Q> query, IService<E> service) {
+    public <T, E, Q> PageDTO<T> pageQuery(Supplier<T> supplier, QueryPage<Q> query, IService<E> service) {
         return pageQuery(supplier, buildQueryWrapper(new QueryWrapper<E>(), query.getQuery()),
                 Page.of(query.getCurrent(), query.getSize()), service);
     }
 
-    public <T, E, Q, R> PageDTO<T> pageQuery(Supplier<T> supplier, QueryPageDTO<Q> query, BiFunction<Page<R>, QueryWrapper<E>, Page<R>> pageFunction) {
+    public <T, E, Q, R> PageDTO<T> pageQuery(Supplier<T> supplier, QueryPage<Q> query, BiFunction<Page<R>, QueryWrapper<E>, Page<R>> pageFunction) {
         Page<R> page = Page.of(query.getCurrent(), query.getSize());
         return pageQuery(supplier, buildQueryWrapper(new QueryWrapper<E>(), query.getQuery()),
                 page, pageFunction);

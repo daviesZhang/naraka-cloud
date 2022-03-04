@@ -1,6 +1,7 @@
-package com.davies.naraka.cloud.common.domain;
+package com.davies.naraka.admin.domain.dto;
 
 
+import com.davies.naraka.autoconfigure.mybatis.QueryPage;
 
 import javax.validation.constraints.NotNull;
 
@@ -9,7 +10,7 @@ import javax.validation.constraints.NotNull;
  * @date 2022/2/7 12:57 PM
  */
 
-public class QueryPageDTO<T> {
+public class QueryPageDTO<T> implements QueryPage<T> {
 
 
     /**

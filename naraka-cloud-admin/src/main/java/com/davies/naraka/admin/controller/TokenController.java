@@ -6,16 +6,19 @@ import com.davies.naraka.admin.domain.dto.system.CurrentUserDTO;
 import com.davies.naraka.admin.domain.dto.system.LoginDTO;
 import com.davies.naraka.admin.domain.entity.Authority;
 import com.davies.naraka.admin.domain.entity.User;
+import com.davies.naraka.admin.domain.enums.AuthorityProcessorType;
 import com.davies.naraka.admin.domain.enums.ResourceType;
 import com.davies.naraka.admin.service.IUserService;
 import com.davies.naraka.admin.service.exception.UserNotFoundException;
 import com.davies.naraka.autoconfigure.ClassUtils;
 import com.davies.naraka.autoconfigure.GeneratorTokenBiFunction;
 import com.davies.naraka.autoconfigure.SecurityHelper;
+import com.davies.naraka.autoconfigure.jackson.SerializeBeanPropertyFactory;
 import com.davies.naraka.autoconfigure.properties.SecurityProperties;
 import com.davies.naraka.autoconfigure.security.HasUser;
+import com.davies.naraka.cloud.common.StringConstants;
 import com.davies.naraka.cloud.common.StringUtils;
-import com.davies.naraka.cloud.common.enums.AuthorityProcessorType;
+import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
@@ -91,7 +94,7 @@ public class TokenController {
         CurrentUserDTO currentUser = new CurrentUserDTO();
         ClassUtils.copyObject(userInfo, currentUser);
         currentUser.setAuthority(getAuthorityMap(authorities));
-        RMap<String, Map<String, Set<AuthorityProcessorType>>> authorityMap =
+        RMap<String, Map<String, Set<String>>> authorityMap =
                 redissonClient.getMap(SecurityHelper.userAuthorityCacheKey(userInfo.getUsername()));
         authorityMap.clear();
         authorityMap.expire(USER_CACHE_LIVE, TimeUnit.MINUTES);
@@ -103,6 +106,7 @@ public class TokenController {
 
     /**
      * 刷新缓存和token的有效时间
+     *
      * @param request
      * @return
      */
@@ -134,7 +138,7 @@ public class TokenController {
             optionalUser = userService.findUserByUsername(principal);
         }
         User user = optionalUser.orElseThrow(UserNotFoundException::new);
-        if (passwordEncoder.matches(password,user.getPassword())) {
+        if (passwordEncoder.matches(password, user.getPassword())) {
             refreshCache(user);
             String jwt = this.generatorToken.apply(user.getUsername(), null);
             log.info("[{}] login success", user.getUsername());
@@ -173,17 +177,17 @@ public class TokenController {
      * @param authorityList
      * @return ResourceType=> Resource=> ProcessorValue(按逗号拆分后) => AuthorityProcessorType
      */
-    private Map<ResourceType, Map<String, Map<String, Set<AuthorityProcessorType>>>> authorityListToMap(List<Authority> authorityList) {
+    private Map<ResourceType, Map<String, Map<String, Set<String>>>> authorityListToMap(List<Authority> authorityList) {
         return authorityList.stream().collect(Collectors
                 .groupingBy(Authority::getResourceType, Collectors.mapping((Function<Authority, Authority>) input -> input,
                         Collectors.groupingBy(Authority::getResource, Collectors.mapping(authority -> {
-                                    String value = authority.getProcessorValue();
-                                    if (Strings.isNullOrEmpty(value)) {
-                                        return new ArrayList<>();
-                                    }
-                                    return Arrays.stream(value.split(StringPool.COMMA)).map(v -> {
-                                        Authority newAuthority = ClassUtils.copyObject(authority, new Authority());
-                                        newAuthority.setProcessorValue(v);
+                            String value = authority.getProcessorValue();
+                            if (Strings.isNullOrEmpty(value)) {
+                                return new ArrayList<>();
+                            }
+                            return Arrays.stream(value.split(StringPool.COMMA)).map(v -> {
+                                Authority newAuthority = ClassUtils.copyObject(authority, new Authority());
+                                newAuthority.setProcessorValue(v);
                                         return newAuthority;
                                     }).collect(Collectors.toList());
                                 }, new ListMapCollector<>(this::accumulator)
@@ -192,7 +196,7 @@ public class TokenController {
     }
 
 
-    private void accumulator(Map<String, Set<AuthorityProcessorType>> stringSetMap,
+    private void accumulator(Map<String, Set<String>> stringSetMap,
                              Collection<Authority> authorities) {
         if (authorities.isEmpty()) {
             return;
@@ -200,12 +204,22 @@ public class TokenController {
         authorities.forEach(authority -> {
             stringSetMap.compute(authority.getProcessorValue(), (s, authorityProcessorTypes) -> {
                 if (authorityProcessorTypes == null) {
-                    return Sets.newHashSet(authority.getProcessor());
+
+                    return Sets.newHashSet(processorTypeToString(authority.getProcessor()));
                 } else {
-                    authorityProcessorTypes.add(authority.getProcessor());
+                    authorityProcessorTypes.add(processorTypeToString(authority.getProcessor()));
                     return authorityProcessorTypes;
                 }
             });
         });
+    }
+
+
+    private String processorTypeToString(AuthorityProcessorType processorType) {
+
+        String name = SerializeBeanPropertyFactory.SERIALIZE_PREFIX + StringConstants.UNDERSCORE + processorType.name();
+
+        return CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.LOWER_CAMEL).convert(name);
+
     }
 }

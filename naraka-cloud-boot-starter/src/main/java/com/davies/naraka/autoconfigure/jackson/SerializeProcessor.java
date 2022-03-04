@@ -4,22 +4,23 @@ import java.util.function.Function;
 
 /**
  * 序列化字段时,根据配置处理的方法
+ *
  * @author davies
  * @date 2022/2/10 6:55 PM
  */
-public class SerializeProcessor  implements Function<String, String> {
+public class SerializeProcessor implements Function<Object, Object> {
 
-    private final Function<String, String> previous;
+    private final SerializeProcessor previous;
 
-    private final Function<String, String> current;
+    private final SerializeBeanPropertyFunction current;
 
-    public SerializeProcessor(Function<String, String> current, Function<String, String> previous) {
+    public SerializeProcessor(SerializeBeanPropertyFunction current, SerializeProcessor previous) {
         this.previous = previous;
         this.current = current;
     }
 
     @Override
-    public String apply(String s) {
+    public Object apply(Object s) {
         return current.apply(previous == null ? s : previous.apply(s));
     }
 
