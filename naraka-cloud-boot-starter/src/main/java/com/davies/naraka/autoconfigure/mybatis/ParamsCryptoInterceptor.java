@@ -1,11 +1,9 @@
 package com.davies.naraka.autoconfigure.mybatis;
 
-import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.davies.naraka.autoconfigure.annotation.Crypto;
 import com.davies.naraka.autoconfigure.properties.EncryptProperties;
 import com.davies.naraka.cloud.common.AesEncryptorUtils;
 import com.google.common.base.Strings;
-import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.plugin.*;
 
@@ -16,7 +14,8 @@ import java.lang.reflect.Field;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.PreparedStatement;
-import java.util.List;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -45,30 +44,34 @@ public class ParamsCryptoInterceptor implements Interceptor {
         parameterField.setAccessible(true);
         Object parameterObject = parameterHandler.getParameterObject();
         if (parameterObject != null) {
-            if (parameterObject instanceof List) {
-                List<Object> list = (List) parameterObject;
+            if (parameterObject instanceof Collection) {
+                Collection list = (Collection) parameterObject;
                 if (!list.isEmpty()) {
                     for (Object item : list) {
-                        encryptObject(item);
+                        encryptParameterObject(item);
                     }
                 }
-            } else if (parameterObject instanceof MapperMethod.ParamMap) {
-                getParameterObject((MapperMethod.ParamMap) parameterObject, Constants.ENTITY);
             } else {
-                encryptObject(parameterObject);
+                encryptParameterObject(parameterObject);
             }
         }
         return invocation.proceed();
     }
 
-    private void getParameterObject(MapperMethod.ParamMap<?> parameterObject, String key) throws IllegalBlockSizeException, NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalAccessException {
-        if (parameterObject.containsKey(key)) {
-            Object params = parameterObject.get(key);
-            encryptObject(params);
+    private void encryptParameterObject(Object parameterObject) throws IllegalBlockSizeException, NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalAccessException {
+        if (parameterObject instanceof Map) {
+            for (Object value : ((Map<?, ?>) parameterObject).values()) {
+                encryptObject(value);
+            }
+        } else {
+            encryptObject(parameterObject);
         }
     }
 
     private void encryptObject(Object params) throws IllegalBlockSizeException, NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalAccessException {
+        if (params == null) {
+            return;
+        }
         Class<?> objectClass = params.getClass();
         Crypto crypto = objectClass.getDeclaredAnnotation(Crypto.class);
         if (null != crypto) {

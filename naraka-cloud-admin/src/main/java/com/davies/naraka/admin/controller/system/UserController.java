@@ -44,7 +44,10 @@ public class UserController {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserController(IUserService userService, IUserRoleService userRoleService, MyBatisQueryUtils queryUtils, PasswordEncoder passwordEncoder) {
+    public UserController(IUserService userService,
+                          IUserRoleService userRoleService,
+                          MyBatisQueryUtils queryUtils,
+                          PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.userRoleService = userRoleService;
         this.queryUtils = queryUtils;
@@ -104,8 +107,8 @@ public class UserController {
     }
 
     @GetMapping("/email")
-    public String fullEmail(@RequestParam String email) {
-        return userService.findUserByEmail(email).map(User::getEmail).orElse(null);
+    public String fullEmail(@RequestParam String username) {
+        return userService.findUserByUsername(username).map(User::getEmail).orElse(null);
     }
 
     /**
