@@ -1,10 +1,8 @@
 package com.davies.naraka.gateway;
 
-import com.alibaba.csp.sentinel.adapter.gateway.common.SentinelGatewayConstants;
 import com.alibaba.csp.sentinel.adapter.gateway.common.api.ApiDefinition;
 import com.alibaba.csp.sentinel.adapter.gateway.common.api.GatewayApiDefinitionManager;
 import com.alibaba.csp.sentinel.adapter.gateway.common.rule.GatewayFlowRule;
-import com.alibaba.csp.sentinel.adapter.gateway.common.rule.GatewayParamFlowItem;
 import com.alibaba.csp.sentinel.adapter.gateway.common.rule.GatewayRuleManager;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.davies.naraka.autoconfigure.HasResources;
@@ -12,7 +10,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
 
 import javax.annotation.PostConstruct;
 import java.util.HashSet;
@@ -56,20 +53,21 @@ public class GatewayConfiguration {
     }
 
     /**
-     * 测试 加一个限流规则,不允许频繁刷新token
+     *
      */
     private void initGatewayRules() {
         Set<GatewayFlowRule> rules = new HashSet<>();
-        rules.add(new GatewayFlowRule("refreshToken_api")
-                .setResourceMode(SentinelGatewayConstants.RESOURCE_MODE_ROUTE_ID)
-                .setCount(2)
-                .setIntervalSec(60 * 10)
-                .setParamItem(new GatewayParamFlowItem()
-                        .setParseStrategy(SentinelGatewayConstants.PARAM_PARSE_STRATEGY_HEADER)
-                        .setFieldName(HttpHeaders.AUTHORIZATION)
-
-                )
-        );
+//        测试 加一个限流规则,不允许频繁刷新token
+//        rules.add(new GatewayFlowRule("refreshToken_api")
+//                .setResourceMode(SentinelGatewayConstants.RESOURCE_MODE_ROUTE_ID)
+//                .setCount(2)
+//                .setIntervalSec(60 * 10)
+//                .setParamItem(new GatewayParamFlowItem()
+//                        .setParseStrategy(SentinelGatewayConstants.PARAM_PARSE_STRATEGY_HEADER)
+//                        .setFieldName(HttpHeaders.AUTHORIZATION)
+//
+//                )
+//        );
         GatewayRuleManager.loadRules(rules);
     }
 }

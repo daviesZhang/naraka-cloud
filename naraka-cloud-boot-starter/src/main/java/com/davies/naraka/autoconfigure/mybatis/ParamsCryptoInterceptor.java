@@ -1,12 +1,13 @@
 package com.davies.naraka.autoconfigure.mybatis;
 
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.davies.naraka.autoconfigure.annotation.Crypto;
 import com.davies.naraka.autoconfigure.properties.EncryptProperties;
 import com.davies.naraka.cloud.common.AesEncryptorUtils;
-import com.davies.naraka.cloud.common.annotation.Crypto;
 import com.google.common.base.Strings;
+import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.plugin.*;
-import org.springframework.stereotype.Component;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -19,9 +20,9 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * @see com.davies.naraka.cloud.common.annotation.Crypto
  * @author davies
  * @date 2022/1/30 8:55 PM
+ * @see Crypto
  */
 
 @Intercepts(value =
@@ -48,31 +49,36 @@ public class ParamsCryptoInterceptor implements Interceptor {
                 List<Object> list = (List) parameterObject;
                 if (!list.isEmpty()) {
                     for (Object item : list) {
-                        Class<?> objectClass = item.getClass();
-                        Crypto crypto = objectClass.getDeclaredAnnotation(Crypto.class);
-                        if (null == crypto) {
-                            continue;
-                        }
-                        Field[] fields = objectClass.getDeclaredFields();
-                        for (Field field : fields) {
-                            encrypt(field, item);
-                        }
+                        encryptObject(item);
                     }
                 }
+            } else if (parameterObject instanceof MapperMethod.ParamMap) {
+                getParameterObject((MapperMethod.ParamMap) parameterObject, Constants.ENTITY);
             } else {
-                Class<?> objectClass = parameterObject.getClass();
-                Crypto crypto = objectClass.getDeclaredAnnotation(Crypto.class);
-                if (null != crypto) {
-                    Field[] fields = objectClass.getDeclaredFields();
-                    for (Field field : fields) {
-                        encrypt(field, parameterObject);
-                    }
-                }
+                encryptObject(parameterObject);
             }
         }
         return invocation.proceed();
-        //return null;
     }
+
+    private void getParameterObject(MapperMethod.ParamMap<?> parameterObject, String key) throws IllegalBlockSizeException, NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalAccessException {
+        if (parameterObject.containsKey(key)) {
+            Object params = parameterObject.get(key);
+            encryptObject(params);
+        }
+    }
+
+    private void encryptObject(Object params) throws IllegalBlockSizeException, NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalAccessException {
+        Class<?> objectClass = params.getClass();
+        Crypto crypto = objectClass.getDeclaredAnnotation(Crypto.class);
+        if (null != crypto) {
+            Field[] fields = objectClass.getDeclaredFields();
+            for (Field field : fields) {
+                encrypt(field, params);
+            }
+        }
+    }
+
 
     private void encrypt(Field field, Object item) throws IllegalAccessException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException {
         Crypto fieldCrypto = field.getDeclaredAnnotation(Crypto.class);
@@ -81,7 +87,10 @@ public class ParamsCryptoInterceptor implements Interceptor {
         }
         field.setAccessible(true);
         String key = this.encryptProperties.getKey(Strings.isNullOrEmpty(fieldCrypto.name()) ? field.getName() : fieldCrypto.name());
-        field.set(item, AesEncryptorUtils.encrypt((String) field.get(item), key));
+        Object value = field.get(item);
+        if (value instanceof String && !Strings.isNullOrEmpty((String) value)) {
+            field.set(item, AesEncryptorUtils.encrypt((String) value, key));
+        }
     }
 
 

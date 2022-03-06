@@ -9,18 +9,12 @@ import javax.validation.constraints.NotBlank;
  * @date 2022/1/24 2:47 PM
  */
 @Data
-public class UserCreateDTO {
+public class UserPhoneUpdateDTO {
 
     @NotBlank
     private String username;
 
     @NotBlank
-    private String email;
-
-    @NotBlank
     private String phone;
-
-    @NotBlank
-    private String password;
 
 }

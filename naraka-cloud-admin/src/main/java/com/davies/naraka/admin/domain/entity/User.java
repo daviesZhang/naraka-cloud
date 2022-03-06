@@ -1,9 +1,9 @@
 package com.davies.naraka.admin.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
-import com.davies.naraka.cloud.common.annotation.Crypto;
 import com.davies.naraka.admin.domain.enums.UserStatus;
 import com.davies.naraka.admin.domain.enums.UserType;
+import com.davies.naraka.autoconfigure.annotation.Crypto;
 import lombok.Getter;
 import lombok.Setter;
 

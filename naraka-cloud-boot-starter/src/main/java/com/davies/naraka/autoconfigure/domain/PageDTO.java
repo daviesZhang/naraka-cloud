@@ -1,4 +1,4 @@
-package com.davies.naraka.cloud.common.domain;
+package com.davies.naraka.autoconfigure.domain;
 
 
 import lombok.AllArgsConstructor;
@@ -25,7 +25,6 @@ public class PageDTO<T> {
     private Long size;
 
     private List<T> items;
-
 
 
 }

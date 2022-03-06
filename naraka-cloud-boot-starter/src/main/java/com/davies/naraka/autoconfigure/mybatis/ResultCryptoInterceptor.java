@@ -1,12 +1,11 @@
 package com.davies.naraka.autoconfigure.mybatis;
 
+import com.davies.naraka.autoconfigure.annotation.Crypto;
 import com.davies.naraka.autoconfigure.properties.EncryptProperties;
 import com.davies.naraka.cloud.common.AesEncryptorUtils;
-import com.davies.naraka.cloud.common.annotation.Crypto;
 import com.google.common.base.Strings;
 import org.apache.ibatis.executor.resultset.ResultSetHandler;
 import org.apache.ibatis.plugin.*;
-import org.springframework.stereotype.Component;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;

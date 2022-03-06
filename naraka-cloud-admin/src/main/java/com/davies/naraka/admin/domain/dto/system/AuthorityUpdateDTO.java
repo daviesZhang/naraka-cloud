@@ -12,7 +12,11 @@ import javax.validation.constraints.NotNull;
  * @date 2022/1/28 2:52 PM
  */
 @Data
-public class AuthorityCreateDTO {
+public class AuthorityUpdateDTO {
+
+
+    @NotNull
+    private Integer id;
 
 
     @NotBlank

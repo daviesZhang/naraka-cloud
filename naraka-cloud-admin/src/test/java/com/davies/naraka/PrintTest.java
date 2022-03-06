@@ -2,9 +2,10 @@ package com.davies.naraka;
 
 import com.davies.naraka.admin.domain.dto.system.UserQueryDTO;
 import com.davies.naraka.admin.domain.enums.UserStatus;
+import com.davies.naraka.autoconfigure.domain.QueryField;
+import com.davies.naraka.autoconfigure.enums.QueryFilterType;
 import com.davies.naraka.autoconfigure.jackson.CustomBeanDeserializerModifier;
-import com.davies.naraka.cloud.common.domain.QueryField;
-import com.davies.naraka.cloud.common.enums.QueryFilterType;
+import com.davies.naraka.cloud.common.AesEncryptorUtils;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
@@ -19,8 +20,13 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -32,11 +38,10 @@ import java.time.format.DateTimeFormatter;
 public class PrintTest {
 
 
-
     @Test
-    public void regx(){
+    public void regx() throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
 
-        System.out.println("/admin/test".replaceAll("/admin/(?<segment>.*)", "/${segment}"));
+        System.out.println("AesEncryptorUtils.encrypt(\"138438383438\", \"dsadas$#@$@#\") = " + AesEncryptorUtils.encrypt("138438383438", "dsadas$#@$@#"));
     }
 
     @Test

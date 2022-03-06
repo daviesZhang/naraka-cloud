@@ -24,8 +24,10 @@ spring:
 
 mybatis-plus:
   # 支持统配符 * 或者 ; 分割
-  typeEnumsPackage: com.davies.naraka.admin.domain.enums;com.davies.naraka.cloud.common.enums
+  typeEnumsPackage: com.davies.naraka.admin.domain.enums
 naraka:
+  mybatis:
+    metaObjectFill: true
   encrypt:
     defaultKey: 3DA@231$%aswsdas
     keyMap:

@@ -26,7 +26,7 @@ public class ExceptionControllerAdvice {
      */
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseDTO> methodArgumentNotValid(MethodArgumentNotValidException e) {
-        ErrorResponseDTO response = new ErrorResponseDTO();
+        ErrorResponseDTO response = new ErrorResponseDTO().setCode(HttpStatus.BAD_REQUEST.value());
       /*  if (null != e.getFieldError()) {
             FieldError fieldError = e.getFieldError();
             String message = Strings.lenientFormat("[%s]%s", fieldError.getField(), fieldError.getDefaultMessage());
@@ -34,18 +34,19 @@ public class ExceptionControllerAdvice {
         } else {
             response = new ErrorResponseDTO();
         }*/
+
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponseDTO> methodArgumentNotValid(HttpMessageNotReadableException e) {
 
-        return new ResponseEntity<>(new ErrorResponseDTO(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponseDTO().setCode(HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = UserNameMissingException.class)
     public ResponseEntity<ErrorResponseDTO> methodArgumentNotValid(UserNameMissingException e) {
-        return new ResponseEntity<>(new ErrorResponseDTO(e.getMessage()), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponseDTO(e.getMessage()).setCode(HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
     }
 
 

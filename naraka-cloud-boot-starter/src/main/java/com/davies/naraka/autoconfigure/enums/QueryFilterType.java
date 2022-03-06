@@ -1,4 +1,4 @@
-package com.davies.naraka.cloud.common.enums;
+package com.davies.naraka.autoconfigure.enums;
 
 /**
  * @author davies
@@ -17,6 +17,10 @@ public enum QueryFilterType {
      * 包含
      */
     CONTAINS,
+    /**
+     * 不包含
+     */
+    NOT_CONTAINS,
     /**
      * 模糊
      */

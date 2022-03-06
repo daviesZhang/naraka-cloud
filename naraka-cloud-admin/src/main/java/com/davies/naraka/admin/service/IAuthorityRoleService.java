@@ -15,8 +15,18 @@ import com.davies.naraka.admin.domain.entity.AuthorityRole;
 public interface IAuthorityRoleService extends IService<AuthorityRole> {
     /**
      * 创建角色和权限的关联
+     *
      * @param authorityRole
      * @return
      */
     Integer createAuthorityRole(AuthorityRole authorityRole);
+
+    /**
+     * 移除角色和权限的关联
+     *
+     * @param authority
+     * @param code
+     * @return
+     */
+    void removeAuthorityRole(Integer authority, String code);
 }

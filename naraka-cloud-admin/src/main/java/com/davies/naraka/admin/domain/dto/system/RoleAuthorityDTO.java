@@ -4,24 +4,22 @@ import com.davies.naraka.admin.domain.enums.AuthorityProcessorType;
 import com.davies.naraka.admin.domain.enums.ResourceType;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 /**
  * @author davies
- * @date 2022/1/28 2:52 PM
+ * @date 2022/2/10 5:36 PM
  */
 @Data
-public class AuthorityCreateDTO {
+public class RoleAuthorityDTO {
+
+    private Integer id;
 
 
-    @NotBlank
     private String resource;
 
     /**
      * 资源类型如:URL,MENU
      */
-    @NotNull
+
     private ResourceType resourceType;
 
     /**
@@ -35,7 +33,10 @@ public class AuthorityCreateDTO {
      */
 
     private String processorValue;
-
-
+    /**
+     * 备注
+     */
     private String remark;
+
+
 }

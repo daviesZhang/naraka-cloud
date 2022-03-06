@@ -4,11 +4,12 @@ import com.davies.naraka.admin.domain.dto.QueryPageDTO;
 import com.davies.naraka.admin.domain.dto.system.AuthorityCreateDTO;
 import com.davies.naraka.admin.domain.dto.system.AuthorityDTO;
 import com.davies.naraka.admin.domain.dto.system.AuthorityQueryDTO;
+import com.davies.naraka.admin.domain.dto.system.AuthorityUpdateDTO;
 import com.davies.naraka.admin.domain.entity.Authority;
 import com.davies.naraka.admin.service.IAuthorityService;
 import com.davies.naraka.autoconfigure.ClassUtils;
+import com.davies.naraka.autoconfigure.domain.PageDTO;
 import com.davies.naraka.autoconfigure.mybatis.MyBatisQueryUtils;
-import com.davies.naraka.cloud.common.domain.PageDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -36,20 +37,27 @@ public class AuthorityController {
 
 
     @PostMapping
-    public ResponseEntity<Void> createAuthority(@RequestBody AuthorityCreateDTO createAuthority) {
+    public ResponseEntity<Void> createAuthority(@RequestBody @Validated AuthorityCreateDTO createAuthority) {
         Authority authority = ClassUtils.copyObject(createAuthority, new Authority());
         authorityService.createAuthority(authority);
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping
+    public ResponseEntity<Void> updateAuthority(@RequestBody @Validated AuthorityUpdateDTO updateDTO) {
+        Authority authority = ClassUtils.copyObject(updateDTO, new Authority());
+        authorityService.updateById(authority);
+        return ResponseEntity.ok().build();
+    }
+
     /**
      * 删除权限
+     *
      * @param id
      * @return
      */
-    @DeleteMapping("/{id}")
-
-    public ResponseEntity<Void> deleteAuthority(@PathVariable Integer id) {
+    @DeleteMapping()
+    public ResponseEntity<Void> deleteAuthority(@RequestParam Integer id) {
         authorityService.delete(Collections.singletonList(id));
         return ResponseEntity.ok().build();
     }

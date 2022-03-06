@@ -1,7 +1,7 @@
 package com.davies.naraka.autoconfigure.jackson;
 
-import com.davies.naraka.cloud.common.domain.QueryField;
-import com.davies.naraka.cloud.common.enums.QueryFilterType;
+import com.davies.naraka.autoconfigure.domain.QueryField;
+import com.davies.naraka.autoconfigure.enums.QueryFilterType;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;

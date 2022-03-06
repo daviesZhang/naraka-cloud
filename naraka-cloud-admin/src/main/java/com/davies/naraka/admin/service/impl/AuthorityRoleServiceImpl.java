@@ -1,9 +1,10 @@
 package com.davies.naraka.admin.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.davies.naraka.admin.mapper.AuthorityRoleMapper;
 import com.davies.naraka.admin.domain.entity.AuthorityRole;
+import com.davies.naraka.admin.mapper.AuthorityRoleMapper;
 import com.davies.naraka.admin.service.IAuthorityRoleService;
 import org.springframework.stereotype.Service;
 
@@ -26,4 +27,12 @@ public class AuthorityRoleServiceImpl extends ServiceImpl<AuthorityRoleMapper, A
                 .eq(AuthorityRole::getCode, authorityRole.getCode()));
         return authorityRole.getId();
     }
+
+    @Override
+    public void removeAuthorityRole(Integer authority, String code) {
+        remove(new QueryWrapper<>(new AuthorityRole().setAuthority(authority).setCode(code)));
+
+    }
+
+
 }

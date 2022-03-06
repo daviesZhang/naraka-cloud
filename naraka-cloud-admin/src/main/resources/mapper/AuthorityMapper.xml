@@ -9,6 +9,7 @@
         <result column="RESOURCE_TYPE" property="resourceType" />
         <result column="PROCESSOR" property="processor" />
         <result column="PROCESSOR_VALUE" property="processorValue" />
+        <result column="REMARK" property="remark"/>
         <result column="CREATED_BY" property="createdBy" />
         <result column="CREATED_TIME" property="createdTime" />
         <result column="UPDATED_BY" property="updatedBy" />
@@ -17,7 +18,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        ID, RESOURCE, RESOURCE_TYPE, PROCESSOR, PROCESSOR_VALUE, CREATED_BY, CREATED_TIME, UPDATED_BY, UPDATED_TIME
+        ID, RESOURCE, RESOURCE_TYPE, PROCESSOR, PROCESSOR_VALUE,REMARK, CREATED_BY, CREATED_TIME, UPDATED_BY, UPDATED_TIME
     </sql>
     <select id="selectAuthorityPage" resultType="com.davies.naraka.admin.domain.entity.Authority">
         select a.* from t_authority a left join t_authority_role r on r.AUTHORITY=a.ID

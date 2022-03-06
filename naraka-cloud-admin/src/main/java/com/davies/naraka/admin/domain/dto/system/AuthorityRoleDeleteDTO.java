@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
  * @date 2022/1/28 2:52 PM
  */
 @Data
-public class AuthorityRoleCreateDTO {
+public class AuthorityRoleDeleteDTO {
 
     @NotNull
     private Integer authority;

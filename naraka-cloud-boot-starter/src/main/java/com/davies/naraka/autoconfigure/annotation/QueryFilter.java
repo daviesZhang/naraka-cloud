@@ -1,7 +1,7 @@
-package com.davies.naraka.cloud.common.annotation;
+package com.davies.naraka.autoconfigure.annotation;
 
 
-import com.davies.naraka.cloud.common.enums.QueryFilterType;
+import com.davies.naraka.autoconfigure.enums.QueryFilterType;
 
 import java.lang.annotation.*;
 

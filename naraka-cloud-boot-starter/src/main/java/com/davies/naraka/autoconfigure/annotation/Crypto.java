@@ -1,4 +1,4 @@
-package com.davies.naraka.cloud.common.annotation;
+package com.davies.naraka.autoconfigure.annotation;
 
 import java.lang.annotation.*;
 

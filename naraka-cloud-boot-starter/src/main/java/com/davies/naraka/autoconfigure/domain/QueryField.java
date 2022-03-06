@@ -1,7 +1,7 @@
-package com.davies.naraka.cloud.common.domain;
+package com.davies.naraka.autoconfigure.domain;
 
 
-import com.davies.naraka.cloud.common.enums.QueryFilterType;
+import com.davies.naraka.autoconfigure.enums.QueryFilterType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -4,17 +4,19 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.davies.naraka.autoconfigure.ClassUtils;
+import com.davies.naraka.autoconfigure.annotation.ColumnName;
+import com.davies.naraka.autoconfigure.annotation.Crypto;
+import com.davies.naraka.autoconfigure.annotation.QueryFilter;
+import com.davies.naraka.autoconfigure.annotation.QuerySkip;
+import com.davies.naraka.autoconfigure.domain.PageDTO;
+import com.davies.naraka.autoconfigure.domain.QueryField;
+import com.davies.naraka.autoconfigure.enums.QueryFilterType;
 import com.davies.naraka.autoconfigure.properties.EncryptProperties;
 import com.davies.naraka.cloud.common.AesEncryptorUtils;
-import com.davies.naraka.cloud.common.annotation.ColumnName;
-import com.davies.naraka.cloud.common.annotation.Crypto;
-import com.davies.naraka.cloud.common.annotation.QueryFilter;
-import com.davies.naraka.cloud.common.domain.PageDTO;
-import com.davies.naraka.cloud.common.domain.QueryField;
-import com.davies.naraka.cloud.common.enums.QueryFilterType;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 
@@ -29,6 +31,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -113,6 +116,9 @@ public class MyBatisQueryUtils {
         Class<?> classes = query.getClass();
         Field[] fields = classes.getDeclaredFields();
         for (Field declaredField : fields) {
+            if (declaredField.isAnnotationPresent(QuerySkip.class)) {
+                continue;
+            }
             String name = declaredField.getName();
             Object field;
             try {
@@ -167,7 +173,7 @@ public class MyBatisQueryUtils {
 
 
     private String getEncryptKey(Field field) {
-        if (!encryptProperties.isEnable()){
+        if (!encryptProperties.isEnable()) {
             return null;
         }
         Crypto crypto = field.getDeclaredAnnotation(Crypto.class);
@@ -245,7 +251,7 @@ public class MyBatisQueryUtils {
                 filterType = queryFilterType;
             }
         }
-        Preconditions.checkArgument(filterType != null, "type not is null");
+        Preconditions.checkArgument(filterType != null, "filterType not is null");
         Object value = queryField.getFilter();
         String key = getEncryptKey(declaredField);
         switch (filterType) {
@@ -285,28 +291,10 @@ public class MyBatisQueryUtils {
                 }
                 break;
             case CONTAINS:
-                if (Strings.isNullOrEmpty(key)) {
-                    if (value instanceof Collection) {
-                        if (!((Collection<?>) value).isEmpty()) {
-                            queryWrapper.in(column, (Collection<?>) value);
-                        }
-                    } else {
-                        queryWrapper.in(column, value);
-                    }
-
-                } else {
-                    if (value instanceof List) {
-                        List<String> values = ((List<?>) value)
-                                .stream()
-                                .map(v -> encrypt((String) v, key))
-                                .collect(Collectors.toList());
-                        if (!values.isEmpty()) {
-                            queryWrapper.in(column, values);
-                        }
-                    } else {
-                        queryWrapper.in(column, encrypt((String) value, key));
-                    }
-                }
+                this.queryListCondition(key, column, value, queryWrapper::in);
+                break;
+            case NOT_CONTAINS:
+                this.queryListCondition(key, column, value, queryWrapper::notIn);
                 break;
             case LESSTHAN:
                 queryWrapper.lt(column, value);
@@ -328,6 +316,31 @@ public class MyBatisQueryUtils {
                 break;
             default:
                 throw new IllegalArgumentException(Strings.lenientFormat("%s 不支持这个运算符", filterType));
+        }
+    }
+
+    private void queryListCondition(String key, String column, Object value, BiConsumer<String, List<?>> biFunction) {
+        if (Strings.isNullOrEmpty(key)) {
+            if (value instanceof Collection) {
+                Collection<?> values = (Collection<?>) value;
+                if (!values.isEmpty()) {
+                    biFunction.accept(column, Lists.newArrayList(values));
+                }
+            } else {
+                biFunction.accept(column, Lists.newArrayList(value));
+            }
+        } else {
+            if (value instanceof List) {
+                List<String> values = ((List<?>) value)
+                        .stream()
+                        .map(v -> encrypt((String) v, key))
+                        .collect(Collectors.toList());
+                if (!values.isEmpty()) {
+                    biFunction.accept(column, values);
+                }
+            } else {
+                biFunction.accept(column, Lists.newArrayList(encrypt((String) value, key)));
+            }
         }
     }
 

@@ -2,16 +2,16 @@ package com.davies.naraka.admin.domain.dto.system;
 
 import com.davies.naraka.admin.domain.enums.UserStatus;
 import com.davies.naraka.admin.domain.enums.UserType;
-import com.davies.naraka.cloud.common.annotation.ColumnName;
-import com.davies.naraka.cloud.common.annotation.Crypto;
-import com.davies.naraka.cloud.common.annotation.QueryFilter;
-import com.davies.naraka.cloud.common.domain.QueryField;
+import com.davies.naraka.autoconfigure.annotation.ColumnName;
+import com.davies.naraka.autoconfigure.annotation.Crypto;
+import com.davies.naraka.autoconfigure.annotation.QueryFilter;
+import com.davies.naraka.autoconfigure.domain.QueryField;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.davies.naraka.cloud.common.enums.QueryFilterType.*;
+import static com.davies.naraka.autoconfigure.enums.QueryFilterType.*;
 
 /**
  *

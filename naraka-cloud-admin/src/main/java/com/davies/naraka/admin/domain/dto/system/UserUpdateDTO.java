@@ -4,6 +4,7 @@ import com.davies.naraka.admin.domain.enums.UserStatus;
 import com.davies.naraka.admin.domain.enums.UserType;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 /**
@@ -11,32 +12,24 @@ import java.time.LocalDateTime;
  * @date 2022/1/24 2:47 PM
  */
 @Data
-public class UserDTO {
+public class UserUpdateDTO {
 
+    @NotBlank
     private String username;
 
-    private String email;
-
-    private String phone;
-
+    @NotBlank
     private LocalDateTime passwordExpireTime;
 
-    private String role;
-
-    private String roleCode;
-
+    @NotBlank
     private UserType type;
 
+    @NotBlank
     private UserStatus status;
+
 
     private String remark;
 
-    private String createdBy;
 
-    private LocalDateTime createdTime;
-
-    private String updatedBy;
-
-    private LocalDateTime updatedTime;
+    private String password;
 
 }

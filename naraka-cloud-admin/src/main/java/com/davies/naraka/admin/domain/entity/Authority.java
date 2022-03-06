@@ -44,16 +44,18 @@ public class Authority implements Serializable {
      */
     private AuthorityProcessorType processor;
 
+
+    private String remark;
     /**
      * 处理值,如字段名
      */
     private String processorValue;
 
-    @TableField( fill = FieldFill.INSERT)
+    @TableField(fill = FieldFill.INSERT)
     private String createdBy;
-    @TableField( fill = FieldFill.INSERT)
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createdTime;
-    @TableField( fill = FieldFill.UPDATE)
+    @TableField(fill = FieldFill.UPDATE)
     private String updatedBy;
     @TableField( fill = FieldFill.UPDATE)
     private LocalDateTime updatedTime;

@@ -1,9 +1,8 @@
 package com.davies.naraka.admin.domain.dto.system;
 
-import com.davies.naraka.cloud.common.annotation.QueryFilter;
-import com.davies.naraka.cloud.common.domain.QueryField;
-import com.davies.naraka.cloud.common.enums.QueryFilterType;
-
+import com.davies.naraka.autoconfigure.annotation.QueryFilter;
+import com.davies.naraka.autoconfigure.domain.QueryField;
+import com.davies.naraka.autoconfigure.enums.QueryFilterType;
 import lombok.Data;
 
 import java.time.LocalDateTime;

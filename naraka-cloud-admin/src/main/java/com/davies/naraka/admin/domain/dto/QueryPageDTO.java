@@ -31,6 +31,7 @@ public class QueryPageDTO<T> implements QueryPage<T> {
     @NotNull
     private T query;
 
+    @Override
     public Long getSize() {
         return size;
     }
@@ -39,6 +40,7 @@ public class QueryPageDTO<T> implements QueryPage<T> {
         this.size = size;
     }
 
+    @Override
     public Long getCurrent() {
         return current;
     }
@@ -47,6 +49,7 @@ public class QueryPageDTO<T> implements QueryPage<T> {
         this.current = current;
     }
 
+    @Override
     public T getQuery() {
         return query;
     }
