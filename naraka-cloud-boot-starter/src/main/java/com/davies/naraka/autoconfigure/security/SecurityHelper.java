@@ -1,4 +1,4 @@
-package com.davies.naraka.autoconfigure;
+package com.davies.naraka.autoconfigure.security;
 
 import java.util.Objects;
 

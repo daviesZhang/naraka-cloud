@@ -2,7 +2,7 @@ package com.davies.naraka.autoconfigure.jackson;
 
 import com.davies.naraka.autoconfigure.CurrentUserNameSupplier;
 import com.davies.naraka.autoconfigure.ProcessorFunction;
-import com.davies.naraka.autoconfigure.RedisProcessorFunction;
+import com.davies.naraka.autoconfigure.redis.RedisProcessorFunction;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -68,12 +68,7 @@ public class JacksonAutoConfiguration {
     }
 
 
-    @Bean
-    @ConditionalOnClass(name = {"org.redisson.api.RedissonClient"})
-    @ConditionalOnMissingBean(ProcessorFunction.class)
-    public ProcessorFunction processorFunction(CurrentUserNameSupplier currentUserNameSupplier, RedissonClient redissonClient) {
-        return new RedisProcessorFunction(currentUserNameSupplier, redissonClient);
-    }
+
 
 
     @Bean

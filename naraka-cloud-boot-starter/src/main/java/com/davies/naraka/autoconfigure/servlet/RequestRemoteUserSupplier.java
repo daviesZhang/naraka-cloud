@@ -1,5 +1,6 @@
-package com.davies.naraka.autoconfigure;
+package com.davies.naraka.autoconfigure.servlet;
 
+import com.davies.naraka.autoconfigure.CurrentUserNameSupplier;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;

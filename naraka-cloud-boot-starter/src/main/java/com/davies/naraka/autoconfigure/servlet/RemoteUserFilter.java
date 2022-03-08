@@ -1,4 +1,4 @@
-package com.davies.naraka.autoconfigure;
+package com.davies.naraka.autoconfigure.servlet;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.filter.OncePerRequestFilter;

@@ -1,5 +1,8 @@
-package com.davies.naraka.autoconfigure;
+package com.davies.naraka.autoconfigure.redis;
 
+import com.davies.naraka.autoconfigure.CurrentUserNameSupplier;
+import com.davies.naraka.autoconfigure.ProcessorFunction;
+import com.davies.naraka.autoconfigure.security.SecurityHelper;
 import com.google.common.base.Strings;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;

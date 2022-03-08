@@ -1,4 +1,4 @@
-package com.davies.naraka.autoconfigure;
+package com.davies.naraka.autoconfigure.servlet;
 
 import com.google.common.base.Strings;
 

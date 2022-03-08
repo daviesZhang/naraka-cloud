@@ -3,7 +3,7 @@ package com.davies.naraka.autoconfigure.jackson;
 
 import com.davies.naraka.autoconfigure.CurrentUserNameSupplier;
 import com.davies.naraka.autoconfigure.ProcessorFunction;
-import com.davies.naraka.autoconfigure.SecurityHelper;
+import com.davies.naraka.autoconfigure.security.SecurityHelper;
 import com.davies.naraka.cloud.common.StringConstants;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanDescription;

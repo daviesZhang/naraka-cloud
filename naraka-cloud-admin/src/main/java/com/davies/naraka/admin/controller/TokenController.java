@@ -12,7 +12,7 @@ import com.davies.naraka.admin.service.IUserService;
 import com.davies.naraka.admin.service.exception.UserNotFoundException;
 import com.davies.naraka.autoconfigure.ClassUtils;
 import com.davies.naraka.autoconfigure.GeneratorTokenBiFunction;
-import com.davies.naraka.autoconfigure.SecurityHelper;
+import com.davies.naraka.autoconfigure.security.SecurityHelper;
 import com.davies.naraka.autoconfigure.jackson.SerializeBeanPropertyFactory;
 import com.davies.naraka.autoconfigure.properties.SecurityProperties;
 import com.davies.naraka.autoconfigure.security.HasUser;

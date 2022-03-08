@@ -1,5 +1,8 @@
 package com.davies.naraka.autoconfigure.redis;
 
+import com.davies.naraka.autoconfigure.CurrentUserNameSupplier;
+import com.davies.naraka.autoconfigure.HasResources;
+import com.davies.naraka.autoconfigure.ProcessorFunction;
 import com.davies.naraka.autoconfigure.properties.RedisProperties;
 import com.google.common.base.Strings;
 import org.redisson.Redisson;
@@ -24,18 +27,29 @@ import java.io.IOException;
 @ConditionalOnProperty(value = "naraka.redis.address")
 @ConditionalOnClass(name = {"org.redisson.api.RedissonClient"})
 @EnableConfigurationProperties(RedisProperties.class)
-
 public class RedisAutoConfiguration {
 
     
     private final RedisProperties redisProperties;
 
 
-
-
     public RedisAutoConfiguration(RedisProperties redisProperties) {
         this.redisProperties = redisProperties;
     }
+
+
+    @Bean
+    @ConditionalOnMissingBean(ProcessorFunction.class)
+    public ProcessorFunction processorFunction(CurrentUserNameSupplier currentUserNameSupplier, RedissonClient redissonClient) {
+        return new RedisProcessorFunction(currentUserNameSupplier, redissonClient);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(HasResources.class)
+    public HasResources hasResources(RedissonClient redissonClient) {
+        return new RedisHasResources(redissonClient);
+    }
+
     /**
      * 根据getAddress数量支持两种模式
      * Single

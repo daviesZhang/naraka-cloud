@@ -1,8 +1,9 @@
-package com.davies.naraka.autoconfigure;
+package com.davies.naraka.autoconfigure.redis;
 
+import com.davies.naraka.autoconfigure.HasResources;
+import com.davies.naraka.autoconfigure.security.SecurityHelper;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -13,8 +14,12 @@ import java.util.concurrent.CompletableFuture;
  */
 public class RedisHasResources implements HasResources {
 
-    @Autowired
-    private RedissonClient redissonClient;
+
+    private final RedissonClient redissonClient;
+
+    public RedisHasResources(RedissonClient redissonClient) {
+        this.redissonClient = redissonClient;
+    }
 
     @Override
     public CompletableFuture<Boolean> test(String resource, String principal) {
