@@ -20,8 +20,8 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.Column;
 import javax.persistence.criteria.*;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -46,9 +46,11 @@ class ScriptCaseRepositoryTest {
         scriptCase.setProject("te2st");
         scriptCase.setEnvironment("test");
         scriptCase.setName("login");
+        scriptCase.setCreatedTime(LocalDateTime.now());
         CaseStep caseStep = new CaseStep();
         caseStep.setScriptCase(scriptCase);
         caseStep.setName("First");
+        caseStep.setCreatedTime(LocalDateTime.now().minusDays(2L));
         scriptCase.setSteps(Collections.singletonList(caseStep));
         this.scriptCaseRepository.save(scriptCase);
         this.caseStepRepository.save(caseStep);
@@ -70,16 +72,21 @@ class ScriptCaseRepositoryTest {
     }
 
     @Test
+    @Rollback(value = false)
     public void specificationUtilsTest() {
+
         QueryCase queryCase = new QueryCase();
         queryCase.setProject("te2st");
         queryCase.setEnvironment("test");
-        queryCase.setName(new QueryField<>(QueryFilterType.NOT_CONTAINS, Lists.newArrayList("login")));
+        queryCase.setName(new QueryField<>(QueryFilterType.NOT_CONTAINS, Lists.newArrayList("loxgin")));
 //        queryCase.setName(new QueryField<>(QueryFilterType.CONTAINS, Lists.newArrayList("xcx","login")));
         queryCase.setStepName("First");
-        queryCase.setCreatedTime(new QueryField<>(QueryFilterType.ORDER_ASC, ""));
-        queryCase.setUpdatedTime(new QueryField<>(QueryFilterType.ORDER_DESC, ""));
-        Specification<ScriptCase> specification = JpaSpecificationUtils.specification(queryCase);
+        QueryField<LocalDateTime> asc = new QueryField<>(QueryFilterType.ORDER_ASC, null);
+        QueryField<LocalDateTime> now = new QueryField<>(QueryFilterType.LESSTHANEQUAL, LocalDateTime.now());
+        queryCase.setCreatedTime(Lists.newArrayList(asc, now));
+        queryCase.setUpdatedTime(new QueryField<>(QueryFilterType.ORDER_DESC, null));
+        JpaSpecificationUtils specificationUtils = new JpaSpecificationUtils(null);
+        Specification<ScriptCase> specification = specificationUtils.specification(queryCase);
         List<ScriptCase> cases = this.scriptCaseRepository.findAll(specification);
         Assertions.assertFalse(cases.isEmpty());
 
@@ -98,7 +105,7 @@ class ScriptCaseRepositoryTest {
 
         private QueryField<List<String>> name;
 
-        private QueryField<String> createdTime;
+        private List<QueryField<LocalDateTime>> createdTime;
 
         private QueryField<String> updatedTime;
 
