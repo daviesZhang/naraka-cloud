@@ -36,6 +36,7 @@
         <module>naraka-cloud-admin</module>
         <module>naraka-cloud-gateway</module>
         <module>naraka-cloud-boot-starter</module>
+        <module>naraka-cloud-puppeteer</module>
     </modules>
     <dependencyManagement>
         <dependencies>
