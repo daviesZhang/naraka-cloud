@@ -1,12 +1,10 @@
 package com.davies.naraka.puppeteer.repository;
 
 import com.davies.naraka.autoconfigure.annotation.ColumnName;
-import com.davies.naraka.autoconfigure.annotation.Crypto;
 import com.davies.naraka.autoconfigure.domain.QueryField;
 import com.davies.naraka.autoconfigure.enums.QueryFilterType;
 import com.davies.naraka.autoconfigure.jpa.JoinQuery;
 import com.davies.naraka.autoconfigure.jpa.JpaSpecificationUtils;
-import com.davies.naraka.autoconfigure.properties.EncryptProperties;
 import com.davies.naraka.puppeteer.domain.entity.CaseReport;
 import com.davies.naraka.puppeteer.domain.entity.CaseStep;
 import com.davies.naraka.puppeteer.domain.entity.ScriptCase;
@@ -67,7 +65,8 @@ class ScriptCaseRepositoryTest {
     public void findStep(){
         List<CaseStep> caseSteps = this.caseStepRepository.findAll();
         caseSteps.forEach(System.out::println);
-
+        List<ScriptCase> scriptCases = this.scriptCaseRepository.findAll();
+        scriptCases.forEach(System.out::println);
     }
 
     @Test

@@ -21,6 +21,10 @@ public class EnumCodeUserType implements UserType, DynamicParameterizedType {
 
     private Class enumClass;
 
+    public EnumCodeUserType(Class enumClass) {
+        this.enumClass = enumClass;
+    }
+
     @Override
     public void setParameterValues(Properties parameters) {
         //parameters

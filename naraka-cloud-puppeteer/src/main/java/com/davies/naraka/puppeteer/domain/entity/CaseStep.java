@@ -1,12 +1,9 @@
 package com.davies.naraka.puppeteer.domain.entity;
 
 
-import com.davies.naraka.autoconfigure.jpa.EnumCodeUserType;
 import com.davies.naraka.puppeteer.domain.enums.StepAction;
 import lombok.*;
-
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -24,7 +21,7 @@ import static javax.persistence.ConstraintMode.NO_CONSTRAINT;
 @Getter
 @Setter
 @Entity
-@TypeDef(typeClass = EnumCodeUserType.class,name="EnumCode")
+
 public class CaseStep {
 
 
@@ -42,7 +39,7 @@ public class CaseStep {
     private String name;
 
 
-    @Type(type = "EnumCode")
+    @Type(type = "StepAction")
     private StepAction action;
 
 
