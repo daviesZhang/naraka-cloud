@@ -5,21 +5,14 @@ import com.davies.naraka.autoconfigure.jpa.EnumCodePersistence;
 /**
  * @author davies
  */
+public enum ScriptStatus implements EnumCodePersistence {
 
-public enum StepAction implements EnumCodePersistence {
-
-    /**
-     *
-     */
-    OPEN(0),
-    /**
-     *
-     */
-    CLOSE(1);
+    ENABLE(10),
+    DISABLE(11);
 
     private final int code;
 
-    StepAction(int code) {
+    ScriptStatus(int code) {
         this.code = code;
     }
 

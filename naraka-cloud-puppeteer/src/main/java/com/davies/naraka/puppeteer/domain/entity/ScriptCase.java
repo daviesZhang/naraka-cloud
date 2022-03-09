@@ -1,7 +1,10 @@
 package com.davies.naraka.puppeteer.domain.entity;
 
-import com.davies.naraka.puppeteer.domain.entity.CaseStep;
+import com.davies.naraka.autoconfigure.jpa.EnumCodeUserType;
+import com.davies.naraka.puppeteer.domain.enums.ScriptStatus;
 import lombok.*;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -18,6 +21,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@TypeDef(typeClass = EnumCodeUserType.class,name="EnumCode")
 public class ScriptCase {
 
     @Id
@@ -30,13 +34,15 @@ public class ScriptCase {
 
     private String environment;
 
+    @Type(type = "EnumCode")
+    private ScriptStatus scriptStatus;
 
     private String name;
 
-    @OneToMany(targetEntity = CaseReport.class,mappedBy = "scriptCase")
+    @OneToMany(targetEntity = CaseReport.class, mappedBy = "scriptCase")
     private List<CaseReport> caseReports;
 
-    @OneToMany(targetEntity = CaseStep.class,mappedBy = "scriptCase")
+    @OneToMany(targetEntity = CaseStep.class, mappedBy = "scriptCase")
     private List<CaseStep> steps;
 
 

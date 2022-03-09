@@ -10,6 +10,8 @@ import com.davies.naraka.autoconfigure.properties.EncryptProperties;
 import com.davies.naraka.puppeteer.domain.entity.CaseReport;
 import com.davies.naraka.puppeteer.domain.entity.CaseStep;
 import com.davies.naraka.puppeteer.domain.entity.ScriptCase;
+import com.davies.naraka.puppeteer.domain.enums.ScriptStatus;
+import com.davies.naraka.puppeteer.domain.enums.StepAction;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -46,17 +48,26 @@ class ScriptCaseRepositoryTest {
     @Rollback(value = false)
     public void saveTest() {
         ScriptCase scriptCase = new ScriptCase();
-        scriptCase.setProject("te2st");
+        scriptCase.setProject("002");
         scriptCase.setEnvironment("test");
         scriptCase.setName("login");
+        scriptCase.setScriptStatus(ScriptStatus.DISABLE);
+
         scriptCase.setCreatedTime(LocalDateTime.now());
         CaseStep caseStep = new CaseStep();
         caseStep.setScriptCase(scriptCase);
-        caseStep.setName("First");
+        caseStep.setName("002");
+        caseStep.setAction(StepAction.CLOSE);
         caseStep.setCreatedTime(LocalDateTime.now().minusDays(2L));
         scriptCase.setSteps(Collections.singletonList(caseStep));
         this.scriptCaseRepository.save(scriptCase);
         this.caseStepRepository.save(caseStep);
+    }
+    @Test
+    public void findStep(){
+        List<CaseStep> caseSteps = this.caseStepRepository.findAll();
+        caseSteps.forEach(System.out::println);
+
     }
 
     @Test

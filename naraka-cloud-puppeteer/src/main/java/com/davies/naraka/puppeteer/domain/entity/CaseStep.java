@@ -1,9 +1,12 @@
 package com.davies.naraka.puppeteer.domain.entity;
 
 
+import com.davies.naraka.autoconfigure.jpa.EnumCodeUserType;
 import com.davies.naraka.puppeteer.domain.enums.StepAction;
 import lombok.*;
-import org.hibernate.annotations.ColumnTransformers;
+
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -11,7 +14,6 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 import static javax.persistence.ConstraintMode.NO_CONSTRAINT;
-import static javax.persistence.ConstraintMode.PROVIDER_DEFAULT;
 
 /**
  * @author sycho
@@ -22,6 +24,7 @@ import static javax.persistence.ConstraintMode.PROVIDER_DEFAULT;
 @Getter
 @Setter
 @Entity
+@TypeDef(typeClass = EnumCodeUserType.class,name="EnumCode")
 public class CaseStep {
 
 
@@ -39,7 +42,7 @@ public class CaseStep {
     private String name;
 
 
-
+    @Type(type = "EnumCode")
     private StepAction action;
 
 
