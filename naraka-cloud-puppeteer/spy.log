@@ -1,0 +1,2 @@
+1646791346314|2|statement|connection 0|url jdbc:p6spy:h2:~/mydb|select * from INFORMATION_SCHEMA.SEQUENCES|select * from INFORMATION_SCHEMA.SEQUENCES
+1646791348465|0|rollback|connection 0|url jdbc:p6spy:h2:~/mydb||

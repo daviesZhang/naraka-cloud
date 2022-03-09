@@ -5,8 +5,8 @@ spring:
   application:
     name: naraka-cloud-puppeteer
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:~/mydb
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+    url: jdbc:p6spy:h2:~/mydb
   jpa:
     hibernate:
       ddl-auto: update

@@ -1,16 +1,19 @@
-package com.davies.naraka.puppeteer;
+package com.davies.naraka.autoconfigure.jpa;
 
 import com.davies.naraka.autoconfigure.annotation.ColumnName;
 import com.davies.naraka.autoconfigure.annotation.Crypto;
 import com.davies.naraka.autoconfigure.annotation.QuerySkip;
 import com.davies.naraka.autoconfigure.domain.QueryField;
 import com.davies.naraka.autoconfigure.enums.QueryFilterType;
+import com.davies.naraka.autoconfigure.jpa.function.AesDecryptFunction;
+import com.davies.naraka.autoconfigure.jpa.function.UnHexFunction;
 import com.davies.naraka.autoconfigure.properties.EncryptProperties;
 import com.davies.naraka.cloud.common.AesEncryptorUtils;
 import com.davies.naraka.cloud.common.StringConstants;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.query.criteria.internal.CriteriaBuilderImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -27,6 +30,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import static java.util.Locale.ENGLISH;
 
@@ -43,6 +48,16 @@ public class JpaSpecificationUtils {
         this.encryptProperties = encryptProperties;
     }
 
+
+    /**
+     * 根据符合规则的查询对象自动生成简单Specification
+     * 对象内字段属性不是QueryField<?>的,会自动转换为QueryField<?>对象
+     * 需要join的条件需要添加JoinQuery
+     *
+     * @param queryParams
+     * @param <T>
+     * @return
+     */
     public <T> Specification<T> specification(Object queryParams) {
         return (root, query, criteriaBuilder) -> {
             Class<?> classes = queryParams.getClass();
@@ -78,7 +93,7 @@ public class JpaSpecificationUtils {
                 }
                 Predicate nextPredicate = null;
                 if (value instanceof Collection) {
-                    for (Object v : (Collection) value) {
+                    for (Object v : (Collection<?>) value) {
                         if (nextPredicate != null) {
                             nextPredicate = criteriaBuilder.and(nextPredicate, getPredicate(root, criteriaBuilder, orders, cacheJoin, declaredField, v, column));
                         } else {
@@ -151,40 +166,27 @@ public class JpaSpecificationUtils {
 
         switch (queryFilterType) {
             case LIKE:
-                return cb.like(root.get(column), StringConstants.PERCENT + value.toString() + StringConstants.PERCENT);
+                return likePredicate(column, root, cb, key, StringConstants.PERCENT + value.toString() + StringConstants.PERCENT);
             case STARTS_WITH:
-                return cb.like(root.get(column), value.toString() + StringConstants.PERCENT);
+                return likePredicate(column, root, cb, key, value.toString() + StringConstants.PERCENT);
             case ENDS_WITH:
-                return cb.like(root.get(column), StringConstants.PERCENT + value.toString());
+                return likePredicate(column, root, cb, key, StringConstants.PERCENT + value.toString());
             case EQUALS:
                 return cb.equal(root.get(column), Strings.isNullOrEmpty(key) ? value : encrypt(value, key));
             case NOT_EQUALS:
                 return cb.notEqual(root.get(column), Strings.isNullOrEmpty(key) ? value : encrypt(value, key));
             case CONTAINS:
-                if (value instanceof Collection) {
-                    if (Strings.isNullOrEmpty(key)) {
-                        return root.get(column).in(((Collection<?>) value).toArray());
-                    } else {
-                        Object[] values = ((Collection<?>) value).stream().map(v -> encrypt(v, key)).toArray();
-                        return root.get(column).in(values);
-                    }
-                }
-                return root.get(column).in(Strings.isNullOrEmpty(key) ? value : encrypt(value, key));
+                return containsPredicate(column, root, key, value, null);
             case NOT_CONTAINS:
-                if (value instanceof Collection) {
-                    if (Strings.isNullOrEmpty(key)) {
-                        return root.get(column).in(((Collection<?>) value).toArray()).not();
-                    } else {
-                        Object[] values = ((Collection<?>) value).stream().map(v -> encrypt(v, key)).toArray();
-                        return root.get(column).in(values).not();
-                    }
-                }
-                return root.get(column).in(Strings.isNullOrEmpty(key) ? value : encrypt(value, key)).not();
+                return containsPredicate(column, root, key, value, Predicate::not);
             case LESSTHAN:
+                return comparablePredicate(root.get(column), value, cb::lessThan);
             case LESSTHANEQUAL:
+                return comparablePredicate(root.get(column), value, cb::lessThanOrEqualTo);
             case GREATERTHANE:
+                return comparablePredicate(root.get(column), value, cb::greaterThan);
             case GREATERTHANEQUAL:
-                return comparablePredicate(queryFilterType, cb, root.get(column), value);
+                return comparablePredicate(root.get(column), value, cb::greaterThanOrEqualTo);
             case ORDER_ASC:
                 orders.add(cb.asc(root.get(column)));
                 return null;
@@ -197,25 +199,46 @@ public class JpaSpecificationUtils {
 
     }
 
+    private <T> Predicate containsPredicate(String column, Path<T> root, String key, Object value, Function<Predicate, Predicate> predicateFunction) {
+        Predicate predicate;
+        if (value instanceof Collection) {
+            if (Strings.isNullOrEmpty(key)) {
+                predicate = root.get(column).in(((Collection<?>) value).toArray());
+            } else {
+                Object[] values = ((Collection<?>) value).stream().map(v -> encrypt(v, key)).toArray();
+                predicate = root.get(column).in(values);
+            }
+        } else {
+            predicate = root.get(column).in(Strings.isNullOrEmpty(key) ? value : encrypt(value, key));
+        }
+        if (predicateFunction != null) {
+            return predicateFunction.apply(predicate);
+        }
+        return predicate;
 
-    private Predicate comparablePredicate(QueryFilterType queryFilterType,
-                                          CriteriaBuilder cb,
-                                          Expression<? extends Comparable> expression,
-                                          Object value) {
+    }
+
+    private <T> Predicate likePredicate(String column,
+                                        Path<T> root,
+                                        CriteriaBuilder cb,
+                                        String key,
+                                        String pattern) {
+        if (Strings.isNullOrEmpty(key)) {
+            return cb.like(root.get(column), pattern);
+        }
+        CriteriaBuilderImpl criteriaBuilder = (CriteriaBuilderImpl) cb;
+        Expression<String> expression = new AesDecryptFunction(criteriaBuilder, new UnHexFunction(criteriaBuilder, root.get(column)), key);
+        return cb.like(expression, pattern);
+    }
+
+
+    @SuppressWarnings("unchecked")
+    private Predicate comparablePredicate(
+            Expression<? extends Comparable<Object>> expression,
+            Object value, BiFunction<Expression<? extends Comparable<Object>>, Comparable<Object>, Predicate> biFunction) {
         if (value instanceof Comparable) {
             Comparable<Object> comparable = (Comparable<Object>) value;
-            switch (queryFilterType) {
-                case LESSTHAN:
-                    return cb.lessThan(expression, comparable);
-                case LESSTHANEQUAL:
-                    return cb.lessThanOrEqualTo(expression, comparable);
-                case GREATERTHANE:
-                    return cb.greaterThan(expression, comparable);
-                case GREATERTHANEQUAL:
-                    return cb.greaterThanOrEqualTo(expression, comparable);
-                default:
-                    throw new IllegalArgumentException(Strings.lenientFormat("FilterType [%s] 不支持", queryFilterType.name()));
-            }
+            return biFunction.apply(expression, comparable);
         }
         throw new IllegalArgumentException("Filter must implements Comparable");
     }
@@ -228,17 +251,6 @@ public class JpaSpecificationUtils {
         return name.substring(0, 1).toUpperCase(ENGLISH) + name.substring(1);
     }
 
-
-    /**
-     * 数据库解密
-     *
-     * @param column
-     * @param key
-     * @return
-     */
-    private String dbDecryptColumn(String column, String key) {
-        return "AES_DECRYPT(UNHEX(" + column + "),'" + key + "')";
-    }
 
     private String getEncryptKey(Field field) {
         if (encryptProperties == null || !encryptProperties.isEnable()) {

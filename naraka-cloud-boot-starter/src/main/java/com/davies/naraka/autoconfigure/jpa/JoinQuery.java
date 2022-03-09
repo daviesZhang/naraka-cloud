@@ -1,4 +1,4 @@
-package com.davies.naraka.puppeteer;
+package com.davies.naraka.autoconfigure.jpa;
 
 import javax.persistence.criteria.JoinType;
 import java.lang.annotation.*;

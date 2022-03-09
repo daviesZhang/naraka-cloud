@@ -1,10 +1,12 @@
 package com.davies.naraka.puppeteer.repository;
 
 import com.davies.naraka.autoconfigure.annotation.ColumnName;
+import com.davies.naraka.autoconfigure.annotation.Crypto;
 import com.davies.naraka.autoconfigure.domain.QueryField;
 import com.davies.naraka.autoconfigure.enums.QueryFilterType;
-import com.davies.naraka.puppeteer.JoinQuery;
-import com.davies.naraka.puppeteer.JpaSpecificationUtils;
+import com.davies.naraka.autoconfigure.jpa.JoinQuery;
+import com.davies.naraka.autoconfigure.jpa.JpaSpecificationUtils;
+import com.davies.naraka.autoconfigure.properties.EncryptProperties;
 import com.davies.naraka.puppeteer.domain.entity.CaseReport;
 import com.davies.naraka.puppeteer.domain.entity.CaseStep;
 import com.davies.naraka.puppeteer.domain.entity.ScriptCase;
@@ -37,7 +39,8 @@ class ScriptCaseRepositoryTest {
 
     @Autowired
     private CaseReportRepository caseReportRepository;
-
+    @Autowired
+    private JpaSpecificationUtils specificationUtils;
     @Test
     @Transactional
     @Rollback(value = false)
@@ -76,16 +79,16 @@ class ScriptCaseRepositoryTest {
     public void specificationUtilsTest() {
 
         QueryCase queryCase = new QueryCase();
-        queryCase.setProject("te2st");
+        queryCase.setProject(new QueryField<>(QueryFilterType.LIKE,"te2st"));
         queryCase.setEnvironment("test");
-        queryCase.setName(new QueryField<>(QueryFilterType.NOT_CONTAINS, Lists.newArrayList("loxgin")));
+        queryCase.setName(new QueryField<>(QueryFilterType.CONTAINS, Lists.newArrayList("12345","login")));
 //        queryCase.setName(new QueryField<>(QueryFilterType.CONTAINS, Lists.newArrayList("xcx","login")));
         queryCase.setStepName("First");
         QueryField<LocalDateTime> asc = new QueryField<>(QueryFilterType.ORDER_ASC, null);
         QueryField<LocalDateTime> now = new QueryField<>(QueryFilterType.LESSTHANEQUAL, LocalDateTime.now());
         queryCase.setCreatedTime(Lists.newArrayList(asc, now));
         queryCase.setUpdatedTime(new QueryField<>(QueryFilterType.ORDER_DESC, null));
-        JpaSpecificationUtils specificationUtils = new JpaSpecificationUtils(null);
+
         Specification<ScriptCase> specification = specificationUtils.specification(queryCase);
         List<ScriptCase> cases = this.scriptCaseRepository.findAll(specification);
         Assertions.assertFalse(cases.isEmpty());
@@ -95,7 +98,9 @@ class ScriptCaseRepositoryTest {
     @Data
     @NoArgsConstructor
     public static class QueryCase {
-        private String project;
+
+        private QueryField<String> project;
+
 
         private String environment;
 

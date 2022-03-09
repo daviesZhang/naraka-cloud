@@ -1,7 +1,9 @@
 package com.davies.naraka.puppeteer.domain.entity;
 
 
+import com.davies.naraka.puppeteer.domain.enums.StepAction;
 import lombok.*;
+import org.hibernate.annotations.ColumnTransformers;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -36,6 +38,9 @@ public class CaseStep {
     @Column(nullable = false)
     private String name;
 
+
+
+    private StepAction action;
 
 
 
