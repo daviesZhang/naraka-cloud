@@ -12,6 +12,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.key.LocalDateTimeKeyDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -88,7 +89,7 @@ public class JacksonAutoConfiguration {
     @ConditionalOnProperty(value = "naraka.jackson.messageConverter", havingValue = "true")
     public CustomBeanSerializerModifier customBeanSerializerModifier(
             SerializeBeanPropertyFactory serializeBeanPropertyFactory,
-            ProcessorFunction processorFunction, CurrentUserNameSupplier currentUserNameSupplier) {
+            @Autowired(required = false) ProcessorFunction processorFunction, CurrentUserNameSupplier currentUserNameSupplier) {
         return new CustomBeanSerializerModifier(serializeBeanPropertyFactory, processorFunction, currentUserNameSupplier);
     }
 
