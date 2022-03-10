@@ -340,10 +340,10 @@ public class JpaSpecificationUtils {
             if (object instanceof String) {
                 return AesEncryptorUtils.encrypt((String) object, key);
             }
-            throw new IllegalArgumentException(key + ":加密异常,值必须为String类型");
+            throw new IllegalArgumentException("加密异常,值必须为String类型");
         } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
 
-            throw new RuntimeException(key + ":加密异常", e);
+            throw new RuntimeException("加密异常", e);
         }
 
     }

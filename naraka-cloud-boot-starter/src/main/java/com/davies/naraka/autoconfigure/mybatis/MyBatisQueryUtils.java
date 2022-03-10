@@ -190,7 +190,7 @@ public class MyBatisQueryUtils {
         try {
             return AesEncryptorUtils.encrypt(object, key);
         } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
-            throw new RuntimeException(key + ":加密异常", e);
+            throw new RuntimeException(  "加密异常", e);
         }
 
     }
