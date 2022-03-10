@@ -28,6 +28,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -243,15 +244,12 @@ public class MyBatisQueryUtils {
      */
     private <T> void buildQueryField(QueryWrapper<T> queryWrapper, String column, QueryField<?> queryField, Field declaredField) {
         QueryFilter queryFilter = declaredField.getAnnotation(QueryFilter.class);
-        QueryFilterType[] types = queryFilter.types();
-        QueryFilterType filterType = null;
-
-        for (QueryFilterType queryFilterType : types) {
-            if (queryField.getType() == queryFilterType) {
-                filterType = queryFilterType;
-            }
+        QueryFilterType filterType = queryField.getType();
+        if (queryFilter != null) {
+            QueryFilterType[] types = queryFilter.types();
+            boolean supportType = Arrays.stream(types).anyMatch(type -> type == queryField.getType());
+            Preconditions.checkArgument(supportType, "filterType not support");
         }
-        Preconditions.checkArgument(filterType != null, "filterType not is null");
         Object value = queryField.getFilter();
         String key = getEncryptKey(declaredField);
         switch (filterType) {
