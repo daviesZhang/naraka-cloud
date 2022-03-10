@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.davies.naraka.autoconfigure.ClassUtils;
+import com.davies.naraka.autoconfigure.QueryPage;
 import com.davies.naraka.autoconfigure.annotation.ColumnName;
 import com.davies.naraka.autoconfigure.annotation.Crypto;
 import com.davies.naraka.autoconfigure.annotation.QueryFilter;

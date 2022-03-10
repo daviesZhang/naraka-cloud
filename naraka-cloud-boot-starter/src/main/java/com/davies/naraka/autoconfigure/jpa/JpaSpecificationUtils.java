@@ -10,7 +10,7 @@ import com.davies.naraka.autoconfigure.domain.QueryField;
 import com.davies.naraka.autoconfigure.enums.QueryFilterType;
 import com.davies.naraka.autoconfigure.jpa.function.AesDecryptFunction;
 import com.davies.naraka.autoconfigure.jpa.function.UnHexFunction;
-import com.davies.naraka.autoconfigure.mybatis.QueryPage;
+import com.davies.naraka.autoconfigure.QueryPage;
 import com.davies.naraka.autoconfigure.properties.EncryptProperties;
 import com.davies.naraka.cloud.common.AesEncryptorUtils;
 import com.davies.naraka.cloud.common.StringConstants;
@@ -177,6 +177,9 @@ public class JpaSpecificationUtils {
                 } else {
                     predicate = nextPredicate;
                 }
+            }
+            if (predicate==null){
+                return query.orderBy(orders).getRestriction();
             }
             return query.orderBy(orders).where(predicate).getRestriction();
         };

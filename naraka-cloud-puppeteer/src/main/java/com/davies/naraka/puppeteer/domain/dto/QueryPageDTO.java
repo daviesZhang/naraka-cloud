@@ -1,4 +1,4 @@
-package com.davies.naraka.admin.domain.dto;
+package com.davies.naraka.puppeteer.domain.dto;
 
 
 import com.davies.naraka.autoconfigure.QueryPage;

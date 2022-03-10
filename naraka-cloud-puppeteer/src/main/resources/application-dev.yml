@@ -25,9 +25,9 @@ naraka:
     keyMap:
       phone: dsadas$#@$@#
   jackson:
-    objectMapper: false
-    messageConverter: false
-    smartConverter: false
+    objectMapper: true
+    messageConverter: true
+    smartConverter: true
   username:
     header: username
   jpa:

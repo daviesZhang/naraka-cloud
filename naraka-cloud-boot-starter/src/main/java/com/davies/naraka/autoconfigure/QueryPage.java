@@ -1,4 +1,4 @@
-package com.davies.naraka.autoconfigure.mybatis;
+package com.davies.naraka.autoconfigure;
 
 /**
  * @author davies
