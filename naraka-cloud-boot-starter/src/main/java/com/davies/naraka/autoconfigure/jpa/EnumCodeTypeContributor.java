@@ -35,6 +35,10 @@ public class EnumCodeTypeContributor implements TypeContributor {
 
     private final String typeEnumsPackage;
 
+    private static final ResourcePatternResolver RESOURCE_PATTERN_RESOLVER = new PathMatchingResourcePatternResolver();
+    private static final MetadataReaderFactory METADATA_READER_FACTORY = new CachingMetadataReaderFactory();
+
+
     public EnumCodeTypeContributor(String typeEnumsPackage) {
         this.typeEnumsPackage = typeEnumsPackage;
     }
@@ -47,8 +51,6 @@ public class EnumCodeTypeContributor implements TypeContributor {
         }
     }
 
-    private static final ResourcePatternResolver RESOURCE_PATTERN_RESOLVER = new PathMatchingResourcePatternResolver();
-    private static final MetadataReaderFactory METADATA_READER_FACTORY = new CachingMetadataReaderFactory();
 
 
     private Set<Class<?>> getEnumCodeClass() {

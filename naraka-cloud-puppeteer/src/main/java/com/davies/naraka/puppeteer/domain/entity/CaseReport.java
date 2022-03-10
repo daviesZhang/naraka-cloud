@@ -1,6 +1,8 @@
 package com.davies.naraka.puppeteer.domain.entity;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnTransformer;
+import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -24,6 +26,7 @@ public class CaseReport {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @ColumnTransformer
     @ManyToOne(targetEntity = ScriptCase.class)
     @JoinColumn(referencedColumnName = "id",foreignKey = @ForeignKey(NO_CONSTRAINT))
 

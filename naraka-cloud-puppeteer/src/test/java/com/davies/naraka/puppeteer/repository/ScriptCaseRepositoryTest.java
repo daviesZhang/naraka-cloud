@@ -46,7 +46,7 @@ class ScriptCaseRepositoryTest {
     @Rollback(value = false)
     public void saveTest() {
         ScriptCase scriptCase = new ScriptCase();
-        scriptCase.setProject("002");
+        scriptCase.setProject("test_project");
         scriptCase.setEnvironment("test");
         scriptCase.setName("login");
         scriptCase.setScriptStatus(ScriptStatus.DISABLE);
@@ -63,8 +63,8 @@ class ScriptCaseRepositoryTest {
     }
     @Test
     public void findStep(){
-        List<CaseStep> caseSteps = this.caseStepRepository.findAll();
-        caseSteps.forEach(System.out::println);
+       // List<CaseStep> caseSteps = this.caseStepRepository.findAll();
+       // caseSteps.forEach(System.out::println);
         List<ScriptCase> scriptCases = this.scriptCaseRepository.findAll();
         scriptCases.forEach(System.out::println);
     }

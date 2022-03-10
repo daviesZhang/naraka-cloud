@@ -89,7 +89,7 @@
     {
       "name": "naraka.jpa.typeEnumsPackage",
       "type": "java.lang.String",
-      "description": "实现了EnumCodePersistence的枚举包路径"
+      "description": "实现了EnumCodePersistence的枚举包路径,多个用;隔开"
     }
   ]
 }

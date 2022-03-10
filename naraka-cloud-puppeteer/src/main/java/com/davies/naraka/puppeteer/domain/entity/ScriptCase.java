@@ -19,7 +19,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-//@TypeDef(typeClass = EnumCodeUserType.class,name="EnumCode")
+
 public class ScriptCase {
 
     @Id

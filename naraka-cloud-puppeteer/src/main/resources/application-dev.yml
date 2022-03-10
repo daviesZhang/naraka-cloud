@@ -20,6 +20,10 @@ spring:
 naraka:
   security:
     enable: true
+  encrypt:
+    enable: true
+    keyMap:
+      phone: dsadas$#@$@#
   jackson:
     objectMapper: false
     messageConverter: false
