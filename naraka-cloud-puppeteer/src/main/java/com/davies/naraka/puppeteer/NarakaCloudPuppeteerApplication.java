@@ -1,5 +1,6 @@
 package com.davies.naraka.puppeteer;
 
+import com.davies.naraka.autoconfigure.CurrentUserNameSupplier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -18,4 +19,8 @@ public class NarakaCloudPuppeteerApplication {
 
 
 
+    /*@Bean
+    public CurrentUserNameSupplier currentUserNameSupplier(){
+        return new UserNameSupplier();
+    }*/
 }
