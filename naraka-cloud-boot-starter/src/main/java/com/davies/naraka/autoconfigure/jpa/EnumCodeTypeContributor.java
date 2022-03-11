@@ -1,5 +1,6 @@
 package com.davies.naraka.autoconfigure.jpa;
 
+import com.davies.naraka.autoconfigure.EnumCodePersistence;
 import com.davies.naraka.cloud.common.StringConstants;
 import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;

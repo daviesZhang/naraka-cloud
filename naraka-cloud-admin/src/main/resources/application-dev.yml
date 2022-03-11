@@ -40,6 +40,6 @@ naraka:
   jackson:
     objectMapper: true
     messageConverter: true
-    smartConverter: true
+    deserializer-smart: true
   username:
     header: username

@@ -28,17 +28,22 @@
       "description": "jackson序列化的时间格式,默认yyyy-MM-dd HH:mm:ss"
     },
     {
+      "name": "naraka.jackson.serializerCustomField",
+      "type": "java.lang.Boolean",
+      "description": "是否启用序列化时处理字段 过滤,脱敏等其他操作"
+    },
+    {
       "name": "naraka.jackson.messageConverter",
       "type": "java.lang.Boolean",
-      "description": "是否启用jackson的一系列消息转换自动配置"
+      "description": "是否生成一个MappingJacksonHttpMessageConverter"
     },
     {
       "name": "naraka.jackson.objectMapper",
       "type": "java.lang.Boolean",
-      "description": "是否启用jackson的objectMapper自动配置"
+      "description": "是否生成一个单例默认ObjectMapper"
     },
     {
-      "name": "naraka.jackson.smartConverter",
+      "name": "naraka.jackson.deserializerSmart",
       "type": "java.lang.Boolean",
       "description": "是否启用高级转换QueryField参数,当要求QueryField时,传入单个值默认转换为new QueryField(EQUALS,value),多个值new QueryField(CONTAINS,value)"
     },

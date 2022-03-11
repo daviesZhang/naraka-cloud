@@ -1,4 +1,4 @@
-package com.davies.naraka.autoconfigure.jpa;
+package com.davies.naraka.autoconfigure;
 
 import javax.persistence.Converter;
 

@@ -23,11 +23,11 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * 跟URL自定义字段过滤策略
  * @author davies
  * @date 2022/1/26 12:32 PM
  */
-
-public class CustomBeanSerializerModifier extends BeanSerializerModifier {
+public class CustomFieldBeanSerializerModifier extends BeanSerializerModifier {
 
 
     @Autowired
@@ -42,9 +42,9 @@ public class CustomBeanSerializerModifier extends BeanSerializerModifier {
 
     private final SerializeBeanPropertyFactory serializeBeanPropertyFactory;
 
-    public CustomBeanSerializerModifier(SerializeBeanPropertyFactory serializeBeanPropertyFactory,
-                                        ProcessorFunction processorFunction,
-                                        CurrentUserNameSupplier currentUserNameSupplier) {
+    public CustomFieldBeanSerializerModifier(SerializeBeanPropertyFactory serializeBeanPropertyFactory,
+                                             ProcessorFunction processorFunction,
+                                             CurrentUserNameSupplier currentUserNameSupplier) {
         this.serializeBeanPropertyFactory = serializeBeanPropertyFactory;
         this.processorFunction = processorFunction;
         this.currentUserNameSupplier = currentUserNameSupplier;

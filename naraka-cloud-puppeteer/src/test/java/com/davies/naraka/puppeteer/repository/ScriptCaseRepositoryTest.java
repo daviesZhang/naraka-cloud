@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
@@ -40,8 +39,10 @@ class ScriptCaseRepositoryTest {
 
     @Autowired
     private CaseReportRepository caseReportRepository;
+
     @Autowired
     private JpaSpecificationUtils specificationUtils;
+
     @Test
     @Transactional
     @Rollback(value = false)
@@ -62,12 +63,13 @@ class ScriptCaseRepositoryTest {
         this.scriptCaseRepository.save(scriptCase);
         this.caseStepRepository.save(caseStep);
     }
+
+
     @Test
     public void findStep(){
        // List<CaseStep> caseSteps = this.caseStepRepository.findAll();
        // caseSteps.forEach(System.out::println);
         List<ScriptCase> scriptCases = this.scriptCaseRepository.findAll();
-
         scriptCases.forEach(System.out::println);
     }
 

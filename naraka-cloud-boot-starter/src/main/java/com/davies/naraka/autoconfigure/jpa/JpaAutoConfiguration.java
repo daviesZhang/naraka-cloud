@@ -1,6 +1,7 @@
 package com.davies.naraka.autoconfigure.jpa;
 
 import com.davies.naraka.autoconfigure.CurrentUserNameSupplier;
+import com.davies.naraka.autoconfigure.EnumCodePersistence;
 import com.davies.naraka.autoconfigure.properties.EncryptProperties;
 import org.hibernate.boot.model.TypeContributor;
 import org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl;

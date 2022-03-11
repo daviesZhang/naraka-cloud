@@ -1,6 +1,6 @@
 package com.davies.naraka.puppeteer.domain.enums;
 
-import com.davies.naraka.autoconfigure.jpa.EnumCodePersistence;
+import com.davies.naraka.autoconfigure.EnumCodePersistence;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**

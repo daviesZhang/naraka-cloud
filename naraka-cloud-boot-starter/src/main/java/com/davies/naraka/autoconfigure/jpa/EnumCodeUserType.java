@@ -1,5 +1,6 @@
 package com.davies.naraka.autoconfigure.jpa;
 
+import com.davies.naraka.autoconfigure.EnumCodePersistence;
 import com.google.common.base.Strings;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;

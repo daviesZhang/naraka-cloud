@@ -27,7 +27,8 @@ naraka:
   jackson:
     objectMapper: true
     messageConverter: true
-    smartConverter: true
+    deserializerSmart: true
+
   username:
     header: username
   jpa:
