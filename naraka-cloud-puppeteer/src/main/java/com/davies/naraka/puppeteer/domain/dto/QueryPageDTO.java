@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
  * @date 2022/2/7 12:57 PM
  */
 
+
 public class QueryPageDTO<T> implements QueryPage<T> {
 
 

@@ -9,15 +9,18 @@ import com.davies.naraka.puppeteer.domain.enums.ScriptStatus;
 import com.davies.naraka.puppeteer.repository.ScriptCaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 
 @Controller
+@Validated
 public class TestController {
 
     @Autowired
@@ -39,10 +42,11 @@ public class TestController {
 
         //return ResponseEntity.ok().body()
     }
+
     @PostMapping("/list")
     @ResponseBody
     public PageDTO<ScriptCase> fileSystemResource(
-           @RequestBody QueryPageDTO<ScriptCaseQueryDTO> queryPage
+            @RequestBody @Validated QueryPageDTO<@Valid ScriptCaseQueryDTO> queryPage
     ) {
 
         return this.specificationUtils.pageQuery(queryPage, scriptCaseRepository);
