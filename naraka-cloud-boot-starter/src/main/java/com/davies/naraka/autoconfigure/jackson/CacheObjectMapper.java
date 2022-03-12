@@ -14,7 +14,6 @@ import java.util.function.Supplier;
 /**
  * 为每个用户缓存CacheObjectMapper对象
  * 避免每次请求都创建新的ObjectMapper
- * 这意味,当修改了用户的接口字段权限,需要缓存刷新后生效
  * 一般系统来说无需及时刷新,所以不做手动刷新的调用策略
  * @author davies
  * @date 2022/1/29 8:31 PM

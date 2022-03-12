@@ -6,6 +6,8 @@ import org.springframework.data.domain.AuditorAware;
 import java.util.Optional;
 
 /**
+ * 为 @CreatedBy @LastModifiedBy 提供用户名
+ *
  * @author davies
  */
 public class UserNameAuditorAware implements AuditorAware<String> {

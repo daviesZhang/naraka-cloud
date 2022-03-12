@@ -4,7 +4,9 @@ import javax.persistence.criteria.JoinType;
 import java.lang.annotation.*;
 
 /**
- * @author sycho
+ * 使用JpaSpecificationUtils 构造查询时,查询对象字段上添加了此注解,意味需要join查询
+ *
+ * @author davies
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

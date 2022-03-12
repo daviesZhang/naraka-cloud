@@ -17,6 +17,8 @@ import java.util.Objects;
 import java.util.Properties;
 
 /**
+ * 字符串字段加解密 特殊类型
+ *
  * @author davies
  */
 @Slf4j

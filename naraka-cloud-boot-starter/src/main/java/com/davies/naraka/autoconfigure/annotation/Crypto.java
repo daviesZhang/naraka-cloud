@@ -3,12 +3,12 @@ package com.davies.naraka.autoconfigure.annotation;
 import java.lang.annotation.*;
 
 /**
- * 暂时只支持字符串类型加解密
- * 被此注解标记的实体类及字段或QueryDTO 字段,在读写时进行加解密操作
- * 例如 {@link  com.davies.naraka.admin.domain.dto.system.UserQueryDTO} {@link  com.davies.naraka.admin.domain.entity.User}
- * 对于queryDTO在{@link com.davies.naraka.admin.common.QueryUtils}中使用
- * 对于entity类使用mybatis拦截器处理 {@link com.davies.naraka.admin.config.mybatis.ParamsCryptoInterceptor}
- * {@link com.davies.naraka.admin.config.mybatis.ResultCryptoInterceptor}
+ * 在Mybatis应用中
+ * 在实体类上添加此注解,表明此类中有需要加解密的字段,
+ * 同时在字段上添加此字段,在数据入库出库时mybatis拦截器会自动处理加解密
+ * 参见 ParamsCryptoInterceptor 和 ResultCryptoInterceptor
+ * 在 查询字段上添加了此注解,使用 MyBatisQueryUtils 或 JpaSpecificationUtils 构造查询参数时,会自动处理需要加密的情况
+ *
  * @author davies
  * @date 2022/1/30 9:17 PM
  */

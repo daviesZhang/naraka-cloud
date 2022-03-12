@@ -28,6 +28,10 @@ import java.util.stream.Stream;
 import static org.springframework.util.StringUtils.tokenizeToStringArray;
 
 /**
+ * 扫描typeEnumsPackage 包路径下的实现了EnumCodePersistence接口的枚举,为他们添加 EnumCodeUserType 转换器
+ * 用来实现入库为 int code ,出库转换为枚举
+ * typeEnumsPackage 包支持多个,已; 隔开
+ *
  * @author davies
  * @date 2022/3/9 10:21 PM
  */

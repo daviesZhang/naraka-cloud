@@ -16,6 +16,8 @@ import java.util.Objects;
 import java.util.Properties;
 
 /**
+ * 实现了EnumCodePersistence 接口的Enum 类型转换,入库为自定义int node
+ *
  * @author davies
  */
 public class EnumCodeUserType implements UserType, DynamicParameterizedType {
