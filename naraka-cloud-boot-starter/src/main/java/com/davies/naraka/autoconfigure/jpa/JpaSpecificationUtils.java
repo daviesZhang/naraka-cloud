@@ -1,6 +1,7 @@
 package com.davies.naraka.autoconfigure.jpa;
 
 import com.davies.naraka.autoconfigure.ClassUtils;
+import com.davies.naraka.autoconfigure.QueryPage;
 import com.davies.naraka.autoconfigure.annotation.ColumnName;
 import com.davies.naraka.autoconfigure.annotation.Crypto;
 import com.davies.naraka.autoconfigure.annotation.QueryFilter;
@@ -10,7 +11,6 @@ import com.davies.naraka.autoconfigure.domain.QueryField;
 import com.davies.naraka.autoconfigure.enums.QueryFilterType;
 import com.davies.naraka.autoconfigure.jpa.function.AesDecryptFunction;
 import com.davies.naraka.autoconfigure.jpa.function.UnHexFunction;
-import com.davies.naraka.autoconfigure.QueryPage;
 import com.davies.naraka.autoconfigure.properties.EncryptProperties;
 import com.davies.naraka.cloud.common.AesEncryptorUtils;
 import com.davies.naraka.cloud.common.StringConstants;

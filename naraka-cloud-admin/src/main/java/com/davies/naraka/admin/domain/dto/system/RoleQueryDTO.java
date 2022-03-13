@@ -8,6 +8,8 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.davies.naraka.autoconfigure.enums.QueryFilterType.*;
+
 /**
  * @author davies
  * @date 2022/2/7 1:41 PM
@@ -15,16 +17,11 @@ import java.util.List;
 @Data
 public class RoleQueryDTO {
     @QueryFilter(types = {
-            QueryFilterType.EQUALS,
+            EQUALS,
             QueryFilterType.LIKE})
     private QueryField<String> name;
 
-    @QueryFilter(types = {
-            QueryFilterType.LESSTHAN,
-            QueryFilterType.EQUALS,
-            QueryFilterType.LESSTHANEQUAL,
-            QueryFilterType.GREATERTHANE,
-            QueryFilterType.GREATERTHANEQUAL})
+    @QueryFilter(types = {LESSTHAN, EQUALS, LESSTHANEQUAL, GREATERTHANE, GREATERTHANEQUAL})
     private List<QueryField<LocalDateTime>> createdTime;
 
 }

@@ -19,12 +19,12 @@ import java.util.Objects;
 import java.util.Properties;
 
 /**
- * @see com.davies.naraka.admin.annotation.Crypto
- * 查询结果解密
- * 不支持多层结构,仅支持 Object->field(解密) 或者List<Object->field(解密)>
- *     不支持Object->Object->field(解密)
  * @author davies
  * @date 2022/1/30 9:36 PM
+ * @see Crypto
+ * 查询结果解密
+ * 不支持多层结构,仅支持 Object->field(解密) 或者List<Object->field(解密)>
+ * 不支持Object->Object->field(解密)
  */
 
 @Intercepts({

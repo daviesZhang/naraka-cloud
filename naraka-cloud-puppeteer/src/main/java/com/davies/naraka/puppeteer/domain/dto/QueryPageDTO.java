@@ -29,7 +29,7 @@ public class QueryPageDTO<T> implements QueryPage<T> {
     /**
      * 查询条件
      */
-    @NotNull
+
     private T query;
 
     @Override

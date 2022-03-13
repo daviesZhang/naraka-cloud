@@ -5,6 +5,7 @@ import com.davies.naraka.autoconfigure.domain.QueryField;
 import com.davies.naraka.autoconfigure.enums.QueryFilterType;
 import com.davies.naraka.autoconfigure.jpa.JoinQuery;
 import com.davies.naraka.autoconfigure.jpa.JpaSpecificationUtils;
+import com.davies.naraka.puppeteer.domain.bo.TestBO;
 import com.davies.naraka.puppeteer.domain.entity.CaseReport;
 import com.davies.naraka.puppeteer.domain.entity.CaseStep;
 import com.davies.naraka.puppeteer.domain.entity.ScriptCase;
@@ -66,10 +67,11 @@ class ScriptCaseRepositoryTest {
 
 
     @Test
-    public void findStep(){
-       // List<CaseStep> caseSteps = this.caseStepRepository.findAll();
-       // caseSteps.forEach(System.out::println);
-        List<ScriptCase> scriptCases = this.scriptCaseRepository.findAll();
+    public void findStep() {
+        // List<CaseStep> caseSteps = this.caseStepRepository.findAll();
+        // caseSteps.forEach(System.out::println);
+        List<TestBO> scriptCases = this.scriptCaseRepository.testBo();
+        // Transformers.aliasToBean()
         scriptCases.forEach(System.out::println);
     }
 

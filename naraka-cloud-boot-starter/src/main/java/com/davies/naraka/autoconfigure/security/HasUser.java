@@ -3,7 +3,8 @@ package com.davies.naraka.autoconfigure.security;
 import java.lang.annotation.*;
 
 /**
- * aop检查当前httpServletRequest是否包含remoteUser,如果不包含抛出异常
+ * aop检查当前能否获取到user,如果不能抛出异常
+ *
  * @author davies
  * @date 2022/2/27 12:42 PM
  */

@@ -61,7 +61,6 @@ public class UnHexFunction
 		try {
 			return "unhex(" +
 					((Renderable) getValue()).render(renderingContext) +
-
 					')';
 		}
 		finally {

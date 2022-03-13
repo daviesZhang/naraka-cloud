@@ -46,7 +46,7 @@ public class TestController {
     @PostMapping("/list")
     @ResponseBody
     public PageDTO<ScriptCase> fileSystemResource(
-            @RequestBody @Validated QueryPageDTO<@Valid ScriptCaseQueryDTO> queryPage
+            @RequestBody @Valid QueryPageDTO<@Valid ScriptCaseQueryDTO> queryPage
     ) {
 
         return this.specificationUtils.pageQuery(queryPage, scriptCaseRepository);
