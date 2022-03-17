@@ -37,7 +37,7 @@ public class RedisProcessorFunction implements ProcessorFunction {
             return Collections.emptyMap();
         }
         RMap<String, Map<String, Set<String>>>
-                rMap = this.redissonClient.getMap(SecurityHelper.userAuthorityCacheKey(username));
+                rMap = this.redissonClient.getMap(SecurityHelper.userAuthorityApiCacheKey(username));
 
         return rMap.getOrDefault(key, Collections.emptyMap());
 

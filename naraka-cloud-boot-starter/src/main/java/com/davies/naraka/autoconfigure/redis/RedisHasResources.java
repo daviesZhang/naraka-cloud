@@ -23,7 +23,7 @@ public class RedisHasResources implements HasResources {
 
     @Override
     public CompletableFuture<Boolean> test(String resource, String principal) {
-        String key = SecurityHelper.userAuthorityCacheKey(principal);
+        String key = SecurityHelper.userAuthorityApiCacheKey(principal);
         RMap<String, Object> map = redissonClient.getMap(key);
         return map.containsKeyAsync(resource).toCompletableFuture();
     }

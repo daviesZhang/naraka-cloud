@@ -1,0 +1,10 @@
+package com.test
+
+import com.davies.naraka.rules.domain.entity.Rule
+
+rule "test"
+when
+ ruleName: Rule(name=="test");
+ then
+  ruleName.setName("success");
+  end

@@ -12,13 +12,17 @@ public enum AuthorityProcessorType {
 
 
     /**
-     * 过滤
+     * 过滤字段
      */
     FILTER(0),
     /**
      * 脱敏
      */
-    DESENSITIZATION(1);
+    DESENSITIZATION(1),
+    /**
+     * 数据筛选,row级别
+     */
+    SKIP(2);
 
 
     /**

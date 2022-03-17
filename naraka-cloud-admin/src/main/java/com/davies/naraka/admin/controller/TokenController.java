@@ -12,10 +12,10 @@ import com.davies.naraka.admin.service.IUserService;
 import com.davies.naraka.admin.service.exception.UserNotFoundException;
 import com.davies.naraka.autoconfigure.ClassUtils;
 import com.davies.naraka.autoconfigure.GeneratorTokenBiFunction;
-import com.davies.naraka.autoconfigure.security.SecurityHelper;
 import com.davies.naraka.autoconfigure.jackson.SerializeBeanPropertyFactory;
 import com.davies.naraka.autoconfigure.properties.SecurityProperties;
 import com.davies.naraka.autoconfigure.security.HasUser;
+import com.davies.naraka.autoconfigure.security.SecurityHelper;
 import com.davies.naraka.cloud.common.StringConstants;
 import com.davies.naraka.cloud.common.StringUtils;
 import com.google.common.base.CaseFormat;
@@ -95,7 +95,7 @@ public class TokenController {
         ClassUtils.copyObject(userInfo, currentUser);
         currentUser.setAuthority(getAuthorityMap(authorities));
         RMap<String, Map<String, Set<String>>> authorityMap =
-                redissonClient.getMap(SecurityHelper.userAuthorityCacheKey(userInfo.getUsername()));
+                redissonClient.getMap(SecurityHelper.userAuthoritySerializeCacheKey(userInfo.getUsername()));
         authorityMap.clear();
         authorityMap.expire(USER_CACHE_LIVE, TimeUnit.MINUTES);
         authorityMap.putAll(authorityListToMap(authorities).get(ResourceType.URL));
@@ -173,12 +173,18 @@ public class TokenController {
     }
 
 
+    private boolean serializeAuthority(Authority authority) {
+        AuthorityProcessorType type = authority.getProcessor();
+        return type == AuthorityProcessorType.DESENSITIZATION ||
+                type == AuthorityProcessorType.FILTER;
+    }
+
     /**
      * @param authorityList
      * @return ResourceType=> Resource=> ProcessorValue(按逗号拆分后) => AuthorityProcessorType
      */
     private Map<ResourceType, Map<String, Map<String, Set<String>>>> authorityListToMap(List<Authority> authorityList) {
-        return authorityList.stream().collect(Collectors
+        return authorityList.stream().filter(this::serializeAuthority).collect(Collectors
                 .groupingBy(Authority::getResourceType, Collectors.mapping((Function<Authority, Authority>) input -> input,
                         Collectors.groupingBy(Authority::getResource, Collectors.mapping(authority -> {
                             String value = authority.getProcessorValue();
@@ -188,7 +194,7 @@ public class TokenController {
                             return Arrays.stream(value.split(StringPool.COMMA)).map(v -> {
                                 Authority newAuthority = ClassUtils.copyObject(authority, new Authority());
                                 newAuthority.setProcessorValue(v);
-                                        return newAuthority;
+                                return newAuthority;
                                     }).collect(Collectors.toList());
                                 }, new ListMapCollector<>(this::accumulator)
                         ))
