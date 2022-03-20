@@ -21,6 +21,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "t_rule")
 @Accessors(chain = true)
 public class Rule {
 
@@ -36,7 +37,7 @@ public class Rule {
     private String name;
 
 
-    @Column(columnDefinition = "CLOB")
+    @Column(columnDefinition = "text")
     private String content;
 
 

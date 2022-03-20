@@ -17,5 +17,6 @@ public interface RuleService {
 
 
     @RequestMapping(method = RequestMethod.POST, value = "/rules/list")
-    public List<Object> getList(@RequestBody Map<String, String> object);
+    List<Object> getList(@RequestBody Map<String, String> object);
+
 }

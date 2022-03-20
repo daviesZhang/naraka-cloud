@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @RestController
 @Validated
 @RequestMapping("/rules")
-public class RoleController {
+public class RuleController {
 
     @Autowired
     private RuleService ruleService;

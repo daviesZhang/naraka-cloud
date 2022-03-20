@@ -44,7 +44,8 @@ public class TokenFilter implements GlobalFilter, Ordered {
     }
 
     /**
-     * 跟服务约定 当Subject不为空时意味着用户调用,需要鉴权.当Issuer等于serviceIssuer,意味着是服务间互相调用,直接允许通过
+     * 跟服务约定 当Issuer等于serviceIssuer,意味着是服务间互相调用,直接允许通过
+     * 当Issuer不等于serviceIssuer时意味着用户调用,需要对Subject鉴权.
      *
      * @param exchange
      * @param chain
