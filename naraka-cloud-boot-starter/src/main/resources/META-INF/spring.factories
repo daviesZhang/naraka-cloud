@@ -3,5 +3,6 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.davies.naraka.autoconfigure.redis.RedisAutoConfiguration,\
   com.davies.naraka.autoconfigure.mybatis.MyBatisAutoConfiguration,\
   com.davies.naraka.autoconfigure.jpa.JpaAutoConfiguration,\
+  com.davies.naraka.autoconfigure.feign.FeignAutoConfiguration,\
   com.davies.naraka.autoconfigure.jackson.JacksonAutoConfiguration,\
   com.davies.naraka.autoconfigure.servlet.ServletAutoConfiguration

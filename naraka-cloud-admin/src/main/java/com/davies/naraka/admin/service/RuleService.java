@@ -16,6 +16,6 @@ import java.util.Map;
 public interface RuleService {
 
 
-    @RequestMapping(method = RequestMethod.POST, value = "/rules/list", headers = "Authorization=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJzZXJ2aWNlIiwiZXhwIjoxNjQ3NzY4Njg5fQ.0WmbVm0Z8HiIFKedrFz31IHLytpJOI1QQ6kzfM9AgxzdiYSf4GsqFpLreMPUXmQCfT5JT7NVNqP0Q5KrhhHOjw")
+    @RequestMapping(method = RequestMethod.POST, value = "/rules/list")
     public List<Object> getList(@RequestBody Map<String, String> object);
 }
