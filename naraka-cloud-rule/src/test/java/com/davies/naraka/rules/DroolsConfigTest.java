@@ -26,10 +26,10 @@ class DroolsConfigTest {
         // KieServices.Factory.get().getKieClasspathContainer("")
         KieSession session = kieContainer.newKieSession();
         // kieContainer.getKieBase().getKiePackage().getRules()
-        Rule rule = new Rule("test");
+        Rule rule = new Rule();
 
         session.insert(rule);
-
+        // session.()
         assertEquals("success", rule.getName());
 
     }

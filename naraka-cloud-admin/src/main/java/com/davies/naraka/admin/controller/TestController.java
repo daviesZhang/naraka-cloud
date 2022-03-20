@@ -1,6 +1,8 @@
 package com.davies.naraka.admin.controller;
 
+import com.davies.naraka.admin.service.RuleService;
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,11 +28,21 @@ public class TestController {
     @Autowired
     private HttpServletRequest request;
 
+    @Autowired
+    private RuleService ruleService;
+
     @GetMapping(value = {"/test", "/bing/test"})
     public String test() {
         log.info("port:{}", port);
         return Strings.lenientFormat("age:%s,port:%s,username:%s,usernameHeader:%s"
-        ,age,port,request.getRemoteUser(),request.getHeader("username"));
+                , age, port, request.getRemoteUser(), request.getHeader("username"));
         //return "age:" + age + "port:"+port+"username:"+request.getRemoteUser();
     }
+
+    @GetMapping("/test/list")
+    public Object getList() {
+
+        return this.ruleService.getList(Maps.newHashMap());
+    }
+
 }

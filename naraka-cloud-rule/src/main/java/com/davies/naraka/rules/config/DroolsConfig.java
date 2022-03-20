@@ -38,6 +38,7 @@ public class DroolsConfig {
     public KieContainer kieContainer(KieFileSystem kieFileSystem) throws IOException {
         final KieRepository kieRepository = kieRepository();
         KieBuilder kieBuilder = kieServices().newKieBuilder(kieFileSystem);
+
         kieBuilder.buildAll();
         return kieServices().newKieContainer(kieRepository.getDefaultReleaseId());
     }

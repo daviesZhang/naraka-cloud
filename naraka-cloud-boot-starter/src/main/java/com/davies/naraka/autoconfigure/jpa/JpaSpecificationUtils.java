@@ -125,6 +125,9 @@ public class JpaSpecificationUtils {
      * @return
      */
     public <T> Specification<T> specification(Object queryParams) {
+        if (null == queryParams) {
+            return (root, query, criteriaBuilder) -> query.getRestriction();
+        }
         return (root, query, criteriaBuilder) -> {
             Class<?> classes = queryParams.getClass();
             Field[] fields = classes.getDeclaredFields();

@@ -94,11 +94,21 @@ public class TokenController {
         CurrentUserDTO currentUser = new CurrentUserDTO();
         ClassUtils.copyObject(userInfo, currentUser);
         currentUser.setAuthority(getAuthorityMap(authorities));
-        RMap<String, Map<String, Set<String>>> authorityMap =
+        RMap<String, Map<String, Set<String>>> authoritySerializeMap =
                 redissonClient.getMap(SecurityHelper.userAuthoritySerializeCacheKey(userInfo.getUsername()));
-        authorityMap.clear();
-        authorityMap.expire(USER_CACHE_LIVE, TimeUnit.MINUTES);
-        authorityMap.putAll(authorityListToMap(authorities).get(ResourceType.URL));
+        authoritySerializeMap.clear();
+        authoritySerializeMap.expire(USER_CACHE_LIVE, TimeUnit.MINUTES);
+        authoritySerializeMap.putAll(authorityListToMap(authorities).get(ResourceType.URL));
+
+        RMap<String, String> authorityApiMap =
+                redissonClient.getMap(SecurityHelper.userAuthorityApiCacheKey(userInfo.getUsername()));
+
+        Map<String, String> apiMap = authorities.stream().map(Authority::getResource).distinct()
+                .collect(Collectors.toMap((Function<String, String>) input -> input, (Function<String, String>) input -> input));
+        authorityApiMap.clear();
+        authorityApiMap.expire(USER_CACHE_LIVE, TimeUnit.MINUTES);
+        authorityApiMap.putAll(apiMap);
+
         redissonClient.getBucket(SecurityHelper.userCacheKey(userInfo.getUsername()))
                 .set(currentUser, USER_CACHE_LIVE, TimeUnit.MINUTES);
         return currentUser;

@@ -10,6 +10,7 @@ import org.redisson.api.RedissonClient;
 import org.redisson.config.ClusterServersConfig;
 import org.redisson.config.Config;
 import org.redisson.config.SingleServerConfig;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -40,6 +41,7 @@ public class RedisAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(ProcessorFunction.class)
+    @ConditionalOnBean(CurrentUserNameSupplier.class)
     public ProcessorFunction processorFunction(CurrentUserNameSupplier currentUserNameSupplier, RedissonClient redissonClient) {
         return new RedisProcessorFunction(currentUserNameSupplier, redissonClient);
     }
