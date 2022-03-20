@@ -1,10 +1,12 @@
 package com.davies.naraka.admin.service.exception;
 
+import com.davies.naraka.cloud.common.exception.NarakaException;
+
 /**
  * @author davies
  * @date 2022/1/28 2:09 PM
  */
-public class SystemVerifyException extends RuntimeException {
+public class SystemVerifyException extends NarakaException {
 
 
     public SystemVerifyException() {

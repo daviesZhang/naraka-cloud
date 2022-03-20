@@ -9,11 +9,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum ResourceType {
     /**
-     * 0 URL 1菜单
+     * 0 API 1菜单
      */
-    URL(0),
+    API(0),
     MENU(1);
-
 
 
     /**

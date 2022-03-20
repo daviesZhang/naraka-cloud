@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,7 +26,12 @@ public class CurrentUserDTO implements Serializable {
      * 拥有的接口和接口中已被过滤的字段
      * URL 过滤字段
      */
-   private Map<String,String> authority;
+    private Map<String, String> api;
+
+    /**
+     * 用户的组信息,由小到大
+     */
+    private List<String> group;
 
 
 }

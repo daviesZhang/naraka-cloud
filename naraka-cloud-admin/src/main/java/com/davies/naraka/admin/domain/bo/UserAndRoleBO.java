@@ -8,6 +8,8 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
+ * 用户表加上角色信息
+ *
  * @author davies
  * @date 2022/2/7 9:52 PM
  */

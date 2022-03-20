@@ -9,9 +9,9 @@ import java.util.Objects;
 public class SecurityHelper {
 
     private static final String USER_CACHE_PREFIX = "user:";
-    private static final String USER_AUTHORITY_SERIALIZE_CACHE_PREFIX = USER_CACHE_PREFIX + "authority:serialize";
-    private static final String USER_AUTHORITY_DATA_CACHE_PREFIX = USER_CACHE_PREFIX + "authority:data";
-    private static final String USER_AUTHORITY_API_CACHE_PREFIX = USER_CACHE_PREFIX + "authority:api";
+    private static final String USER_AUTHORITY_SERIALIZE_CACHE_PREFIX = ":authority:serialize";
+    private static final String USER_AUTHORITY_ROW_CACHE_PREFIX = ":authority:row";
+    private static final String USER_AUTHORITY_API_CACHE_PREFIX = ":authority:api";
 
     public static final String ROOT = "root";
 
@@ -25,15 +25,15 @@ public class SecurityHelper {
     }
 
     public static String userAuthoritySerializeCacheKey(String username) {
-        return USER_AUTHORITY_SERIALIZE_CACHE_PREFIX + username;
+        return USER_CACHE_PREFIX + username + USER_AUTHORITY_SERIALIZE_CACHE_PREFIX;
     }
 
 
     public static String userAuthorityApiCacheKey(String username) {
-        return USER_AUTHORITY_API_CACHE_PREFIX + username;
+        return USER_CACHE_PREFIX + username + USER_AUTHORITY_API_CACHE_PREFIX;
     }
 
-    public static String userAuthorityDataCacheKey(String username) {
-        return USER_AUTHORITY_DATA_CACHE_PREFIX + username;
+    public static String userAuthorityRowCacheKey(String username) {
+        return USER_CACHE_PREFIX + username + USER_AUTHORITY_ROW_CACHE_PREFIX;
     }
 }

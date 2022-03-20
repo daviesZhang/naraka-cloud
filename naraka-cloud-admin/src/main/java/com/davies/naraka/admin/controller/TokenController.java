@@ -1,29 +1,17 @@
 package com.davies.naraka.admin.controller;
 
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.davies.naraka.admin.common.ListMapCollector;
+import com.davies.naraka.admin.domain.UserInfo;
 import com.davies.naraka.admin.domain.dto.system.CurrentUserDTO;
 import com.davies.naraka.admin.domain.dto.system.LoginDTO;
-import com.davies.naraka.admin.domain.entity.Authority;
 import com.davies.naraka.admin.domain.entity.User;
-import com.davies.naraka.admin.domain.enums.AuthorityProcessorType;
-import com.davies.naraka.admin.domain.enums.ResourceType;
 import com.davies.naraka.admin.service.IUserService;
 import com.davies.naraka.admin.service.exception.UserNotFoundException;
 import com.davies.naraka.autoconfigure.ClassUtils;
 import com.davies.naraka.autoconfigure.GeneratorTokenBiFunction;
-import com.davies.naraka.autoconfigure.jackson.SerializeBeanPropertyFactory;
-import com.davies.naraka.autoconfigure.properties.SecurityProperties;
 import com.davies.naraka.autoconfigure.security.HasUser;
 import com.davies.naraka.autoconfigure.security.SecurityHelper;
-import com.davies.naraka.cloud.common.StringConstants;
 import com.davies.naraka.cloud.common.StringUtils;
-import com.google.common.base.CaseFormat;
-import com.google.common.base.Function;
-import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -35,10 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.function.BiFunction;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 
 /**
@@ -50,14 +35,9 @@ import java.util.stream.Collectors;
 public class TokenController {
 
 
-    private final BiFunction<String, String, String> generatorToken;
+    private final GeneratorTokenBiFunction generatorToken;
 
     private RedissonClient redissonClient;
-
-    /**
-     * 比token有效时间多两分钟,防止认证通过后,因程序运行时间导致缓存无效
-     */
-    private final long USER_CACHE_LIVE;
 
 
     private final IUserService userService;
@@ -66,13 +46,11 @@ public class TokenController {
 
     public TokenController(
             RedissonClient redissonClient,
-            SecurityProperties securityProperties,
             GeneratorTokenBiFunction generatorToken,
             IUserService userService,
             PasswordEncoder passwordEncoder) {
         this.generatorToken = generatorToken;
         this.redissonClient = redissonClient;
-        this.USER_CACHE_LIVE = securityProperties.getExpiresAt() + 2;
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }
@@ -85,33 +63,15 @@ public class TokenController {
     @HasUser
     @GetMapping("/me")
     public CurrentUserDTO me(HttpServletRequest request) {
-        return (CurrentUserDTO) redissonClient.getBucket(SecurityHelper.userCacheKey(request.getRemoteUser())).get();
+        UserInfo userInfo = (UserInfo) redissonClient.getBucket(SecurityHelper.userCacheKey(request.getRemoteUser()));
+        return ClassUtils.copyObject(userInfo, new CurrentUserDTO());
     }
 
 
-    private CurrentUserDTO refreshCache(User userInfo) {
-        List<Authority> authorities = userService.getUserAuthorityList(userInfo.getUsername(), ResourceType.URL);
+    private void refreshCache(User user) {
         CurrentUserDTO currentUser = new CurrentUserDTO();
+        UserInfo userInfo = userService.getUserInfo(user);
         ClassUtils.copyObject(userInfo, currentUser);
-        currentUser.setAuthority(getAuthorityMap(authorities));
-        RMap<String, Map<String, Set<String>>> authoritySerializeMap =
-                redissonClient.getMap(SecurityHelper.userAuthoritySerializeCacheKey(userInfo.getUsername()));
-        authoritySerializeMap.clear();
-        authoritySerializeMap.expire(USER_CACHE_LIVE, TimeUnit.MINUTES);
-        authoritySerializeMap.putAll(authorityListToMap(authorities).get(ResourceType.URL));
-
-        RMap<String, String> authorityApiMap =
-                redissonClient.getMap(SecurityHelper.userAuthorityApiCacheKey(userInfo.getUsername()));
-
-        Map<String, String> apiMap = authorities.stream().map(Authority::getResource).distinct()
-                .collect(Collectors.toMap((Function<String, String>) input -> input, (Function<String, String>) input -> input));
-        authorityApiMap.clear();
-        authorityApiMap.expire(USER_CACHE_LIVE, TimeUnit.MINUTES);
-        authorityApiMap.putAll(apiMap);
-
-        redissonClient.getBucket(SecurityHelper.userCacheKey(userInfo.getUsername()))
-                .set(currentUser, USER_CACHE_LIVE, TimeUnit.MINUTES);
-        return currentUser;
     }
 
     /**
@@ -123,7 +83,7 @@ public class TokenController {
     @HasUser
     @PostMapping("/refreshToken")
     public ResponseEntity<Void> refresh(HttpServletRequest request) {
-        //String username
+
         Optional<User> optionalUser = userService.findUserByUsername(request.getRemoteUser());
         User user = optionalUser.orElseThrow(UserNotFoundException::new);
         refreshCache(user);
@@ -152,90 +112,10 @@ public class TokenController {
             refreshCache(user);
             String jwt = this.generatorToken.apply(user.getUsername(), null);
             log.info("[{}] login success", user.getUsername());
-
             return ResponseEntity.ok()
                     .header(HttpHeaders.AUTHORIZATION, jwt)
                     .build();
         }
         throw new RuntimeException();
-    }
-
-
-    /**
-     * 返回拥有的url作为key,value为需要过滤的字段列表,用逗号隔开
-     *
-     * @param authorityList
-     * @return
-     */
-    private Map<String, String> getAuthorityMap(List<Authority> authorityList) {
-        Map<String, String> filterMap = authorityList.stream()
-                .filter(authority -> authority.getResourceType() == ResourceType.URL
-                        && authority.getProcessor() == AuthorityProcessorType.FILTER
-                        && !Strings.isNullOrEmpty(authority.getProcessorValue()))
-                .collect(Collectors.groupingBy(Authority::getResource,
-                        Collectors.mapping(Authority::getProcessorValue,
-                                Collectors.joining(StringPool.COMMA))));
-        return authorityList.stream().filter(authority -> authority.getResourceType() == ResourceType.URL)
-                .map(Authority::getResource)
-                .distinct()
-                .collect(Collectors.toMap(s -> s, s -> filterMap.getOrDefault(s, StringPool.EMPTY)));
-
-    }
-
-
-    private boolean serializeAuthority(Authority authority) {
-        AuthorityProcessorType type = authority.getProcessor();
-        return type == AuthorityProcessorType.DESENSITIZATION ||
-                type == AuthorityProcessorType.FILTER;
-    }
-
-    /**
-     * @param authorityList
-     * @return ResourceType=> Resource=> ProcessorValue(按逗号拆分后) => AuthorityProcessorType
-     */
-    private Map<ResourceType, Map<String, Map<String, Set<String>>>> authorityListToMap(List<Authority> authorityList) {
-        return authorityList.stream().filter(this::serializeAuthority).collect(Collectors
-                .groupingBy(Authority::getResourceType, Collectors.mapping((Function<Authority, Authority>) input -> input,
-                        Collectors.groupingBy(Authority::getResource, Collectors.mapping(authority -> {
-                            String value = authority.getProcessorValue();
-                            if (Strings.isNullOrEmpty(value)) {
-                                return new ArrayList<>();
-                            }
-                            return Arrays.stream(value.split(StringPool.COMMA)).map(v -> {
-                                Authority newAuthority = ClassUtils.copyObject(authority, new Authority());
-                                newAuthority.setProcessorValue(v);
-                                return newAuthority;
-                                    }).collect(Collectors.toList());
-                                }, new ListMapCollector<>(this::accumulator)
-                        ))
-                )));
-    }
-
-
-    private void accumulator(Map<String, Set<String>> stringSetMap,
-                             Collection<Authority> authorities) {
-        if (authorities.isEmpty()) {
-            return;
-        }
-        authorities.forEach(authority -> {
-            stringSetMap.compute(authority.getProcessorValue(), (s, authorityProcessorTypes) -> {
-                if (authorityProcessorTypes == null) {
-
-                    return Sets.newHashSet(processorTypeToString(authority.getProcessor()));
-                } else {
-                    authorityProcessorTypes.add(processorTypeToString(authority.getProcessor()));
-                    return authorityProcessorTypes;
-                }
-            });
-        });
-    }
-
-
-    private String processorTypeToString(AuthorityProcessorType processorType) {
-
-        String name = SerializeBeanPropertyFactory.SERIALIZE_PREFIX + StringConstants.UNDERSCORE + processorType.name();
-
-        return CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.LOWER_CAMEL).convert(name);
-
     }
 }

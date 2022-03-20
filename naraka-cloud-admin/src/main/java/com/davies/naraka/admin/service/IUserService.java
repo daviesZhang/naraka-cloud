@@ -3,6 +3,7 @@ package com.davies.naraka.admin.service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.davies.naraka.admin.domain.UserInfo;
 import com.davies.naraka.admin.domain.bo.UserAndRoleBO;
 import com.davies.naraka.admin.domain.entity.Authority;
 import com.davies.naraka.admin.domain.entity.Role;
@@ -89,9 +90,18 @@ public interface IUserService extends IService<User> {
 
     /**
      * 用户表 left join 角色表 后的结果
+     *
      * @param page
      * @param wrapper
      * @return
      */
     Page<UserAndRoleBO> userAndRolePage(Page<UserAndRoleBO> page, Wrapper<User> wrapper);
+
+
+    /**
+     * 获取用户信息,并缓存起来
+     *
+     * @param username 用户名
+     */
+    UserInfo getUserInfo(User user);
 }

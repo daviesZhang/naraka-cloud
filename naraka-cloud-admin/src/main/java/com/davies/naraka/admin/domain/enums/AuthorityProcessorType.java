@@ -22,7 +22,7 @@ public enum AuthorityProcessorType {
     /**
      * 数据筛选,row级别
      */
-    SKIP(2);
+    SKIP_ROW(2);
 
 
     /**
