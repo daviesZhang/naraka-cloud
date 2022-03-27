@@ -22,6 +22,10 @@ import com.davies.naraka.autoconfigure.jackson.SerializeBeanPropertyFactory;
 import com.davies.naraka.autoconfigure.properties.SecurityProperties;
 import com.davies.naraka.autoconfigure.security.SecurityHelper;
 import com.davies.naraka.cloud.common.StringConstants;
+import com.davies.naraka.cloud.common.domain.AuthorityRow;
+import com.davies.naraka.cloud.common.exception.NarakaException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
@@ -57,7 +61,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private final IAuthorityService authorityService;
 
     private final RedissonClient redissonClient;
-
+    private final static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     /**
      * 比token有效时间多两分钟,防止认证通过后,因程序运行时间导致缓存无效
      */
@@ -211,12 +215,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
 
-    public Map<String, Map<String, Set<String>>> getAuthorityRows(List<Authority> authorityList) {
+    public Map<String, Map<String, Set<AuthorityRow>>> getAuthorityRows(List<Authority> authorityList) {
         return authorityList.stream().filter(authority -> authority.getProcessor() == SKIP_ROW).collect(
                 Collectors.groupingBy(Authority::getResource,
                         Collectors.mapping(authority -> authority,
                                 Collectors.groupingBy(authority -> processorTypeToString(authority.getProcessor()),
-                                        Collectors.mapping(Authority::getProcessorValue, Collectors.toSet()))
+                                        Collectors.mapping(authority -> {
+                                            try {
+                                                String value = authority.getProcessorValue();
+                                                if (Strings.isNullOrEmpty(value)) {
+                                                    return new AuthorityRow();
+                                                }
+                                                return OBJECT_MAPPER.readValue(authority.getProcessorValue(), AuthorityRow.class);
+                                            } catch (JsonProcessingException e) {
+                                                throw new NarakaException(e);
+                                            }
+                                        }, Collectors.toSet()))
                         ))
         );
 

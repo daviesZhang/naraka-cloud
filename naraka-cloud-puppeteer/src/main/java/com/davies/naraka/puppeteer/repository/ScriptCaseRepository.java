@@ -16,4 +16,8 @@ public interface ScriptCaseRepository extends JpaRepository<ScriptCase, Long>, J
 
     @Query("SELECT new com.davies.naraka.puppeteer.domain.bo.TestBO(name, updatedTime) from ScriptCase")
     List<TestBO> testBo();
+
+    @Query("SELECT new com.davies.naraka.puppeteer.domain.bo.TestBO(sc.name, sch.updatedTime) from " +
+            "ScriptCase sc left join CaseStepHistory sch on sc.name=sch.name")
+    List<TestBO> testBoo();
 }

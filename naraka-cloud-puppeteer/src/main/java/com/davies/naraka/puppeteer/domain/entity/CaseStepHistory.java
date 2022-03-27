@@ -1,17 +1,17 @@
 package com.davies.naraka.puppeteer.domain.entity;
 
+import com.davies.naraka.puppeteer.domain.enums.StepAction;
 import lombok.*;
-import org.hibernate.annotations.ColumnTransformer;
+import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-import static javax.persistence.ConstraintMode.NO_CONSTRAINT;
-
 /**
- * @author sycho
+ * @author davies
+ * @date 2022/3/26 16:04
  */
 @Builder
 @AllArgsConstructor
@@ -20,27 +20,24 @@ import static javax.persistence.ConstraintMode.NO_CONSTRAINT;
 @Setter
 @Entity
 @ToString
-public class CaseReport {
-
+public class CaseStepHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ColumnTransformer
-    @ManyToOne(targetEntity = ScriptCase.class)
-    @JoinColumn(referencedColumnName = "id",foreignKey = @ForeignKey(NO_CONSTRAINT))
-    private ScriptCase scriptCase;
+    @Column(nullable = false)
+    private Long reportId;
 
-
-    private String project;
-
-
-    private String environment;
-
-
+    @Column(nullable = false)
     private String name;
 
+
+    @Type(type = "StepAction")
+    private StepAction action;
+
+
     private String remark;
+
 
     private String createdBy;
     @CreatedDate
@@ -49,4 +46,6 @@ public class CaseReport {
     private String updatedBy;
     @LastModifiedDate
     private LocalDateTime updatedTime;
+
+
 }
