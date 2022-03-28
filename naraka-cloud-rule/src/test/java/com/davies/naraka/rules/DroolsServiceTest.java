@@ -59,4 +59,11 @@ public class DroolsServiceTest {
         Assertions.assertEquals("success", rule.getName());
 
     }
+
+
+    @Test
+    public void jpaTest() {
+
+
+    }
 }

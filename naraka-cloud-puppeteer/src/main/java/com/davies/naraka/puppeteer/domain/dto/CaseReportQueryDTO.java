@@ -1,6 +1,6 @@
 package com.davies.naraka.puppeteer.domain.dto;
 
-import com.davies.naraka.puppeteer.annotation.QueryParams;
+import com.davies.naraka.puppeteer.annotation.QueryConfig;
 import lombok.Data;
 
 
@@ -11,10 +11,10 @@ import lombok.Data;
 public class CaseReportQueryDTO {
 
 
-    @QueryParams(alias = "c.project")
+    @QueryConfig(alias = "c.project")
     private String project;
-    @QueryParams(alias = "c.name")
+    @QueryConfig(alias = "c.name")
     private String name;
-    @QueryParams(alias = "c.createdBy")
+    @QueryConfig(alias = "c.createdBy")
     private String createdBy;
 }

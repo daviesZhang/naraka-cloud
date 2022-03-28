@@ -7,7 +7,7 @@ import com.davies.naraka.autoconfigure.enums.QueryFilterType;
 import com.davies.naraka.autoconfigure.jpa.JoinQuery;
 import com.davies.naraka.autoconfigure.jpa.JpaSpecificationUtils;
 import com.davies.naraka.cloud.common.StringConstants;
-import com.davies.naraka.puppeteer.annotation.QueryParams;
+import com.davies.naraka.puppeteer.annotation.QueryConfig;
 import com.davies.naraka.puppeteer.domain.bo.TestBO;
 import com.davies.naraka.puppeteer.domain.dto.CaseReportQueryDTO;
 import com.davies.naraka.puppeteer.domain.entity.CaseReport;
@@ -291,8 +291,8 @@ class ScriptCaseRepositoryTest {
         boolean isNotBlank = false;
         ParameterLink queryFunction = null;
         for (Field field : fields) {
-            QueryParams queryParams = field.getDeclaredAnnotation(QueryParams.class);
-            if (null != queryParams && queryParams.skip()) {
+            QueryConfig queryConfig = field.getDeclaredAnnotation(QueryConfig.class);
+            if (null != queryConfig && queryConfig.skip()) {
                 continue;
             }
             Object params;
@@ -313,10 +313,10 @@ class ScriptCaseRepositoryTest {
             }
             String alias = field.getName();
 
-            if (queryParams != null && !Strings.isNullOrEmpty(queryParams.alias())) {
-                alias = queryParams.alias();
+            if (queryConfig != null && !Strings.isNullOrEmpty(queryConfig.alias())) {
+                alias = queryConfig.alias();
             }
-            String paramsTemplate = filterType(queryParams == null ? QueryFilterType.EQUALS : queryParams.filterType());
+            String paramsTemplate = filterType(queryConfig == null ? QueryFilterType.EQUALS : queryConfig.filterType());
             builder.append(Strings.lenientFormat(FIELD, alias))
                     .append(Strings.lenientFormat(paramsTemplate, field.getName()));
             queryFunction = new ParameterLink(field.getName(), params, queryFunction);

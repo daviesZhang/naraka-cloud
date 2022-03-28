@@ -10,8 +10,8 @@ import java.lang.annotation.*;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
-public @interface QueryParams {
+@Target({ElementType.FIELD, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+public @interface QueryConfig {
 
     String alias() default "";
 
