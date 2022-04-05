@@ -27,7 +27,6 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -52,9 +51,6 @@ class ScriptCaseRepositoryTest {
     @Autowired
     private CaseStepHistoryRepository caseStepHistoryRepository;
 
-
-    @Autowired
-    private EntityManager entityManager;
 
     @Test
     @Transactional

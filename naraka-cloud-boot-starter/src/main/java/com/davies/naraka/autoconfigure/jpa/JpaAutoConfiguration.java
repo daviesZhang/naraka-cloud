@@ -64,6 +64,7 @@ public class JpaAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(SimpleQueryHelper.class)
     public SimpleQueryHelper simpleQueryHelper(EntityManager entityManager) {
         return new SimpleQueryHelper(entityManager);
     }
