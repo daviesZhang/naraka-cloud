@@ -16,6 +16,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 /**
@@ -44,6 +46,8 @@ public class JpaAutoConfiguration {
 
     @Value("${naraka.jpa.typeEnumsPackage:}")
     public String typeEnumsPackage;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public JpaAutoConfiguration(EncryptProperties encryptProperties) {
         this.encryptProperties = encryptProperties;
@@ -59,6 +63,11 @@ public class JpaAutoConfiguration {
     @ConditionalOnProperty(name = "naraka.jpa.typeEnumsPackage")
     public EnumCodeTypeContributor enumCodeTypeContributor() {
         return new EnumCodeTypeContributor(this.typeEnumsPackage);
+    }
+
+    @Bean
+    public SimpleQueryHelper simpleQueryHelper() {
+        return new SimpleQueryHelper(this.entityManager);
     }
 
     @Bean

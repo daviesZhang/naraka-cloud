@@ -7,27 +7,25 @@ import com.davies.naraka.puppeteer.domain.dto.ScriptCaseQueryDTO;
 import com.davies.naraka.puppeteer.domain.entity.ScriptCase;
 import com.davies.naraka.puppeteer.domain.enums.ScriptStatus;
 import com.davies.naraka.puppeteer.repository.ScriptCaseRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 
-@Controller
+@RestController
 @Validated
 public class TestController {
 
-    @Autowired
-    private ScriptCaseRepository scriptCaseRepository;
+    private final ScriptCaseRepository scriptCaseRepository;
 
-    @Autowired
-    private JpaSpecificationUtils specificationUtils;
+    private final JpaSpecificationUtils specificationUtils;
+
+    public TestController(ScriptCaseRepository scriptCaseRepository, JpaSpecificationUtils specificationUtils) {
+        this.scriptCaseRepository = scriptCaseRepository;
+        this.specificationUtils = specificationUtils;
+    }
 
     @GetMapping("/test")
     @ResponseBody
@@ -37,7 +35,7 @@ public class TestController {
         scriptCase.setEnvironment("test");
         scriptCase.setName("login");
         scriptCase.setScriptStatus(ScriptStatus.DISABLE);
-        this.scriptCaseRepository.save(scriptCase);
+//        this.scriptCaseRepository.save(scriptCase);
 
 
         //return ResponseEntity.ok().body()

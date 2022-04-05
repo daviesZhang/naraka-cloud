@@ -1,10 +1,13 @@
-package com.davies.naraka.puppeteer;
+package com.davies.naraka.autoconfigure.jpa;
 
+import com.davies.naraka.autoconfigure.QueryAndSort;
+import com.davies.naraka.autoconfigure.QueryPage;
+import com.davies.naraka.autoconfigure.QueryPageAndSort;
 import com.davies.naraka.autoconfigure.enums.QueryFilterType;
 import com.davies.naraka.cloud.common.StringConstants;
-import com.davies.naraka.puppeteer.annotation.QueryConfig;
 import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
@@ -13,9 +16,8 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.Map;
-import java.util.function.UnaryOperator;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.Locale.ENGLISH;
@@ -69,11 +71,27 @@ public class QueryParamsProvider {
 
     private static <T> QueryParams query(T o, Pageable pageable, Sort sort, QueryParamsInterceptor<T> interceptor) {
         StringBuilder builder = new StringBuilder();
-        UnaryOperator<Query> queryConsumer;
+        Function<Query, Query> queryConsumer;
         if (o instanceof Map) {
-            queryConsumer = queryByMap((Map<Object, Object>) o, builder, UnaryOperator.identity(), interceptor);
+            queryConsumer = queryByMap((Map<Object, Object>) o, builder, Function.identity(), interceptor);
         } else {
-            queryConsumer = queryByObject(o, builder, UnaryOperator.identity(), interceptor);
+            if (o instanceof QueryPageAndSort) {
+                if (pageable == null) {
+                    sort = getSort(sort, (QueryPageAndSort<?>) o);
+                    pageable = PageRequest.of(Math.toIntExact(((QueryPageAndSort<?>) o).getCurrent()), Math.toIntExact(((QueryPageAndSort<?>) o).getSize()), sort);
+                }
+                queryConsumer = queryByObject(((QueryPageAndSort<?>) o).getQuery(), builder, Function.identity(), interceptor);
+            } else if (o instanceof QueryPage) {
+                if (pageable == null) {
+                    pageable = PageRequest.of(Math.toIntExact(((QueryPage<?>) o).getCurrent()), Math.toIntExact(((QueryPage<?>) o).getSize()));
+                }
+                queryConsumer = queryByObject(((QueryPage<?>) o).getQuery(), builder, Function.identity(), interceptor);
+            } else if (o instanceof QueryAndSort) {
+                sort = getSort(sort, (QueryAndSort<?>) o);
+                queryConsumer = queryByObject(((QueryAndSort<?>) o).getQuery(), builder, Function.identity(), interceptor);
+            } else {
+                queryConsumer = queryByObject(o, builder, Function.identity(), interceptor);
+            }
         }
         boolean isNotBlank = builder.length() >= 0;
         if (null != interceptor) {
@@ -86,7 +104,10 @@ public class QueryParamsProvider {
                 }
                 builder.append(sql);
             }
-            queryConsumer = interceptor.queryConsumer(queryConsumer);
+            queryConsumer = queryConsumer.andThen(query -> {
+                interceptor.queryConsumer(o, query);
+                return query;
+            });
         }
         if (isNotBlank) {
             builder.insert(0, SQL_WHERE);
@@ -107,8 +128,22 @@ public class QueryParamsProvider {
         return new QueryParams(builder.toString(), queryConsumer, pageable);
     }
 
-    private static <T> UnaryOperator<Query> queryByMap(Map<Object, Object> map, StringBuilder builder, UnaryOperator<Query> queryConsumer, QueryParamsInterceptor<T> interceptor) {
+    private static <T> Sort getSort(Sort sort, QueryAndSort<T> queryAndSort) {
+        if (sort == null) {
+            List<Sort.Order> descList = Optional.ofNullable(queryAndSort.getDesc())
+                    .map(strings -> strings.stream().map(Sort.Order::desc).collect(Collectors.toList())).orElse(new ArrayList<>());
+            List<Sort.Order> ascList = Optional.ofNullable(queryAndSort.getAsc())
+                    .map(strings -> strings.stream().map(Sort.Order::asc).collect(Collectors.toList())).orElse(new ArrayList<>());
+            descList.addAll(ascList);
+            if (!descList.isEmpty()) {
+                sort = Sort.by(descList.toArray(new Sort.Order[0]));
+            }
+        }
+        return sort;
 
+    }
+
+    private static <T> Function<Query, Query> queryByMap(Map<Object, Object> map, StringBuilder builder, Function<Query, Query> queryConsumer, QueryParamsInterceptor<T> interceptor) {
         if (map == null || map.isEmpty()) {
             return queryConsumer;
         }
@@ -136,12 +171,12 @@ public class QueryParamsProvider {
             }
             builder.append(Strings.lenientFormat(FIELD_TEMPLATE, key))
                     .append(Strings.lenientFormat(paramsTemplate, key));
-            queryConsumer = (UnaryOperator<Query>) queryConsumer.andThen(((UnaryOperator<Query>) query -> query.setParameter(key, value)));
+            queryConsumer = queryConsumer.andThen(query -> query.setParameter(key, value));
         }
         return queryConsumer;
     }
 
-    private static <T> UnaryOperator<Query> queryByObject(T object, StringBuilder builder, UnaryOperator<Query> queryConsumer, QueryParamsInterceptor<T> interceptor) {
+    private static <T, V> Function<Query, Query> queryByObject(T object, StringBuilder builder, Function<Query, Query> queryConsumer, QueryParamsInterceptor<V> interceptor) {
         if (object == null) {
             return queryConsumer;
         }
@@ -182,7 +217,7 @@ public class QueryParamsProvider {
             String paramsTemplate = filterType(queryConfig == null ? QueryFilterType.EQUALS : queryConfig.filterType());
             builder.append(Strings.lenientFormat(FIELD_TEMPLATE, alias))
                     .append(Strings.lenientFormat(paramsTemplate, name));
-            queryConsumer = (UnaryOperator<Query>) queryConsumer.andThen(((UnaryOperator<Query>) query -> query.setParameter(name, params)));
+            queryConsumer = queryConsumer.andThen(query -> query.setParameter(name, params));
         }
         return queryConsumer;
     }
@@ -196,6 +231,20 @@ public class QueryParamsProvider {
                 return " not in ( " + PARAMS_TEMPLATE + " )";
             case GREATERTHANEQUAL:
                 return " >= " + PARAMS_TEMPLATE;
+            case GREATERTHANE:
+                return " > " + PARAMS_TEMPLATE;
+            case LESSTHAN:
+                return " < " + PARAMS_TEMPLATE;
+            case LESSTHANEQUAL:
+                return " <= " + PARAMS_TEMPLATE;
+            case NOT_EQUALS:
+                return " <> " + PARAMS_TEMPLATE;
+            case LIKE:
+                return " like CONCAT('%'," + PARAMS_TEMPLATE + ",'%')";
+            case STARTS_WITH:
+                return " like CONCAT(" + PARAMS_TEMPLATE + ",'%')";
+            case ENDS_WITH:
+                return " like CONCAT('%'," + PARAMS_TEMPLATE + ")";
             case EQUALS:
             default:
                 return " = " + PARAMS_TEMPLATE;

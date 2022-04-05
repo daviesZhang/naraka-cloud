@@ -1,6 +1,4 @@
-package com.davies.naraka.puppeteer;
-
-import com.davies.naraka.autoconfigure.QueryPage;
+package com.davies.naraka.autoconfigure;
 
 /**
  * 分页查询和排序

@@ -5,12 +5,14 @@ import com.davies.naraka.puppeteer.domain.entity.ScriptCase;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 /**
  * @author sycho
  */
+@Repository
 public interface ScriptCaseRepository extends JpaRepository<ScriptCase, Long>, JpaSpecificationExecutor<ScriptCase> {
 
 

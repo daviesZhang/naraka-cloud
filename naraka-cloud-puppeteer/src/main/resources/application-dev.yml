@@ -32,7 +32,6 @@ naraka:
     objectMapper: true
     messageConverter: true
     deserializerSmart: true
-
   username:
     header: username
   jpa:

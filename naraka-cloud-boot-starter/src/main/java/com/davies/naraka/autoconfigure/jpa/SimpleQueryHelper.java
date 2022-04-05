@@ -1,4 +1,4 @@
-package com.davies.naraka.puppeteer;
+package com.davies.naraka.autoconfigure.jpa;
 
 import com.google.common.base.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -7,12 +7,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.Assert;
 
+import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -35,20 +35,20 @@ public class SimpleQueryHelper {
         this.entityManager = entityManager;
     }
 
-    public Page getPage(String from, QueryParams queryParams) {
+    public Page getPage(@NotNull String from, @NotNull QueryParams queryParams) {
         return getPage(from, queryParams, null, null);
     }
 
 
-    public <T> Page<T> getPage(String from, QueryParams queryParams, Class<T> tClass) {
+    public <T> Page<T> getPage(@NotNull String from, @NotNull QueryParams queryParams, @NotNull Class<T> tClass) {
         return getPage(from, queryParams, tClass, null);
     }
 
-    public <T> Page<T> getPage(QueryParams queryParams, Class<T> tClass) {
+    public <T> Page<T> getPage(@NotNull QueryParams queryParams, @NotNull Class<T> tClass) {
         return getPage(buildFrom(tClass), queryParams, tClass, null);
     }
 
-    public <T, V> Page<V> getPage(QueryParams queryParams, Class<T> tClass, Function<T, V> convert) {
+    public <T, V> Page<V> getPage(@NotNull QueryParams queryParams, @NotNull Class<T> tClass, @NotNull Function<T, V> convert) {
         return getPage(buildFrom(tClass), queryParams, tClass, convert);
     }
 
@@ -65,8 +65,8 @@ public class SimpleQueryHelper {
         if (count <= 0) {
             return Page.empty(pageable);
         }
-        UnaryOperator<Query> queryConsumer = queryParams.getQueryConsumer();
-        queryConsumer = (UnaryOperator<Query>) queryConsumer.andThen(query -> {
+        Function<Query, Query> queryConsumer = queryParams.getQueryConsumer();
+        queryConsumer = queryConsumer.andThen(query -> {
             query.setFirstResult(pageable.getPageSize() * pageable.getPageNumber());
             query.setMaxResults(pageable.getPageSize());
             return query;
@@ -81,33 +81,33 @@ public class SimpleQueryHelper {
     }
 
 
-    public <T, V> List<V> getList(String from, QueryParams queryParams, Class<T> tClass, Function<T, V> convert) {
+    public <T, V> List<V> getList(@NotNull String from, @NotNull QueryParams queryParams, @NotNull Class<T> tClass, @NotNull Function<T, V> convert) {
         return getList(from, queryParams, tClass)
                 .stream().map(convert).collect(Collectors.toList());
     }
 
 
-    public <T, V> List<V> getList(QueryParams queryParams, Class<T> tClass, Function<T, V> convert) {
+    public <T, V> List<V> getList(@NotNull QueryParams queryParams, @NotNull Class<T> tClass, @NotNull Function<T, V> convert) {
         return getList(buildFrom(tClass), queryParams, tClass)
                 .stream().map(convert).collect(Collectors.toList());
     }
 
 
-    public List getList(String from, QueryParams queryParams) {
+    public List getList(@NotNull String from, @NotNull QueryParams queryParams) {
         return getList(from, queryParams, null);
     }
 
 
-    public <T> List<T> getList(String from, QueryParams queryParams, Class<T> tClass) {
+    public <T> List<T> getList(@NotNull String from, @NotNull QueryParams queryParams, @NotNull Class<T> tClass) {
         return list(from, queryParams, tClass);
     }
 
-    public <T> List<T> getList(QueryParams queryParams, Class<T> tClass) {
+    public <T> List<T> getList(@NotNull QueryParams queryParams, @NotNull Class<T> tClass) {
         return list(buildFrom(tClass), queryParams, tClass);
     }
 
 
-    private <T> List<T> list(String from, QueryParams queryParams, Class<T> tClass) {
+    private <T> List<T> list(@NotNull String from, @NotNull QueryParams queryParams, Class<T> tClass) {
         Query query;
         if (null == tClass) {
             query = entityManager.createQuery(from + queryParams.getQuerySql());
@@ -123,7 +123,15 @@ public class SimpleQueryHelper {
 
 
     private @NotNull String buildFrom(@NotNull Class<?> from) {
-        return Strings.lenientFormat(FROM_TEMPLATE, from.getName());
+        Entity entity = from.getAnnotation(Entity.class);
+        String tableName = from.getName();
+        if (null != entity) {
+            String name = entity.name();
+            if (!Strings.isNullOrEmpty(name)) {
+                tableName = name;
+            }
+        }
+        return Strings.lenientFormat(FROM_TEMPLATE, tableName);
     }
 
 

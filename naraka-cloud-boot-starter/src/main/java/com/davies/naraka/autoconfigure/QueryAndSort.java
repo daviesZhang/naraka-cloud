@@ -1,4 +1,4 @@
-package com.davies.naraka.puppeteer;
+package com.davies.naraka.autoconfigure;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package com.davies.naraka.puppeteer.domain.dto;
 
-import com.davies.naraka.puppeteer.annotation.QueryConfig;
+import com.davies.naraka.autoconfigure.jpa.QueryConfig;
 import lombok.Data;
 
 

@@ -21,7 +21,6 @@ import static javax.persistence.ConstraintMode.NO_CONSTRAINT;
 @Getter
 @Setter
 @Entity
-
 public class CaseStep {
 
 

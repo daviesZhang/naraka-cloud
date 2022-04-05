@@ -1,7 +1,6 @@
-package com.davies.naraka.puppeteer;
+package com.davies.naraka.autoconfigure.jpa;
 
 import javax.persistence.Query;
-import java.util.function.UnaryOperator;
 
 /**
  * @author davies
@@ -42,8 +41,7 @@ public interface QueryParamsInterceptor<T> {
     }
 
 
-    default UnaryOperator<Query> queryConsumer(UnaryOperator<Query> operator) {
-        return operator;
+    default void queryConsumer(T object, Query query) {
     }
 
 }

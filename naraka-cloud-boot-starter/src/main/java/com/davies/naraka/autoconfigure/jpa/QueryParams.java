@@ -1,8 +1,9 @@
-package com.davies.naraka.puppeteer;
+package com.davies.naraka.autoconfigure.jpa;
 
 import org.springframework.data.domain.Pageable;
 
 import javax.persistence.Query;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 /**
@@ -16,18 +17,15 @@ public class QueryParams {
 
     private final Pageable pageable;
 
-    private final UnaryOperator<Query> queryConsumer;
+    private final Function<Query, Query> queryConsumer;
 
 
-    public QueryParams(String querySql, UnaryOperator<Query> queryConsumer, Pageable pageable) {
+    public QueryParams(String querySql, Function<Query, Query> queryConsumer, Pageable pageable) {
         this.querySql = querySql;
         this.queryConsumer = queryConsumer == null ? UnaryOperator.identity() : queryConsumer;
         this.pageable = pageable;
     }
 
-    public QueryParams(String querySql, UnaryOperator<Query> queryConsumer) {
-        this(querySql, queryConsumer, null);
-    }
 
     public String getQuerySql() {
         return querySql;
@@ -39,7 +37,7 @@ public class QueryParams {
     }
 
 
-    public UnaryOperator<Query> getQueryConsumer() {
+    public Function<Query, Query> getQueryConsumer() {
         return queryConsumer;
     }
 

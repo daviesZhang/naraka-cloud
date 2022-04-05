@@ -1,4 +1,4 @@
-package com.davies.naraka.puppeteer.annotation;
+package com.davies.naraka.autoconfigure.jpa;
 
 import com.davies.naraka.autoconfigure.enums.QueryFilterType;
 
