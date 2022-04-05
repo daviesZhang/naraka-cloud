@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 /**
@@ -46,8 +45,7 @@ public class JpaAutoConfiguration {
 
     @Value("${naraka.jpa.typeEnumsPackage:}")
     public String typeEnumsPackage;
-    @PersistenceContext
-    private EntityManager entityManager;
+
 
     public JpaAutoConfiguration(EncryptProperties encryptProperties) {
         this.encryptProperties = encryptProperties;
@@ -66,8 +64,8 @@ public class JpaAutoConfiguration {
     }
 
     @Bean
-    public SimpleQueryHelper simpleQueryHelper() {
-        return new SimpleQueryHelper(this.entityManager);
+    public SimpleQueryHelper simpleQueryHelper(EntityManager entityManager) {
+        return new SimpleQueryHelper(entityManager);
     }
 
     @Bean

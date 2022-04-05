@@ -42,6 +42,8 @@ public class QueryParamsProvider {
 
     public static final String SQL_ORDER_BY = " ORDER BY ";
 
+    private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
+
 
     public static <T> QueryParams query(T o, Sort sort, QueryParamsInterceptor<T> interceptor) {
         return query(o, null, sort, interceptor);
@@ -195,10 +197,10 @@ public class QueryParamsProvider {
             String methodName = GET_STRING + capitalize(name);
             Object params;
             try {
-                MethodHandle handle = MethodHandles.lookup().findVirtual(oClass, methodName, MethodType.methodType(field.getType()));
+                MethodHandle handle = LOOKUP.findVirtual(oClass, methodName, MethodType.methodType(field.getType()));
                 params = handle.invoke(object);
             } catch (Throwable e) {
-                log.warn("动态构造查询条件时,调用{}#{}方法抛出异常~", oClass.getName(), methodName, e);
+                log.debug("动态构造查询条件时,调用{}#{}方法抛出异常~", oClass.getName(), methodName, e);
                 continue;
             }
             String alias = name;
