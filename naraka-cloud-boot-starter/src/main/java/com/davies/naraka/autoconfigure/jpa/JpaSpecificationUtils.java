@@ -2,6 +2,7 @@ package com.davies.naraka.autoconfigure.jpa;
 
 import com.davies.naraka.autoconfigure.ClassUtils;
 import com.davies.naraka.autoconfigure.QueryPage;
+import com.davies.naraka.autoconfigure.QueryUtils;
 import com.davies.naraka.autoconfigure.annotation.ColumnName;
 import com.davies.naraka.autoconfigure.annotation.Crypto;
 import com.davies.naraka.autoconfigure.annotation.QueryFilter;
@@ -50,34 +51,37 @@ import static java.util.Locale.ENGLISH;
  * @see QueryField
  */
 @Slf4j
-public class JpaSpecificationUtils {
-    private static final String READ_METHOD = "get";
+public class JpaSpecificationUtils extends QueryUtils {
 
-    private final EncryptProperties encryptProperties;
+
+    public JpaSpecificationUtils() {
+        super();
+    }
 
     public JpaSpecificationUtils(EncryptProperties encryptProperties) {
-        this.encryptProperties = encryptProperties;
+        super(encryptProperties);
     }
 
 
     /**
      * 分页获取数据
-     * @param query 查询参数
+     *
+     * @param query    查询参数
      * @param findPage 分页查询的实际方法
      * @param supplier 需要转换对象的实例获取方法
-     * @param <T> 返回的DTO
-     * @param <E> entity
-     * @param <Q> 查询对象
+     * @param <T>      返回的DTO
+     * @param <E>      entity
+     * @param <Q>      查询对象
      * @return PageDTO
      */
     public <T, E, Q> PageDTO<T> pageQuery(
-                                          QueryPage<Q> query,
-                                          BiFunction<Specification<E>, Pageable, Page<E>> findPage,
-                                          Supplier<T> supplier) {
-        Pageable pageable=   Pageable.ofSize(Math.toIntExact(query.getSize()))
+            QueryPage<Q> query,
+            BiFunction<Specification<E>, Pageable, Page<E>> findPage,
+            Supplier<T> supplier) {
+        Pageable pageable = Pageable.ofSize(Math.toIntExact(query.getSize()))
                 .withPage(Math.toIntExact(query.getCurrent()));
         Specification<E> specification = specification(query.getQuery());
-        Page<T> page= findPage.apply(specification, pageable).map(e -> ClassUtils.copyObject(e, supplier.get()));
+        Page<T> page = findPage.apply(specification, pageable).map(e -> ClassUtils.copyObject(e, supplier.get()));
         List<T> items = page.getContent();
         return new PageDTO<>(query.getCurrent(), (long) page.getTotalPages(), query.getSize(), items);
     }
@@ -86,25 +90,26 @@ public class JpaSpecificationUtils {
             QueryPage<Q> query,
             JpaSpecificationExecutor<E> executor,
             Supplier<T> supplier) {
-        return this.pageQuery( query, (BiFunction<Specification<E>, Pageable, Page<E>>) executor::findAll,supplier);
+        return this.pageQuery(query, (BiFunction<Specification<E>, Pageable, Page<E>>) executor::findAll, supplier);
     }
 
 
     /**
      * 分页获取数据
-     * @param query 查询参数
+     *
+     * @param query    查询参数
      * @param findPage 分页查询的实际方法
-     * @param <E> entity
-     * @param <Q> 查询对象
+     * @param <E>      entity
+     * @param <Q>      查询对象
      * @return PageDTO
      */
     public <E, Q> PageDTO<E> pageQuery(
             QueryPage<Q> query,
             BiFunction<Specification<E>, Pageable, Page<E>> findPage) {
-        Pageable pageable= Pageable.ofSize(Math.toIntExact(query.getSize()))
+        Pageable pageable = Pageable.ofSize(Math.toIntExact(query.getSize()))
                 .withPage(Math.toIntExact(query.getCurrent()));
         Specification<E> specification = specification(query.getQuery());
-        Page<E> page= findPage.apply(specification, pageable);
+        Page<E> page = findPage.apply(specification, pageable);
         List<E> items = page.getContent();
         return new PageDTO<>(query.getCurrent(), (long) page.getTotalPages(), query.getSize(), items);
     }
@@ -113,8 +118,9 @@ public class JpaSpecificationUtils {
     public <E, Q> PageDTO<E> pageQuery(
             QueryPage<Q> query,
             JpaSpecificationExecutor<E> executor) {
-        return this.pageQuery( query, executor::findAll);
+        return this.pageQuery(query, executor::findAll);
     }
+
     /**
      * 根据符合规则的查询对象自动生成简单Specification
      * 对象内字段属性不是QueryField<?>的,会自动转换为QueryField<?>对象
@@ -128,64 +134,52 @@ public class JpaSpecificationUtils {
         if (null == queryParams) {
             return (root, query, criteriaBuilder) -> query.getRestriction();
         }
-        return (root, query, criteriaBuilder) -> {
-            Class<?> classes = queryParams.getClass();
-            Field[] fields = classes.getDeclaredFields();
-            Predicate predicate = null;
-            List<Order> orders = Lists.newArrayList();
-            Map<String, Path<T>> cacheJoin = new HashMap<>(3);
-            for (Field declaredField : fields) {
-                if (declaredField.isAnnotationPresent(QuerySkip.class)) {
-                    continue;
-                }
-                String name = declaredField.getName();
-                Object value;
-                try {
-                    Method method = BeanUtils.findDeclaredMethodWithMinimalParameters(classes, READ_METHOD + capitalize(name));
-                    if (null == method) {
-                        continue;
-                    }
-                    value = method.invoke(queryParams);
-                } catch (IllegalArgumentException | IllegalAccessException |
-                        InvocationTargetException e) {
-                    log.debug("BeanUtils.findDeclaredMethodWithMinimalParameters", e);
-                    continue;
-                }
-                if (value == null) {
-                    continue;
-                }
+        return (root, query, criteriaBuilder) -> this.toPredicate(queryParams,root,query,criteriaBuilder);
+    }
 
-                String column = name;
-                ColumnName columnName = declaredField.getDeclaredAnnotation(ColumnName.class);
-                if (columnName != null && !Strings.isNullOrEmpty(columnName.name())) {
-                    column = columnName.name();
-                }
-                Predicate nextPredicate = null;
-                if (value instanceof Collection) {
-                    for (Object v : (Collection<?>) value) {
-                        if (nextPredicate != null) {
-                            nextPredicate = criteriaBuilder.and(nextPredicate, getPredicate(root, criteriaBuilder, orders, cacheJoin, declaredField, v, column));
-                        } else {
-                            nextPredicate = getPredicate(root, criteriaBuilder, orders, cacheJoin, declaredField, v, column);
-                        }
+    private <T> Predicate toPredicate(Object queryParams,Root<T> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder){
+        Class<?> classes = queryParams.getClass();
+        Field[] fields = classes.getDeclaredFields();
+        Predicate predicate = null;
+        List<Order> orders = Lists.newArrayList();
+        Map<String, Path<T>> cacheJoin = new HashMap<>(3);
+        for (Field declaredField : fields) {
+
+            Optional<Object> valueOptional=queryValue(queryParams, declaredField);
+            if (!valueOptional.isPresent()) {
+                continue;
+            }
+            Object value=valueOptional.get();
+            String column = declaredField.getName();
+            ColumnName columnName = declaredField.getDeclaredAnnotation(ColumnName.class);
+            if (columnName != null && !Strings.isNullOrEmpty(columnName.name())) {
+                column = columnName.name();
+            }
+            Predicate nextPredicate = null;
+            if (value instanceof Collection) {
+                for (Object v : (Collection<?>) value) {
+                    if (nextPredicate != null) {
+                        nextPredicate = criteriaBuilder.and(nextPredicate, getPredicate(root, criteriaBuilder, orders, cacheJoin, declaredField, v, column));
+                    } else {
+                        nextPredicate = getPredicate(root, criteriaBuilder, orders, cacheJoin, declaredField, v, column);
                     }
-                } else {
-                    nextPredicate = getPredicate(root, criteriaBuilder, orders, cacheJoin, declaredField, value, column);
                 }
-                if (null == nextPredicate) {
-                    continue;
-                }
-                if (predicate != null) {
-                    predicate = criteriaBuilder.and(predicate, nextPredicate);
-                } else {
-                    predicate = nextPredicate;
-                }
+            } else {
+                nextPredicate = getPredicate(root, criteriaBuilder, orders, cacheJoin, declaredField, value, column);
             }
-            if (predicate==null){
-                return query.orderBy(orders).getRestriction();
+            if (null == nextPredicate) {
+                continue;
             }
-            return query.orderBy(orders).where(predicate).getRestriction();
-        };
+            if (predicate != null) {
+                predicate = criteriaBuilder.and(predicate, nextPredicate);
+            } else {
+                predicate = nextPredicate;
+            }
+        }
+        if (predicate == null) {
+            return query.orderBy(orders).getRestriction();
+        }
+        return query.orderBy(orders).where(predicate).getRestriction();
     }
 
     private <T> Predicate getPredicate(Root<T> root, CriteriaBuilder criteriaBuilder, List<Order> orders, Map<String, Path<T>> cacheJoin, Field declaredField, Object value, String column) {
@@ -321,37 +315,6 @@ public class JpaSpecificationUtils {
     }
 
 
-    private String capitalize(String name) {
-        if (name == null || name.length() == 0) {
-            return name;
-        }
-        return name.substring(0, 1).toUpperCase(ENGLISH) + name.substring(1);
-    }
 
-
-    private String getEncryptKey(Field field) {
-        if (encryptProperties == null || !encryptProperties.isEnable()) {
-            return null;
-        }
-        Crypto crypto = field.getDeclaredAnnotation(Crypto.class);
-        String key = null;
-        if (crypto != null) {
-            key = encryptProperties.getKey(Strings.isNullOrEmpty(crypto.name()) ? field.getName() : crypto.name());
-        }
-        return key;
-    }
-
-    private String encrypt(Object object, String key) {
-        try {
-            if (object instanceof String) {
-                return AesEncryptorUtils.encrypt((String) object, key);
-            }
-            throw new IllegalArgumentException("加密异常,值必须为String类型");
-        } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
-
-            throw new RuntimeException("加密异常", e);
-        }
-
-    }
 
 }

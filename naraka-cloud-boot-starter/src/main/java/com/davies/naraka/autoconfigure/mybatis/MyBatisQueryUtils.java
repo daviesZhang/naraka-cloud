@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.davies.naraka.autoconfigure.ClassUtils;
 import com.davies.naraka.autoconfigure.QueryPage;
+import com.davies.naraka.autoconfigure.QueryUtils;
 import com.davies.naraka.autoconfigure.annotation.ColumnName;
 import com.davies.naraka.autoconfigure.annotation.Crypto;
 import com.davies.naraka.autoconfigure.annotation.QueryFilter;
@@ -17,6 +18,7 @@ import com.davies.naraka.cloud.common.AesEncryptorUtils;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
@@ -29,10 +31,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
@@ -45,21 +44,17 @@ import static java.util.Locale.ENGLISH;
  * @date 2022/1/30 2:27 PM
  */
 
-public class MyBatisQueryUtils {
+public class MyBatisQueryUtils extends QueryUtils {
 
     private static final String READ_METHOD = "get";
 
-    private final EncryptProperties encryptProperties;
 
-    public MyBatisQueryUtils(EncryptProperties encryptProperties) {
-        this.encryptProperties = encryptProperties;
+    public MyBatisQueryUtils() {
+        super();
     }
 
-    private static String capitalize(String name) {
-        if (name == null || name.length() == 0) {
-            return name;
-        }
-        return name.substring(0, 1).toUpperCase(ENGLISH) + name.substring(1);
+    public MyBatisQueryUtils(EncryptProperties encryptProperties) {
+        super(encryptProperties);
     }
 
 
@@ -76,6 +71,7 @@ public class MyBatisQueryUtils {
         return pageQuery(supplier, buildQueryWrapper(new QueryWrapper<E>(), query.getQuery()),
                 Page.of(query.getCurrent(), query.getSize()), service);
     }
+
 
     public <T, E, Q, R> PageDTO<T> pageQuery(Supplier<T> supplier, QueryPage<Q> query, BiFunction<Page<R>, QueryWrapper<E>, Page<R>> pageFunction) {
         Page<R> page = Page.of(query.getCurrent(), query.getSize());
@@ -105,123 +101,49 @@ public class MyBatisQueryUtils {
     }
 
     /**
-     * @param queryWrapper      QueryWrapper 对象
-     * @param query             查询的类
-     * @param converterToColumn 查询条件 field name转换为数据库column name 方法
-     *                          第一个参数 字段名 第二个参数 如果ColumnName注解,则使用ColumnName name,否则也是字段名
-     * @param <T>               entity
+     * @param queryWrapper QueryWrapper 对象
+     * @param query        查询的类
+     * @param <T>          entity
      * @return QueryWrapper<entity>
      */
-    public <T> QueryWrapper<T> buildQueryWrapper(@NotNull QueryWrapper<T> queryWrapper, @NotNull Object query,
-                                                 BiFunction<String, String, String> converterToColumn) {
+    public <T> QueryWrapper<T> buildQueryWrapper(@NotNull QueryWrapper<T> queryWrapper, @NotNull Object query) {
 
         Class<?> classes = query.getClass();
         Field[] fields = classes.getDeclaredFields();
         for (Field declaredField : fields) {
-            if (declaredField.isAnnotationPresent(QuerySkip.class)) {
+            Optional<Object> valueOptional = queryValue(query, declaredField);
+            if (!valueOptional.isPresent()) {
                 continue;
             }
-            String name = declaredField.getName();
-            Object field;
-            try {
-                Method method = BeanUtils.findDeclaredMethodWithMinimalParameters(classes, READ_METHOD + capitalize(name));
-                if (null == method) {
-                    continue;
-                }
-                field = method.invoke(query);
-            } catch (IllegalArgumentException | IllegalAccessException |
-                    InvocationTargetException e) {
-                continue;
-            }
-            String column = name;
+            Object fieldValue = valueOptional.get();
             ColumnName columnName = declaredField.getDeclaredAnnotation(ColumnName.class);
+            String column = declaredField.getName();
             if (columnName != null && !Strings.isNullOrEmpty(columnName.name())) {
                 column = columnName.name();
+            } else {
+                column = converterToColumn(column);
             }
-            if (converterToColumn != null) {
-                column = converterToColumn.apply(name, column);
-            }
-            String key = getEncryptKey(declaredField);
-            if (field instanceof List) {
-                List<?> items = (List<?>) field;
+            if (fieldValue instanceof Collection) {
+                Collection<?> items = (Collection<?>) fieldValue;
                 if (items.isEmpty()) {
                     continue;
                 }
-                Object firstItem = items.get(0);
+                Object firstItem = items.iterator().next();
                 if (firstItem instanceof QueryField) {
                     for (Object item : items) {
                         buildQueryField(queryWrapper, column, (QueryField<?>) item, declaredField);
                     }
                 } else {
-                    if (Strings.isNullOrEmpty(key)) {
-                        queryWrapper.in(column, items);
-                    } else {
-                        List<String> values = items.stream().map(v -> encrypt((String) v, key)).collect(Collectors.toList());
-                        queryWrapper.in(column, values);
-                    }
+                    buildQueryField(queryWrapper, column, new QueryField<Collection<?>>(QueryFilterType.CONTAINS, items), declaredField);
                 }
-            } else if (field instanceof QueryField) {
-                buildQueryField(queryWrapper, column, (QueryField<?>) field, declaredField);
-            } else if (field != null) {
-                if (Strings.isNullOrEmpty(key)) {
-                    queryWrapper.eq(column, field);
-                } else {
-                    queryWrapper.eq(column, encrypt((String) field, key));
-                }
+            } else if (fieldValue instanceof QueryField) {
+                buildQueryField(queryWrapper, column, (QueryField<?>) fieldValue, declaredField);
+            } else {
+                buildQueryField(queryWrapper, column, new QueryField<>(QueryFilterType.EQUALS, fieldValue), declaredField);
             }
         }
         return queryWrapper;
     }
-
-
-    private String getEncryptKey(Field field) {
-        if (!encryptProperties.isEnable()) {
-            return null;
-        }
-        Crypto crypto = field.getDeclaredAnnotation(Crypto.class);
-        String key = null;
-        if (crypto != null) {
-            key = encryptProperties.getKey(Strings.isNullOrEmpty(crypto.name()) ? field.getName() : crypto.name());
-        }
-        return key;
-    }
-
-    private String encrypt(String object, String key) {
-
-        try {
-            return AesEncryptorUtils.encrypt(object, key);
-        } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
-            throw new RuntimeException(  "加密异常", e);
-        }
-
-    }
-
-
-    public <T> QueryWrapper<T> buildQueryWrapper(@NotNull QueryWrapper<T> queryWrapper, @NotNull Object query,
-                                                 Map<String, String> columnMap) {
-        boolean isNullOrEmpty = columnMap == null || columnMap.isEmpty();
-        return buildQueryWrapper(queryWrapper, query, isNullOrEmpty ? (name, column) -> converterToColumn(column) : (name, column) -> {
-            String value = columnMap.get(name);
-            if (Strings.isNullOrEmpty(column)) {
-                return column;
-            }
-            return value;
-        });
-    }
-
-
-    /**
-     * 字段名称映射默认使用 passwordExpireTime => password_expire_time
-     *
-     * @param queryWrapper 查询包装器
-     * @param query        查询条件
-     * @param <T>          entity
-     * @return
-     */
-    public <T> QueryWrapper<T> buildQueryWrapper(@NotNull QueryWrapper<T> queryWrapper, @NotNull Object query) {
-        return buildQueryWrapper(queryWrapper, query, (name, column) -> converterToColumn(column));
-    }
-
 
     /**
      * 数据库解密

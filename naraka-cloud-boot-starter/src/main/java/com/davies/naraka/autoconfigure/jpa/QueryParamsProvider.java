@@ -1,5 +1,6 @@
 package com.davies.naraka.autoconfigure.jpa;
 
+import com.davies.naraka.autoconfigure.ClassUtils;
 import com.davies.naraka.autoconfigure.QueryAndSort;
 import com.davies.naraka.autoconfigure.QueryPage;
 import com.davies.naraka.autoconfigure.QueryPageAndSort;
@@ -12,9 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import javax.persistence.Query;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.function.Function;
@@ -42,7 +40,7 @@ public class QueryParamsProvider {
 
     public static final String SQL_ORDER_BY = " ORDER BY ";
 
-    private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
+
 
 
     public static <T> QueryParams query(T o, Sort sort, QueryParamsInterceptor<T> interceptor) {
@@ -194,22 +192,16 @@ public class QueryParamsProvider {
                 continue;
             }
             String name = field.getName();
-            String methodName = GET_STRING + capitalize(name);
-            Object params;
-            try {
-                MethodHandle handle = LOOKUP.findVirtual(oClass, methodName, MethodType.methodType(field.getType()));
-                params = handle.invoke(object);
-            } catch (Throwable e) {
-                log.debug("动态构造查询条件时,调用{}#{}方法抛出异常~", oClass.getName(), methodName, e);
+            Optional<Object> valueOptional= ClassUtils.getFieldValueAndIgnoreError(object, field);
+            if (!valueOptional.isPresent()) {
                 continue;
             }
+            Object params = valueOptional.get();
             String alias = name;
             if (queryConfig != null && !Strings.isNullOrEmpty(queryConfig.alias())) {
                 alias = queryConfig.alias();
             }
-            if (params == null) {
-                continue;
-            }
+
             if (isNotBlank) {
                 builder.append(SQL_AND);
             }
@@ -223,6 +215,8 @@ public class QueryParamsProvider {
         }
         return queryConsumer;
     }
+
+
 
 
     private static String filterType(QueryFilterType filterType) {

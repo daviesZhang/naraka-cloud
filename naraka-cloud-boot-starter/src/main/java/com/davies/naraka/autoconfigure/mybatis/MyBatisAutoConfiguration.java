@@ -46,8 +46,9 @@ public class MyBatisAutoConfiguration {
         return new ParamsCryptoInterceptor(encryptProperties);
     }
 
-    @ConditionalOnProperty(value = "naraka.mybatis.metaObjectFill", havingValue = "true")
+    @ConditionalOnProperty(value = "naraka.mybatis.metaObjectFill", havingValue = "true",matchIfMissing = true)
     @ConditionalOnMissingBean(MetaObjectHandler.class)
+    @ConditionalOnBean(CurrentUserNameSupplier.class)
     @Bean
     public MyBatisMetaObjectHandler myBatisMetaObjectHandler(CurrentUserNameSupplier currentUserNameSupplier) {
         return new MyBatisMetaObjectHandler(currentUserNameSupplier, myBatisProperties);
