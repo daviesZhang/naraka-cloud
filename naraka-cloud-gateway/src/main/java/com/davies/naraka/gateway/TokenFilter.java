@@ -70,7 +70,7 @@ public class TokenFilter implements GlobalFilter, Ordered {
                     return chain.filter(exchange);
                 }
             } else if (!Strings.isNullOrEmpty(decoded.getSubject())) {
-                return Mono.fromCompletionStage(hasResources.test(resource, decoded.getSubject()))
+                return Mono.fromCompletionStage(hasResources.apply(resource, decoded.getSubject()))
                         .flatMap(aBoolean -> {
                             if (aBoolean) {
                                 return setUsernameAndNext(exchange, chain, decoded.getSubject());

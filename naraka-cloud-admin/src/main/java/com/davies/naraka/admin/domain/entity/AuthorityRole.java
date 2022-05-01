@@ -24,7 +24,7 @@ public class AuthorityRole implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "ID", type = IdType.AUTO)
+    @TableId(value = "ID", type = IdType.ASSIGN_ID)
     private Integer id;
 
     private Integer authority;

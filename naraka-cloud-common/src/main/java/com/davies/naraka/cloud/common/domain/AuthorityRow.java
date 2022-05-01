@@ -20,12 +20,14 @@ public class AuthorityRow implements Serializable {
      */
     private String type;
 
-
+    /**
+     *
+     */
     private List<String> method;
 
 
     /**
-     * 这里入库要防止sql注入
+     * 这里要防止sql注入
      */
     private String content;
 

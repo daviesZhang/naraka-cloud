@@ -1,5 +1,6 @@
 package com.davies.naraka.autoconfigure.redis;
 
+import com.davies.naraka.autoconfigure.AuthorityRowFunction;
 import com.davies.naraka.autoconfigure.CurrentUserNameSupplier;
 import com.davies.naraka.autoconfigure.HasResources;
 import com.davies.naraka.autoconfigure.ProcessorFunction;
@@ -30,7 +31,7 @@ import java.io.IOException;
 @EnableConfigurationProperties(RedisProperties.class)
 public class RedisAutoConfiguration {
 
-    
+
     private final RedisProperties redisProperties;
 
 
@@ -52,34 +53,41 @@ public class RedisAutoConfiguration {
         return new RedisHasResources(redissonClient);
     }
 
+
+    @Bean
+    @ConditionalOnMissingBean(AuthorityRowFunction.class)
+    public AuthorityRowFunction authorityRowFunction(RedissonClient redissonClient) {
+        return new RedisAuthorityRowFunction(redissonClient);
+    }
+
+
     /**
      * 根据getAddress数量支持两种模式
      * Single
      * Cluster
+     *
      * @return
      * @throws IOException
      */
-    @Bean(destroyMethod="shutdown")
+    @Bean(destroyMethod = "shutdown")
     @ConditionalOnMissingBean(RedissonClient.class)
-   public RedissonClient redisson() throws IOException {
+    public RedissonClient redisson() throws IOException {
         Config config = new Config();
-        if (redisProperties.getAddress().size()==1){
-            SingleServerConfig singleServerConfig= config.useSingleServer()
+        if (redisProperties.getAddress().size() == 1) {
+            SingleServerConfig singleServerConfig = config.useSingleServer()
                     .setAddress(redisProperties.getAddress().get(0));
-            if (!Strings.isNullOrEmpty(redisProperties.getPassword())){
+            if (!Strings.isNullOrEmpty(redisProperties.getPassword())) {
                 singleServerConfig.setPassword(redisProperties.getPassword());
             }
-        }else{
-            ClusterServersConfig clusterServersConfig= config.useClusterServers()
+        } else {
+            ClusterServersConfig clusterServersConfig = config.useClusterServers()
                     .addNodeAddress(redisProperties.getAddress().toArray(new String[]{}));
-            if (!Strings.isNullOrEmpty(redisProperties.getPassword())){
+            if (!Strings.isNullOrEmpty(redisProperties.getPassword())) {
                 clusterServersConfig.setPassword(redisProperties.getPassword());
             }
         }
         return Redisson.create(config);
     }
-
-
 
 
 }

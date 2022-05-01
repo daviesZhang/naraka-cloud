@@ -5,8 +5,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Verification;
 import com.davies.naraka.autoconfigure.CurrentUserNameSupplier;
 import com.davies.naraka.autoconfigure.GeneratorTokenBiFunction;
-import com.davies.naraka.autoconfigure.HasResources;
-import com.davies.naraka.autoconfigure.redis.RedisHasResources;
 import com.davies.naraka.autoconfigure.properties.SecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -38,9 +36,6 @@ public class SecurityAutoConfiguration {
     public SecurityAutoConfiguration(SecurityProperties securityProperties) {
         this.securityProperties = securityProperties;
     }
-
-
-
 
 
     @Bean

@@ -55,7 +55,7 @@ public class UserInfo implements Serializable {
      * 获取结果集时,对行数据的过滤
      * resource-> bean name -> 参数
      */
-    private Map<String, Map<String, Set<AuthorityRow>>> authorityRows;
+    private Map<String, Set<AuthorityRow>> authorityRows;
 
     /**
      * 用户的组信息,由小到大

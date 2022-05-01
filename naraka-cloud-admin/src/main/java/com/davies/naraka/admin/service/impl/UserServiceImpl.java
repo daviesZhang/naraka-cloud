@@ -147,7 +147,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public Optional<User> findUserByUsername(@NotNull String username) {
-
         return this.findUser(new LambdaQueryWrapper<User>().eq(User::getUsername, username));
     }
 
@@ -181,7 +180,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      * @return
      */
     @Override
-    public UserInfo getUserInfo(User user) {
+    public UserInfo getUserInfoAndCache(User user) {
         UserInfo userInfo = new UserInfo();
         ClassUtils.copyObject(user, userInfo);
         String username = user.getUsername();
@@ -215,22 +214,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
 
-    public Map<String, Map<String, Set<AuthorityRow>>> getAuthorityRows(List<Authority> authorityList) {
+    /**
+     * {}
+     *
+     * @param authorityList
+     * @return
+     */
+    public Map<String, Set<AuthorityRow>> getAuthorityRows(List<Authority> authorityList) {
         return authorityList.stream().filter(authority -> authority.getProcessor() == SKIP_ROW).collect(
                 Collectors.groupingBy(Authority::getResource,
                         Collectors.mapping(authority -> authority,
-                                Collectors.groupingBy(authority -> processorTypeToString(authority.getProcessor()),
-                                        Collectors.mapping(authority -> {
-                                            try {
-                                                String value = authority.getProcessorValue();
-                                                if (Strings.isNullOrEmpty(value)) {
-                                                    return new AuthorityRow();
-                                                }
-                                                return OBJECT_MAPPER.readValue(authority.getProcessorValue(), AuthorityRow.class);
-                                            } catch (JsonProcessingException e) {
-                                                throw new NarakaException(e);
-                                            }
-                                        }, Collectors.toSet()))
+                                Collectors.mapping(authority -> {
+                                    try {
+                                        String value = authority.getProcessorValue();
+                                        if (Strings.isNullOrEmpty(value)) {
+                                            return new AuthorityRow();
+                                        }
+                                        return OBJECT_MAPPER.readValue(authority.getProcessorValue(), AuthorityRow.class);
+                                    } catch (JsonProcessingException e) {
+                                        throw new NarakaException(e);
+                                    }
+                                }, Collectors.toSet())
                         ))
         );
 

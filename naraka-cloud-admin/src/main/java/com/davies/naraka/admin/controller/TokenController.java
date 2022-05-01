@@ -68,11 +68,7 @@ public class TokenController {
     }
 
 
-    private void refreshCache(User user) {
-        CurrentUserDTO currentUser = new CurrentUserDTO();
-        UserInfo userInfo = userService.getUserInfo(user);
-        ClassUtils.copyObject(userInfo, currentUser);
-    }
+
 
     /**
      * 刷新缓存和token的有效时间
@@ -86,7 +82,7 @@ public class TokenController {
 
         Optional<User> optionalUser = userService.findUserByUsername(request.getRemoteUser());
         User user = optionalUser.orElseThrow(UserNotFoundException::new);
-        refreshCache(user);
+        userService.getUserInfoAndCache(user);
         String jwt = this.generatorToken.apply(user.getUsername(), null);
         log.info("[{}]  refresh token", user.getUsername());
         return ResponseEntity.ok()
@@ -109,7 +105,7 @@ public class TokenController {
         }
         User user = optionalUser.orElseThrow(UserNotFoundException::new);
         if (passwordEncoder.matches(password, user.getPassword())) {
-            refreshCache(user);
+            userService.getUserInfoAndCache(user);
             String jwt = this.generatorToken.apply(user.getUsername(), null);
             log.info("[{}] login success", user.getUsername());
             return ResponseEntity.ok()

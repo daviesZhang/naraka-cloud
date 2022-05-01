@@ -103,5 +103,5 @@ public interface IUserService extends IService<User> {
      *
      * @param username 用户名
      */
-    UserInfo getUserInfo(User user);
+    UserInfo getUserInfoAndCache(User user);
 }

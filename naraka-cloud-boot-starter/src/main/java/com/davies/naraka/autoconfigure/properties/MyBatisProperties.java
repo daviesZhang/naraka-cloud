@@ -12,6 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Data
 public class MyBatisProperties {
 
+    private boolean dataPermission = false;
 
     private String fillCreatedTime ="createdTime";
 

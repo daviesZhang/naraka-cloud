@@ -3,10 +3,14 @@ package com.davies.naraka.autoconfigure.mybatis;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.handler.DataPermissionHandler;
+import com.baomidou.mybatisplus.extension.plugins.inner.DataPermissionInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.davies.naraka.autoconfigure.AuthorityRowFunction;
 import com.davies.naraka.autoconfigure.CurrentUserNameSupplier;
 import com.davies.naraka.autoconfigure.properties.EncryptProperties;
 import com.davies.naraka.autoconfigure.properties.MyBatisProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -56,11 +60,27 @@ public class MyBatisAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "mybatisPlusInterceptor")
-    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+    public MybatisPlusInterceptor mybatisPlusInterceptor(@Autowired(required = false) DataPermissionHandler dataPermissionHandler) {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        if (this.myBatisProperties.isDataPermission() && dataPermissionHandler != null) {
+            DataPermissionInterceptor dataPermissionInterceptor = new DataPermissionInterceptor();
+            dataPermissionInterceptor.setDataPermissionHandler(dataPermissionHandler);
+            interceptor.addInnerInterceptor(dataPermissionInterceptor);
+        }
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
+
         return interceptor;
     }
+
+    @Bean
+    @ConditionalOnProperty(value = "naraka.mybatis.dataPermission", havingValue = "true")
+    @ConditionalOnMissingBean(DataPermissionHandler.class)
+    @ConditionalOnBean(value = {AuthorityRowFunction.class, CurrentUserNameSupplier.class})
+    public DataPermissionHandler dataPermissionHandler(AuthorityRowFunction authorityRowFunction,
+                                                       CurrentUserNameSupplier currentUserNameSupplier) {
+        return new CustomDataPermissionHandler(authorityRowFunction, currentUserNameSupplier);
+    }
+
 
     @ConditionalOnMissingBean(name = "myBatisQueryUtils")
     @Bean
