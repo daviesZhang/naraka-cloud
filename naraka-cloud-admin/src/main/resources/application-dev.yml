@@ -1,6 +1,6 @@
 logging:
   level:
-    root: info
+    root: debug
 spring:
   application:
     name: naraka-cloud-admin

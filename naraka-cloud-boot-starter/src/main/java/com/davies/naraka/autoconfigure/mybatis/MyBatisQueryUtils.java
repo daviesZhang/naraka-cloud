@@ -7,37 +7,25 @@ import com.davies.naraka.autoconfigure.ClassUtils;
 import com.davies.naraka.autoconfigure.QueryPage;
 import com.davies.naraka.autoconfigure.QueryUtils;
 import com.davies.naraka.autoconfigure.annotation.ColumnName;
-import com.davies.naraka.autoconfigure.annotation.Crypto;
-import com.davies.naraka.autoconfigure.annotation.QueryFilter;
-import com.davies.naraka.autoconfigure.annotation.QuerySkip;
+import com.davies.naraka.autoconfigure.annotation.QueryConfig;
 import com.davies.naraka.autoconfigure.domain.PageDTO;
 import com.davies.naraka.autoconfigure.domain.QueryField;
 import com.davies.naraka.autoconfigure.enums.QueryFilterType;
-import com.davies.naraka.autoconfigure.properties.EncryptProperties;
-import com.davies.naraka.cloud.common.AesEncryptorUtils;
 import com.google.common.base.CaseFormat;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.BeanUtils;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.*;
-import java.util.function.BiConsumer;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import static java.util.Locale.ENGLISH;
 
 /**
  * @author davies
@@ -46,17 +34,18 @@ import static java.util.Locale.ENGLISH;
 
 public class MyBatisQueryUtils extends QueryUtils {
 
-    private static final String READ_METHOD = "get";
 
+    @Getter
+    @Setter
+    private List<MyBatisQueryHandle> myBatisQueryHandleList;
 
     public MyBatisQueryUtils() {
-        super();
+
     }
 
-    public MyBatisQueryUtils(EncryptProperties encryptProperties) {
-        super(encryptProperties);
+    public MyBatisQueryUtils(List<MyBatisQueryHandle> myBatisQueryHandleList) {
+        this.myBatisQueryHandleList = myBatisQueryHandleList;
     }
-
 
     /**
      * @param supplier<T> 数据列表的DTO类实例
@@ -68,14 +57,14 @@ public class MyBatisQueryUtils extends QueryUtils {
      * @return PageDTO
      */
     public <T, E, Q> PageDTO<T> pageQuery(Supplier<T> supplier, QueryPage<Q> query, IService<E> service) {
-        return pageQuery(supplier, buildQueryWrapper(new QueryWrapper<E>(), query.getQuery()),
+        return pageQuery(supplier, buildQueryWrapper(new QueryWrapper<>(), query.getQuery()),
                 Page.of(query.getCurrent(), query.getSize()), service);
     }
 
 
     public <T, E, Q, R> PageDTO<T> pageQuery(Supplier<T> supplier, QueryPage<Q> query, BiFunction<Page<R>, QueryWrapper<E>, Page<R>> pageFunction) {
         Page<R> page = Page.of(query.getCurrent(), query.getSize());
-        return pageQuery(supplier, buildQueryWrapper(new QueryWrapper<E>(), query.getQuery()),
+        return pageQuery(supplier, buildQueryWrapper(new QueryWrapper<>(), query.getQuery()),
                 page, pageFunction);
     }
 
@@ -91,13 +80,13 @@ public class MyBatisQueryUtils extends QueryUtils {
     public <T, E> PageDTO<T> pageQuery(Supplier<T> supplier, QueryWrapper<E> queryWrapper, Page<E> page, IService<E> service) {
         service.page(page, queryWrapper);
         List<T> items = page.getRecords().stream().map(item -> ClassUtils.copyObject(item, supplier.get())).collect(Collectors.toList());
-        return new PageDTO<T>(page.getCurrent(), page.getTotal(), page.getSize(), items);
+        return new PageDTO<>(page.getCurrent(), page.getTotal(), page.getSize(), items);
     }
 
     public <T, E, R> PageDTO<T> pageQuery(Supplier<T> supplier, QueryWrapper<E> queryWrapper, Page<R> page, BiFunction<Page<R>, QueryWrapper<E>, Page<R>> pageFunction) {
         pageFunction.apply(page, queryWrapper);
         List<T> items = page.getRecords().stream().map(item -> ClassUtils.copyObject(item, supplier.get())).collect(Collectors.toList());
-        return new PageDTO<T>(page.getCurrent(), page.getTotal(), page.getSize(), items);
+        return new PageDTO<>(page.getCurrent(), page.getTotal(), page.getSize(), items);
     }
 
     /**
@@ -107,54 +96,85 @@ public class MyBatisQueryUtils extends QueryUtils {
      * @return QueryWrapper<entity>
      */
     public <T> QueryWrapper<T> buildQueryWrapper(@NotNull QueryWrapper<T> queryWrapper, @NotNull Object query) {
-
         Class<?> classes = query.getClass();
+
+        if (query instanceof Map) {
+            for (Map.Entry<?, ?> entry : ((Map<?, ?>) query).entrySet()) {
+                Object key = entry.getKey();
+                Object value = entry.getValue();
+                if (value != null) {
+                    buildQueryParams(queryWrapper, value, converterToColumn(key.toString()), null);
+                }
+            }
+            return queryWrapper;
+        }
         Field[] fields = classes.getDeclaredFields();
-        for (Field declaredField : fields) {
-            Optional<Object> valueOptional = queryValue(query, declaredField);
-            if (!valueOptional.isPresent()) {
+        for (Field field : fields) {
+            Optional<Object> optional = queryValue(query, field);
+            if (!optional.isPresent()) {
                 continue;
             }
-            Object fieldValue = valueOptional.get();
-            ColumnName columnName = declaredField.getDeclaredAnnotation(ColumnName.class);
-            String column = declaredField.getName();
-            if (columnName != null && !Strings.isNullOrEmpty(columnName.name())) {
-                column = columnName.name();
+            Object value = optional.get();
+            ColumnName columnName = field.getDeclaredAnnotation(ColumnName.class);
+            String column;
+            if (columnName != null && !Strings.isNullOrEmpty(columnName.value())) {
+                column = columnName.value();
             } else {
-                column = converterToColumn(column);
+                column = converterToColumn(field.getName());
             }
-            if (fieldValue instanceof Collection) {
-                Collection<?> items = (Collection<?>) fieldValue;
-                if (items.isEmpty()) {
-                    continue;
-                }
-                Object firstItem = items.iterator().next();
-                if (firstItem instanceof QueryField) {
-                    for (Object item : items) {
-                        buildQueryField(queryWrapper, column, (QueryField<?>) item, declaredField);
-                    }
-                } else {
-                    buildQueryField(queryWrapper, column, new QueryField<Collection<?>>(QueryFilterType.CONTAINS, items), declaredField);
-                }
-            } else if (fieldValue instanceof QueryField) {
-                buildQueryField(queryWrapper, column, (QueryField<?>) fieldValue, declaredField);
-            } else {
-                buildQueryField(queryWrapper, column, new QueryField<>(QueryFilterType.EQUALS, fieldValue), declaredField);
-            }
+            buildQueryParams(queryWrapper, value, column, field);
         }
         return queryWrapper;
     }
 
-    /**
-     * 数据库解密
-     *
-     * @param column
-     * @param key
-     * @return
-     */
-    private String dbDecryptColumn(String column, String key) {
-        return "AES_DECRYPT(UNHEX(" + column + "),'" + key + "')";
+    private <T> void buildQueryParams(@NotNull QueryWrapper<T> queryWrapper,
+                                      @NotNull Object value,
+                                      @NotNull String column,
+                                      Field field) {
+        if (value instanceof Collection) {
+            Collection<?> items = (Collection<?>) value;
+            if (items.isEmpty()) {
+                return;
+            }
+            Object firstItem = items.iterator().next();
+            if (firstItem instanceof QueryField) {
+                for (Object item : items) {
+                    buildQueryWrapper(queryWrapper, column, (QueryField<?>) item, field);
+                }
+            } else {
+                buildQueryField(items, true, field)
+                        .ifPresent(queryField -> buildQueryWrapper(queryWrapper, column, queryField, field));
+            }
+        } else if (value instanceof QueryField) {
+            buildQueryWrapper(queryWrapper, column, (QueryField<?>) value, field);
+        } else {
+            buildQueryField(value, false, field)
+                    .ifPresent(queryField -> buildQueryWrapper(queryWrapper, column, queryField, field));
+        }
     }
+
+
+    private Optional<QueryField<?>> buildQueryField(Object value, boolean isCollection, Field field) {
+        QueryConfig config = null;
+        if (field != null) {
+            config = field.getDeclaredAnnotation(QueryConfig.class);
+        }
+        QueryField<?> queryField = null;
+        if (config == null) {
+            if (isCollection) {
+                queryField = new QueryField<Collection<?>>(QueryFilterType.CONTAINS, (Collection<?>) value);
+            } else {
+                queryField = new QueryField<>(QueryFilterType.EQUALS, value);
+            }
+        } else {
+            if (!config.skip()) {
+                queryField = new QueryField<>(config.filterType(), value);
+            }
+        }
+        return Optional.ofNullable(queryField);
+
+    }
+
 
     /**
      * 多字段排序时不支持指定顺序
@@ -162,108 +182,34 @@ public class MyBatisQueryUtils extends QueryUtils {
      * @param queryWrapper
      * @param column
      * @param queryField
-     * @param declaredField
+     * @param field
      * @param <T>
      */
-    private <T> void buildQueryField(QueryWrapper<T> queryWrapper, String column, QueryField<?> queryField, Field declaredField) {
-        QueryFilter queryFilter = declaredField.getAnnotation(QueryFilter.class);
-        QueryFilterType filterType = queryField.getType();
-        if (queryFilter != null) {
-            QueryFilterType[] types = queryFilter.types();
-            boolean supportType = Arrays.stream(types).anyMatch(type -> type == queryField.getType());
-            Preconditions.checkArgument(supportType, "filterType not support");
+    private <T> void buildQueryWrapper(QueryWrapper<T> queryWrapper, String column, QueryField<?> queryField, Field field) {
+        if (field != null) {
+            checkFilterType(queryField, field);
         }
         Object value = queryField.getFilter();
-        String key = getEncryptKey(declaredField);
-        switch (filterType) {
-            case EQUALS:
-                if (Strings.isNullOrEmpty(key)) {
-                    queryWrapper.eq(column, value);
-                } else {
-                    queryWrapper.eq(column, encrypt((String) value, key));
-                }
-                break;
-            case NOT_EQUALS:
-                if (Strings.isNullOrEmpty(key)) {
-                    queryWrapper.ne(column, value);
-                } else {
-                    queryWrapper.ne(column, encrypt((String) value, key));
-                }
-                break;
-            case LIKE:
-                if (Strings.isNullOrEmpty(key)) {
-                    queryWrapper.like(column, value);
-                } else {
-                    queryWrapper.like(dbDecryptColumn(column, key), value);
-                }
-                break;
-            case STARTS_WITH:
-                if (Strings.isNullOrEmpty(key)) {
-                    queryWrapper.likeRight(column, value);
-                } else {
-                    queryWrapper.likeRight(dbDecryptColumn(column, key), value);
-                }
-                break;
-            case ENDS_WITH:
-                if (Strings.isNullOrEmpty(key)) {
-                    queryWrapper.likeLeft(column, value);
-                } else {
-                    queryWrapper.likeLeft(dbDecryptColumn(column, key), value);
-                }
-                break;
-            case CONTAINS:
-                this.queryListCondition(key, column, value, queryWrapper::in);
-                break;
-            case NOT_CONTAINS:
-                this.queryListCondition(key, column, value, queryWrapper::notIn);
-                break;
-            case LESSTHAN:
-                queryWrapper.lt(column, value);
-                break;
-            case GREATERTHANE:
-                queryWrapper.gt(column, value);
-                break;
-            case LESSTHANEQUAL:
-                queryWrapper.le(column, value);
-                break;
-            case GREATERTHANEQUAL:
-                queryWrapper.ge(column, value);
-                break;
-            case ORDER_ASC:
-                queryWrapper.orderByAsc(column);
-                break;
-            case ORDER_DESC:
-                queryWrapper.orderByDesc(column);
-                break;
-            default:
-                throw new IllegalArgumentException(Strings.lenientFormat("%s 不支持这个运算符", filterType));
+        QueryFilterType filterType = queryField.getType();
+
+        List<MyBatisQueryHandle> handleList = getMyBatisQueryHandleList();
+        List<MyBatisQueryHandle> list;
+        if (handleList == null || handleList.isEmpty()) {
+            list = Lists.newArrayList();
+        } else {
+            list = Lists.newArrayList(handleList);
         }
+        list.add(new DefaultMyBatisQueryHandle());
+        for (MyBatisQueryHandle myBatisQueryHandle : list) {
+            boolean support = myBatisQueryHandle.support(filterType, column, value, field);
+            if (support) {
+                myBatisQueryHandle.handle(queryWrapper, filterType, column, value, field);
+                return;
+            }
+        }
+        throw new IllegalArgumentException(Strings.lenientFormat("%s 不支持这个运算符", filterType));
     }
 
-    private void queryListCondition(String key, String column, Object value, BiConsumer<String, List<?>> biFunction) {
-        if (Strings.isNullOrEmpty(key)) {
-            if (value instanceof Collection) {
-                Collection<?> values = (Collection<?>) value;
-                if (!values.isEmpty()) {
-                    biFunction.accept(column, Lists.newArrayList(values));
-                }
-            } else {
-                biFunction.accept(column, Lists.newArrayList(value));
-            }
-        } else {
-            if (value instanceof List) {
-                List<String> values = ((List<?>) value)
-                        .stream()
-                        .map(v -> encrypt((String) v, key))
-                        .collect(Collectors.toList());
-                if (!values.isEmpty()) {
-                    biFunction.accept(column, values);
-                }
-            } else {
-                biFunction.accept(column, Lists.newArrayList(encrypt((String) value, key)));
-            }
-        }
-    }
 
     /**
      * passwordExpireTime => password_expire_time

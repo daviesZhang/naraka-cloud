@@ -76,7 +76,7 @@ public class ResultCryptoInterceptor implements Interceptor {
             return;
         }
         field.setAccessible(true);
-        String key = this.encryptProperties.getKey(Strings.isNullOrEmpty(crypto.name()) ? field.getName() : crypto.name());
+        String key = this.encryptProperties.getKey(Strings.isNullOrEmpty(crypto.value()) ? field.getName() : crypto.value());
         field.set(item, AesEncryptorUtils.decrypt((String)field.get(item),key));
     }
 

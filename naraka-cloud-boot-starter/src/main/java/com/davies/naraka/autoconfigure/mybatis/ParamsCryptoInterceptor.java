@@ -89,7 +89,7 @@ public class ParamsCryptoInterceptor implements Interceptor {
             return;
         }
         field.setAccessible(true);
-        String key = this.encryptProperties.getKey(Strings.isNullOrEmpty(fieldCrypto.name()) ? field.getName() : fieldCrypto.name());
+        String key = this.encryptProperties.getKey(Strings.isNullOrEmpty(fieldCrypto.value()) ? field.getName() : fieldCrypto.value());
         Object value = field.get(item);
         if (value instanceof String && !Strings.isNullOrEmpty((String) value)) {
             field.set(item, AesEncryptorUtils.encrypt((String) value, key));

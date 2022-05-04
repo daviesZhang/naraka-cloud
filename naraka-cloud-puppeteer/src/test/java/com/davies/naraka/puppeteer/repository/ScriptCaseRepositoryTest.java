@@ -137,7 +137,7 @@ class ScriptCaseRepositoryTest {
         private String environment;
 
         @JoinQuery(attributeName = "steps")
-        @ColumnName(name = "name")
+        @ColumnName("name")
         private String stepName;
 
         private QueryField<List<String>> name;

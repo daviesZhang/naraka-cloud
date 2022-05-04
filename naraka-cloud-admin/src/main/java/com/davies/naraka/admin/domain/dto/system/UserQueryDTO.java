@@ -61,7 +61,7 @@ public class UserQueryDTO {
     @QueryFilter(types = {
             EQUALS,
             LIKE})
-    @ColumnName(name = "u.username")
+    @ColumnName("u.username")
     private QueryField<String> username;
 
 
@@ -90,7 +90,7 @@ public class UserQueryDTO {
             LESSTHANEQUAL,
             GREATERTHANE,
             GREATERTHANEQUAL})
-    @ColumnName(name = "u.created_time")
+    @ColumnName("u.created_time")
     private List<QueryField<LocalDateTime>> createdTime;
 
     @QueryFilter(types = {
@@ -107,6 +107,6 @@ public class UserQueryDTO {
     @QueryFilter(types = {
             EQUALS,
             LIKE})
-    @ColumnName(name = "r.code")
+    @ColumnName("r.code")
     private QueryField<String> role;
 }

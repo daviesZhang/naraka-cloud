@@ -4,6 +4,8 @@ import com.davies.naraka.autoconfigure.ClassUtils;
 import com.davies.naraka.autoconfigure.QueryAndSort;
 import com.davies.naraka.autoconfigure.QueryPage;
 import com.davies.naraka.autoconfigure.QueryPageAndSort;
+import com.davies.naraka.autoconfigure.annotation.ColumnName;
+import com.davies.naraka.autoconfigure.annotation.QueryConfig;
 import com.davies.naraka.autoconfigure.enums.QueryFilterType;
 import com.davies.naraka.cloud.common.StringConstants;
 import com.google.common.base.Strings;
@@ -192,14 +194,15 @@ public class QueryParamsProvider {
                 continue;
             }
             String name = field.getName();
-            Optional<Object> valueOptional= ClassUtils.getFieldValueAndIgnoreError(object, field);
+            Optional<Object> valueOptional = ClassUtils.getFieldValueAndIgnoreError(object, field);
             if (!valueOptional.isPresent()) {
                 continue;
             }
             Object params = valueOptional.get();
             String alias = name;
-            if (queryConfig != null && !Strings.isNullOrEmpty(queryConfig.alias())) {
-                alias = queryConfig.alias();
+            ColumnName columnName = field.getDeclaredAnnotation(ColumnName.class);
+            if (columnName != null && !Strings.isNullOrEmpty(columnName.value())) {
+                alias = columnName.value();
             }
 
             if (isNotBlank) {

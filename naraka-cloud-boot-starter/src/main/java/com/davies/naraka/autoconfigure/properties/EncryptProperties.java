@@ -16,8 +16,6 @@ import java.util.Map;
 @Data
 public class EncryptProperties {
 
-    private final static String DEFAULT_KEY = "asdasf$!423523@@sdaSAz{}";
-
 
     private boolean enable = true;
 
@@ -31,21 +29,13 @@ public class EncryptProperties {
 
     public String getKey(String name) {
         if (Strings.isNullOrEmpty(name)) {
-            if (Strings.isNullOrEmpty(getDefaultKey())) {
-                return DEFAULT_KEY;
-            } else {
-                return getDefaultKey();
-            }
+            return null;
         } else {
-            String value = keyMap.getOrDefault(name, getDefaultKey());
-            if (Strings.isNullOrEmpty(value)) {
-                return DEFAULT_KEY;
-            }
-            return value;
+            return keyMap.getOrDefault(name, getDefaultKey());
+
+
         }
     }
 
-    public String getDefaultKey() {
-        return Strings.isNullOrEmpty(defaultKey) ? DEFAULT_KEY : defaultKey;
-    }
+
 }

@@ -10,8 +10,9 @@ import java.lang.annotation.*;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD,ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Target({ElementType.FIELD, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 public @interface ColumnName {
 
-    String name() default "";
+
+    String value() default "";
 }

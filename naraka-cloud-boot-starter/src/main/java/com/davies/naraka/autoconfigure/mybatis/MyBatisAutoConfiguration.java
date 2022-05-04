@@ -19,6 +19,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Collections;
+
 /**
  * @author davies
  * @date 2022/2/28 8:10 PM
@@ -50,7 +52,7 @@ public class MyBatisAutoConfiguration {
         return new ParamsCryptoInterceptor(encryptProperties);
     }
 
-    @ConditionalOnProperty(value = "naraka.mybatis.metaObjectFill", havingValue = "true",matchIfMissing = true)
+    @ConditionalOnProperty(value = "naraka.mybatis.metaObjectFill", havingValue = "true", matchIfMissing = true)
     @ConditionalOnMissingBean(MetaObjectHandler.class)
     @ConditionalOnBean(CurrentUserNameSupplier.class)
     @Bean
@@ -81,10 +83,19 @@ public class MyBatisAutoConfiguration {
         return new CustomDataPermissionHandler(authorityRowFunction, currentUserNameSupplier);
     }
 
-
-    @ConditionalOnMissingBean(name = "myBatisQueryUtils")
     @Bean
-    public MyBatisQueryUtils myBatisQueryUtils() {
-        return new MyBatisQueryUtils(encryptProperties);
+    @ConditionalOnProperty(value = "naraka.encrypt.enable", havingValue = "true")
+    public EncryptMyBatisQueryHandle mySqlCryptoQueryHandle() {
+        return new EncryptMyBatisQueryHandle(encryptProperties);
+    }
+
+    @ConditionalOnMissingBean(MyBatisQueryUtils.class)
+    @Bean
+    public MyBatisQueryUtils myBatisQueryUtils(@Autowired(required = false) EncryptMyBatisQueryHandle queryInterceptor) {
+        if (queryInterceptor == null) {
+            return new MyBatisQueryUtils();
+        }
+        return new MyBatisQueryUtils(Collections.singletonList(queryInterceptor));
+
     }
 }

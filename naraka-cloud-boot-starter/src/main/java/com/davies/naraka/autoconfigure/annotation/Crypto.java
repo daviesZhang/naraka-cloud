@@ -21,7 +21,6 @@ public @interface Crypto {
     /**
      * 加密key name
      * 如果不存在,直接使用字段名
-     *
      */
-    String name() default "";
+    String value() default "";
 }

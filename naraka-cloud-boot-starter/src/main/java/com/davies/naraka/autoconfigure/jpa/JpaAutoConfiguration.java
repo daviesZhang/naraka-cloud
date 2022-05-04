@@ -6,6 +6,7 @@ import com.davies.naraka.autoconfigure.properties.EncryptProperties;
 import org.hibernate.boot.model.TypeContributor;
 import org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl;
 import org.hibernate.jpa.boot.spi.TypeContributorList;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -17,6 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.persistence.EntityManager;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -51,10 +53,20 @@ public class JpaAutoConfiguration {
         this.encryptProperties = encryptProperties;
     }
 
+
     @Bean
-    @ConditionalOnMissingBean(name = "specificationUtils")
-    public JpaSpecificationUtils specificationUtils() {
-        return new JpaSpecificationUtils(this.encryptProperties);
+    @ConditionalOnProperty(value = "naraka.encrypt.enable", havingValue = "true")
+    public EncryptJpaQueryHandle mySqlCryptoQueryHandle() {
+        return new EncryptJpaQueryHandle(encryptProperties);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(JpaSpecificationUtils.class)
+    public JpaSpecificationUtils specificationUtils(@Autowired(required = false) EncryptJpaQueryHandle jpaQueryHandle) {
+        if (jpaQueryHandle == null) {
+            return new JpaSpecificationUtils();
+        }
+        return new JpaSpecificationUtils(Collections.singletonList(jpaQueryHandle));
     }
 
     @Bean

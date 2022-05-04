@@ -1,6 +1,6 @@
 package com.davies.naraka.puppeteer.domain.dto;
 
-import com.davies.naraka.autoconfigure.jpa.QueryConfig;
+import com.davies.naraka.autoconfigure.annotation.ColumnName;
 import lombok.Data;
 
 
@@ -11,10 +11,10 @@ import lombok.Data;
 public class CaseReportQueryDTO {
 
 
-    @QueryConfig(alias = "c.project")
     private String project;
-    @QueryConfig(alias = "c.name")
+
+    @ColumnName("c.name")
     private String name;
-    @QueryConfig(alias = "c.createdBy")
+    @ColumnName("c.createdBy")
     private String createdBy;
 }

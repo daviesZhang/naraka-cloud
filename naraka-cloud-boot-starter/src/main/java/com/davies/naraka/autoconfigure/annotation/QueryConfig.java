@@ -1,4 +1,4 @@
-package com.davies.naraka.autoconfigure.jpa;
+package com.davies.naraka.autoconfigure.annotation;
 
 import com.davies.naraka.autoconfigure.enums.QueryFilterType;
 
@@ -12,8 +12,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 public @interface QueryConfig {
-
-    String alias() default "";
 
     boolean skip() default false;
 
