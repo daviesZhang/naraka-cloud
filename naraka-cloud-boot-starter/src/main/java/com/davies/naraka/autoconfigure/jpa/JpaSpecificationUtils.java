@@ -122,6 +122,16 @@ public class JpaSpecificationUtils extends QueryUtils {
         return (root, query, criteriaBuilder) -> this.toPredicate(queryParams, root, query, criteriaBuilder);
     }
 
+    /**
+     * //todo 支持map,支持@QueryConfig
+     *
+     * @param queryParams
+     * @param root
+     * @param query
+     * @param criteriaBuilder
+     * @param <T>
+     * @return
+     */
     private <T> Predicate toPredicate(Object queryParams, Root<T> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
         Class<?> classes = queryParams.getClass();
         Field[] fields = classes.getDeclaredFields();
@@ -167,11 +177,10 @@ public class JpaSpecificationUtils extends QueryUtils {
         return query.orderBy(orders).where(predicate).getRestriction();
     }
 
-    private <T> Predicate getPredicate(Root<T> root, CriteriaBuilder criteriaBuilder, List<Order> orders, Map<String, Path<T>> cacheJoin, Field declaredField, Object value, String column) {
+    private <T> Predicate getPredicate(Root<T> root, CriteriaBuilder cb, List<Order> orders, Map<String, Path<T>> cacheJoin, Field field, Object value, String column) {
         QueryField<?> queryField = getQueryField(value);
-
-        checkFilterType(queryField, declaredField);
-        JoinQuery joinQuery = declaredField.getDeclaredAnnotation(JoinQuery.class);
+        checkFilterType(queryField, field);
+        JoinQuery joinQuery = field.getDeclaredAnnotation(JoinQuery.class);
         Path<T> path;
         if (joinQuery != null) {
             if (cacheJoin.containsKey(joinQuery.attributeName())) {
@@ -188,7 +197,7 @@ public class JpaSpecificationUtils extends QueryUtils {
                 orders,
                 column,
                 path,
-                criteriaBuilder, declaredField);
+                cb, field);
     }
 
 

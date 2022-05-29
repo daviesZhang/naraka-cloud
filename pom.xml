@@ -41,6 +41,7 @@
 
         <module>naraka-cloud-puppeteer</module>
         <module>naraka-cloud-rule</module>
+        <module>naraka-cloud-system</module>
     </modules>
     <dependencyManagement>
         <dependencies>

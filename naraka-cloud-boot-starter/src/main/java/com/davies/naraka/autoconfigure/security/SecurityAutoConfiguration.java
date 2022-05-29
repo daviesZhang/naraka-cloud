@@ -70,6 +70,7 @@ public class SecurityAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean(GeneratorTokenBiFunction.class)
+    @ConditionalOnClass(name = "com.auth0.jwt.JWT")
     public GeneratorTokenBiFunction generatorToken(Algorithm algorithm) {
         return (String username, String issuedUser) -> JWT.create().withSubject(username)
                 .withExpiresAt(Date.from(LocalDateTime.now().plusMinutes(this.securityProperties.getExpiresAt())

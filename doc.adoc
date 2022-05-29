@@ -1,0 +1,73 @@
+= 功能文档
+
+== 数据加解密
+
+目前功能仅支持 `mysql` 数据库,如使用其他数据库,可以参考源代码修改
+
+=== MYBATIS
+
+==== 出库入库自动加密解密
+
+[source,java]
+----
+/**
+* 在入库出库类(一般是实体类或自定义BO类)及对应字段中使用@Crypto 即可实现数据出库入库自动加解密
+*/
+@Crypto
+public class User{
+  //将使用mobile_phone的密钥对该字段进行加解密,请配置 naraka.encrypt.keyMap.mobile_phone
+ @Crypto( "mobile_phone")
+ private String phone;
+  //将使用email的密钥对该字段进行加解密,请配置 naraka.encrypt.keyMap.email
+ @Crypto
+ private String email;
+
+ //get set 忽略
+}
+----
+
+==== 查询加密数据
+
+添加配置 `naraka.encrypt.enable=true`,并使用
+`MyBatisQueryUtils` 类进行查询时,自动处理查询条件加密, 在查询的实体类字段中使用 `@Crypto` 注解标记为需要处理加密查询的条件,并可以指定加密key配置
+[source,java]
+
+----
+// MyBatisQueryUtils查询参数 例子
+@Data
+public class UserQueryDTO {
+    @Crypto
+    @QueryFilter(types = {STARTS_WITH,EQUALS})
+    private QueryField<String> email;
+
+   //将使用mobile_phone的密钥对该字段进行加查询处理
+    @Crypto( "mobile_phone")
+    @QueryFilter(types = {STARTS_WITH,EQUALS})
+    private QueryField<String> phone;
+}
+----
+
+=== JPA
+
+==== 出库入库自动加密解密
+
+数据入库时自动加密
+
+[source,java]
+----
+/**
+* 在入库出库类(一般是实体类或自定义BO类)对应字段中使用@Type 即可实现数据出库入库自动加解密
+*/
+public class User{
+  //将使用phone的密钥对该字段进行加解密,请配置 naraka.encrypt.keyMap.phone
+ @Type(type = "crypto_phone")
+ private String phone;
+  //将使用默认的密钥对该字段进行加解密,请配置 naraka.encrypt.defaultKey
+ @Type(type = "crypto")
+ private String email;
+
+ //get set 忽略
+}
+----
+
+==== 查询加密数据

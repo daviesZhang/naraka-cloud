@@ -47,6 +47,10 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.davies</groupId>
             <artifactId>naraka-cloud-boot-starter</artifactId>
             <version>${project.version}</version>
