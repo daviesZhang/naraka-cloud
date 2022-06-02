@@ -6,8 +6,8 @@ import com.davies.naraka.autoconfigure.domain.QueryField;
 import com.davies.naraka.autoconfigure.enums.QueryFilterType;
 import com.davies.naraka.autoconfigure.jpa.JoinQuery;
 import com.davies.naraka.autoconfigure.jpa.JpaSpecificationUtils;
-import com.davies.naraka.autoconfigure.jpa.QueryParamsProvider;
-import com.davies.naraka.autoconfigure.jpa.SimpleQueryHelper;
+import com.davies.naraka.autoconfigure.jpa.SQLExecuteHelper;
+import com.davies.naraka.autoconfigure.jpa.SQLParamsProvider;
 import com.davies.naraka.puppeteer.domain.dto.CaseReportQueryDTO;
 import com.davies.naraka.puppeteer.domain.entity.CaseReport;
 import com.davies.naraka.puppeteer.domain.entity.CaseStep;
@@ -116,10 +116,10 @@ class ScriptCaseRepositoryTest {
         queryCase.setName(new QueryField<>(QueryFilterType.CONTAINS, Lists.newArrayList("12345", "login")));
 //        queryCase.setName(new QueryField<>(QueryFilterType.CONTAINS, Lists.newArrayList("xcx","login")));
         queryCase.setStepName("First");
-        QueryField<LocalDateTime> asc = new QueryField<>(QueryFilterType.ORDER_ASC, null);
-        QueryField<LocalDateTime> now = new QueryField<>(QueryFilterType.LESSTHANEQUAL, LocalDateTime.now());
+        QueryField<LocalDateTime> asc = new QueryField<>(QueryFilterType.ASC, null);
+        QueryField<LocalDateTime> now = new QueryField<>(QueryFilterType.LE, LocalDateTime.now());
         queryCase.setCreatedTime(Lists.newArrayList(asc, now));
-        queryCase.setUpdatedTime(new QueryField<>(QueryFilterType.ORDER_DESC, null));
+        queryCase.setUpdatedTime(new QueryField<>(QueryFilterType.DESC, null));
 
         Specification<ScriptCase> specification = specificationUtils.specification(queryCase);
         List<ScriptCase> cases = this.scriptCaseRepository.findAll(specification);
@@ -183,7 +183,7 @@ class ScriptCaseRepositoryTest {
     }
 
     @Autowired
-    private SimpleQueryHelper simpleQueryHelper;
+    private SQLExecuteHelper SQLExecuteHelper;
 
     @Test
     public void sqlTest() throws Throwable {
@@ -202,7 +202,7 @@ class ScriptCaseRepositoryTest {
         //Page<Object> objectPage = query.getPage(entityManager, queryDTO, "select c,h from CaseReport c left join CaseStepHistory h  on c.id = h.reportId", null);
 //        List list = caseReportRepository.queryList(queryDTO, "from CaseReport");
 
-        List<CaseReport> list = simpleQueryHelper.getList(QueryParamsProvider.query(queryDTO), CaseReport.class);
+        List<CaseReport> list = SQLExecuteHelper.getList(SQLParamsProvider.query(queryDTO), CaseReport.class);
 //
         for (Object o : list) {
             System.err.println(o);

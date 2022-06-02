@@ -24,12 +24,10 @@ class SysRoleAuthorityRepositoryTest {
 
     @Test
     public void println() {
-
         List<SysUser> sysUser = userRepository.findAll();
-
         log.info(sysUser.toString());
-
-
     }
+
+
 
 }

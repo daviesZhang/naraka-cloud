@@ -11,14 +11,14 @@ public interface QueryPage<T> {
      *
      * @return
      */
-    Long getSize();
+    Integer getSize();
 
     /**
      * 当前页码
      *
      * @return
      */
-    Long getCurrent();
+    Integer getCurrent();
 
     /**
      * 得到查询条件

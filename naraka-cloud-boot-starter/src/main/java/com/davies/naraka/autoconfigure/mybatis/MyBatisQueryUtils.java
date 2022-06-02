@@ -80,13 +80,13 @@ public class MyBatisQueryUtils extends QueryUtils {
     public <T, E> PageDTO<T> pageQuery(Supplier<T> supplier, QueryWrapper<E> queryWrapper, Page<E> page, IService<E> service) {
         service.page(page, queryWrapper);
         List<T> items = page.getRecords().stream().map(item -> ClassUtils.copyObject(item, supplier.get())).collect(Collectors.toList());
-        return new PageDTO<>(page.getCurrent(), page.getTotal(), page.getSize(), items);
+        return new PageDTO<>((int) page.getCurrent(), (int) page.getTotal(), (int) page.getSize(), items);
     }
 
     public <T, E, R> PageDTO<T> pageQuery(Supplier<T> supplier, QueryWrapper<E> queryWrapper, Page<R> page, BiFunction<Page<R>, QueryWrapper<E>, Page<R>> pageFunction) {
         pageFunction.apply(page, queryWrapper);
         List<T> items = page.getRecords().stream().map(item -> ClassUtils.copyObject(item, supplier.get())).collect(Collectors.toList());
-        return new PageDTO<>(page.getCurrent(), page.getTotal(), page.getSize(), items);
+        return new PageDTO<>((int) page.getCurrent(), (int) page.getTotal(), (int) page.getSize(), items);
     }
 
     /**
@@ -159,17 +159,16 @@ public class MyBatisQueryUtils extends QueryUtils {
         if (field != null) {
             config = field.getDeclaredAnnotation(QueryConfig.class);
         }
-        QueryField<?> queryField = null;
+        QueryField<?> queryField;
         if (config == null) {
             if (isCollection) {
                 queryField = new QueryField<Collection<?>>(QueryFilterType.CONTAINS, (Collection<?>) value);
             } else {
-                queryField = new QueryField<>(QueryFilterType.EQUALS, value);
+                queryField = new QueryField<>(QueryFilterType.EQ, value);
             }
         } else {
-            if (!config.skip()) {
-                queryField = new QueryField<>(config.filterType(), value);
-            }
+            queryField = new QueryField<>(config.filterType(), value);
+
         }
         return Optional.ofNullable(queryField);
 

@@ -1,6 +1,7 @@
 package com.davies.naraka.cloud.common.exception;
 
 /**
+ *
  * @author davies
  * @date 2022/3/19 19:21
  */
@@ -11,6 +12,16 @@ public class ObjectAlreadyExistsException extends NarakaException {
 
     public ObjectAlreadyExistsException(String message) {
         super(message);
+    }
+
+    public ObjectAlreadyExistsException(String message, int code) {
+        super(message);
+        this.code = code;
+    }
+
+    public ObjectAlreadyExistsException(String message, int code, Throwable cause) {
+        super(message, cause);
+        this.code = code;
     }
 
     public ObjectAlreadyExistsException(String message, Throwable cause) {

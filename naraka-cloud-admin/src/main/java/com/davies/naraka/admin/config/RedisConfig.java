@@ -1,7 +1,6 @@
 package com.davies.naraka.admin.config;
 
-import com.davies.naraka.autoconfigure.redis.RedisGenerateId;
-import org.redisson.api.RIdGenerator;
+import com.davies.naraka.autoconfigure.redis.RedisIdGenerate;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.EnableCaching;
@@ -29,10 +28,7 @@ public class RedisConfig {
     private RedissonClient redissonClient;
 
     @Bean
-    public RIdGenerator generateId() {
-        RIdGenerator rIdGenerator = new RedisGenerateId(redissonClient).generateId("admin");
-
-        return rIdGenerator;
-
+    public RedisIdGenerate generateId() {
+        return new RedisIdGenerate(redissonClient);
     }
 }

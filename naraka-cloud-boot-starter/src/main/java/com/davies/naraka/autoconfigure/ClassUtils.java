@@ -54,7 +54,7 @@ public class ClassUtils {
     public static <T> Object getFieldValue(T object, Field field) throws Throwable {
         String name = field.getName();
         Class<?> oClass = object.getClass();
-        String methodName = GET_STRING + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, name);
+        String methodName = GET_STRING + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, name);
         MethodHandle handle = LOOKUP.findVirtual(oClass, methodName, MethodType.methodType(field.getType()));
         return handle.invoke(object);
 

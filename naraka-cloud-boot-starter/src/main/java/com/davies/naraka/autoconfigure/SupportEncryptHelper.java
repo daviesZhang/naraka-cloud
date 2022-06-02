@@ -24,12 +24,12 @@ public class SupportEncryptHelper {
 
     public static boolean support(QueryFilterType filterType, String column, @Nullable EncryptProperties encryptProperties, @Nullable Field field) {
         switch (filterType) {
-            case ORDER_ASC:
-            case ORDER_DESC:
-            case LESSTHANEQUAL:
-            case LESSTHAN:
-            case GREATERTHANE:
-            case GREATERTHANEQUAL:
+            case ASC:
+            case DESC:
+            case LE:
+            case LT:
+            case GT:
+            case GE:
                 return false;
             default:
                 String key = getEncryptKey(column, encryptProperties, field);

@@ -17,11 +17,11 @@ import static com.davies.naraka.autoconfigure.enums.QueryFilterType.*;
 @Data
 public class RoleQueryDTO {
     @QueryFilter(types = {
-            EQUALS,
+            EQ,
             QueryFilterType.LIKE})
     private QueryField<String> name;
 
-    @QueryFilter(types = {LESSTHAN, EQUALS, LESSTHANEQUAL, GREATERTHANE, GREATERTHANEQUAL})
+    @QueryFilter(types = {LT, EQ, LE, GT, GE})
     private List<QueryField<LocalDateTime>> createdTime;
 
 }

@@ -28,36 +28,35 @@ public enum QueryFilterType {
     /**
      * 小于
      */
-    LESSTHAN,
+    LT,
     /**
      * 小于等于
      */
-    LESSTHANEQUAL,
+    LE,
     /**
      * 等于
      */
-    EQUALS,
+    EQ,
     /**
      * 不等于
      */
-    NOT_EQUALS,
+    NOT_EQ,
     /**
      * 大于等于
      */
-    GREATERTHANEQUAL,
+    GE,
     /**
      * 大于
      */
-    GREATERTHANE,
+    GT,
     /**
      * DESC排序
      */
-    ORDER_DESC,
+    DESC,
     /**
      * ASC排序
      */
-    ORDER_ASC;
-
+    ASC
 
 
 }

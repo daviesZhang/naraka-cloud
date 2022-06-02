@@ -1,12 +1,13 @@
 package com.davies.naraka.puppeteer.domain.enums;
 
-import com.davies.naraka.autoconfigure.EnumCodePersistence;
 import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.util.function.Supplier;
 
 /**
  * @author davies
  */
-public enum ScriptStatus implements EnumCodePersistence {
+public enum ScriptStatus implements Supplier<Integer> {
 
     ENABLE(10),
     DISABLE(11);
@@ -19,7 +20,7 @@ public enum ScriptStatus implements EnumCodePersistence {
     }
 
     @Override
-    public int getCode() {
+    public Integer get() {
         return code;
     }
 

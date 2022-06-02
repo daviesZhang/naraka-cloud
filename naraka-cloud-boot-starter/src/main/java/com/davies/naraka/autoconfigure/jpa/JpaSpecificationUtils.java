@@ -68,7 +68,7 @@ public class JpaSpecificationUtils extends QueryUtils {
         Specification<E> specification = specification(query.getQuery());
         Page<T> page = findPage.apply(specification, pageable).map(e -> ClassUtils.copyObject(e, supplier.get()));
         List<T> items = page.getContent();
-        return new PageDTO<>(query.getCurrent(), (long) page.getTotalPages(), query.getSize(), items);
+        return new PageDTO<>(query.getCurrent(), page.getTotalPages(), query.getSize(), items);
     }
 
     public <T, E, Q> PageDTO<T> pageQuery(
@@ -96,7 +96,7 @@ public class JpaSpecificationUtils extends QueryUtils {
         Specification<E> specification = specification(query.getQuery());
         Page<E> page = findPage.apply(specification, pageable);
         List<E> items = page.getContent();
-        return new PageDTO<>(query.getCurrent(), (long) page.getTotalPages(), query.getSize(), items);
+        return new PageDTO<>(query.getCurrent(), page.getTotalPages(), query.getSize(), items);
     }
 
 
@@ -209,7 +209,7 @@ public class JpaSpecificationUtils extends QueryUtils {
             if (value instanceof Collection) {
                 queryField = new QueryField<>(QueryFilterType.CONTAINS, (Collection<?>) value);
             } else {
-                queryField = new QueryField<>(QueryFilterType.EQUALS, value);
+                queryField = new QueryField<>(QueryFilterType.EQ, value);
             }
         }
         return queryField;

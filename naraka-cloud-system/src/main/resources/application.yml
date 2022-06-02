@@ -1,1 +1,11 @@
 
+naraka:
+  security:
+    enable: true
+  encrypt:
+    enable: true
+    keyMap:
+      email: #!@#!@41231d2312
+      phone: #!@#!@41cxzca231d2
+  redis:
+    address: redis://127.0.0.1:6379

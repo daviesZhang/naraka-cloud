@@ -13,7 +13,6 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 public @interface QueryConfig {
 
-    boolean skip() default false;
 
-    QueryFilterType filterType() default QueryFilterType.EQUALS;
+    QueryFilterType filterType() default QueryFilterType.EQ;
 }

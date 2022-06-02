@@ -40,10 +40,10 @@ public class EncryptMyBatisQueryHandle implements MyBatisQueryHandle {
                                       Field field) {
         String key = SupportEncryptHelper.getEncryptKey(column, encryptProperties, field);
         switch (filterType) {
-            case EQUALS:
+            case EQ:
                 queryWrapper.eq(column, SupportEncryptHelper.encrypt(value, key));
                 break;
-            case NOT_EQUALS:
+            case NOT_EQ:
                 queryWrapper.ne(column, SupportEncryptHelper.encrypt(value, key));
                 break;
             case LIKE:

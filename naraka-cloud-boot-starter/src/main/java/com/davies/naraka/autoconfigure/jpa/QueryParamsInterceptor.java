@@ -23,11 +23,11 @@ public interface QueryParamsInterceptor<T> {
      * 最后
      *
      * @param object
-     * @param queryParams
+     * @param QuerySQLParams
      * @return
      */
-    default QueryParams after(T object, QueryParams queryParams) {
-        return queryParams;
+    default QuerySQLParams after(T object, QuerySQLParams QuerySQLParams) {
+        return QuerySQLParams;
     }
 
     /**

@@ -1,6 +1,6 @@
 package com.davies.naraka.autoconfigure.jackson;
 
-import com.davies.naraka.autoconfigure.EnumCodePersistence;
+
 import com.davies.naraka.autoconfigure.domain.QueryField;
 import com.davies.naraka.autoconfigure.enums.QueryFilterType;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -17,6 +17,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * jackson反序列化时的自定义逻辑
@@ -83,8 +84,8 @@ public class CustomBeanDeserializerModifier extends BeanDeserializerModifier {
             if (enumClass.isEnum()) {
                 Object value = p.getText();
                 for (Object o : enumClass.getEnumConstants()) {
-                    if (o instanceof EnumCodePersistence){
-                        if (Objects.equals(p.getIntValue(),((EnumCodePersistence) o).getCode())) {
+                    if (o instanceof Supplier) {
+                        if (Objects.equals(p.getIntValue(), ((Supplier) o).get())) {
                             return o;
                         }
                     }
@@ -136,7 +137,7 @@ public class CustomBeanDeserializerModifier extends BeanDeserializerModifier {
                 return new QueryField<Object>(QueryFilterType.CONTAINS, value);
             }
             Object value = this.src.findProperty(QUERY_FIELD_FILTER).getValueDeserializer().deserialize(p, ctxt);
-            return new QueryField<Object>(QueryFilterType.EQUALS, value);
+            return new QueryField<Object>(QueryFilterType.EQ, value);
         }
 
 

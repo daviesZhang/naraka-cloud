@@ -77,7 +77,7 @@ public class RoleController {
                 .stream().map(AuthorityRole::getAuthority).collect(Collectors.toList());
         if (queryDTO.getAssign()) {
             if (authorityList.isEmpty()) {
-                return new PageDTO<>(query.getCurrent(), query.getSize(), 0L, Collections.emptyList());
+                return new PageDTO<>(query.getCurrent(), query.getSize(), 0, Collections.emptyList());
             }
             queryDTO.setId(new QueryField<>(QueryFilterType.CONTAINS, authorityList));
         } else {

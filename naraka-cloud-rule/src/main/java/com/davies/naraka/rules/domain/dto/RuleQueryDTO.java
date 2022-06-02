@@ -23,17 +23,17 @@ public class RuleQueryDTO {
     private String project;
 
 
-    @QueryFilter(types = {LIKE, EQUALS})
+    @QueryFilter(types = {LIKE, EQ})
     private QueryField<String> name;
 
 
     private String createdBy;
 
-    @QueryFilter(types = {ORDER_ASC, ORDER_DESC, LESSTHANEQUAL, GREATERTHANEQUAL})
+    @QueryFilter(types = {ASC, DESC, LE, GE})
     private List<QueryField<LocalDateTime>> createdTime;
 
     private String updatedBy;
 
-    @QueryFilter(types = {ORDER_ASC, ORDER_DESC})
+    @QueryFilter(types = {ASC, DESC})
     private QueryField<LocalDateTime> updatedTime;
 }

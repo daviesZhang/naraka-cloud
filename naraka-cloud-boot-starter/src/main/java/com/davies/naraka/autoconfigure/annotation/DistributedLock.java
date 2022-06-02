@@ -1,4 +1,4 @@
-package com.davies.naraka.admin.annotation;
+package com.davies.naraka.autoconfigure.annotation;
 
 import java.lang.annotation.*;
 
@@ -8,7 +8,7 @@ import java.lang.annotation.*;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Target({ElementType.METHOD})
 public @interface DistributedLock {
 
     /**

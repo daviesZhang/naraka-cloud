@@ -26,10 +26,10 @@ class DefaultMyBatisQueryHandle implements MyBatisQueryHandle {
     @Override
     public <T> QueryWrapper<T> handle(QueryWrapper<T> queryWrapper, QueryFilterType filterType, String column, Object value, Field field) {
         switch (filterType) {
-            case EQUALS:
+            case EQ:
                 queryWrapper.eq(column, value);
                 break;
-            case NOT_EQUALS:
+            case NOT_EQ:
                 queryWrapper.ne(column, value);
                 break;
             case LIKE:
@@ -47,22 +47,22 @@ class DefaultMyBatisQueryHandle implements MyBatisQueryHandle {
             case NOT_CONTAINS:
                 this.queryListCondition(column, value, queryWrapper::notIn);
                 break;
-            case LESSTHAN:
+            case LT:
                 queryWrapper.lt(column, value);
                 break;
-            case GREATERTHANE:
+            case GT:
                 queryWrapper.gt(column, value);
                 break;
-            case LESSTHANEQUAL:
+            case LE:
                 queryWrapper.le(column, value);
                 break;
-            case GREATERTHANEQUAL:
+            case GE:
                 queryWrapper.ge(column, value);
                 break;
-            case ORDER_ASC:
+            case ASC:
                 queryWrapper.orderByAsc(column);
                 break;
-            case ORDER_DESC:
+            case DESC:
                 queryWrapper.orderByDesc(column);
                 break;
             default:

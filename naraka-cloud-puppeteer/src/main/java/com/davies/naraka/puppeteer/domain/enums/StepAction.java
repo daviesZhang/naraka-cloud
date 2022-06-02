@@ -1,12 +1,12 @@
 package com.davies.naraka.puppeteer.domain.enums;
 
-import com.davies.naraka.autoconfigure.EnumCodePersistence;
+import java.util.function.Supplier;
 
 /**
  * @author davies
  */
 
-public enum StepAction implements EnumCodePersistence {
+public enum StepAction implements Supplier<Integer> {
 
     /**
      *
@@ -24,7 +24,7 @@ public enum StepAction implements EnumCodePersistence {
     }
 
     @Override
-    public int getCode() {
+    public Integer get() {
         return code;
     }
 }

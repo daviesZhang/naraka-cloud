@@ -1,6 +1,5 @@
 package com.davies.naraka.autoconfigure.jpa;
 
-import com.davies.naraka.autoconfigure.EnumCodePersistence;
 import com.google.common.base.Strings;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
@@ -14,6 +13,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.function.Supplier;
 
 /**
  * 实现了EnumCodePersistence 接口的Enum 类型转换,入库为自定义int node
@@ -55,21 +55,21 @@ public class EnumCodeUserType implements UserType, DynamicParameterizedType {
         if (value == null) {
             return null;
         }
-        if (EnumCodePersistence.class.isAssignableFrom(this.enumClass)) {
-            EnumCodePersistence[] objects = (EnumCodePersistence[]) this.enumClass.getEnumConstants();
-            for (EnumCodePersistence o : objects) {
-                if (Objects.equals(value, o.getCode())) {
+        if (Supplier.class.isAssignableFrom(this.enumClass)) {
+            Supplier[] objects = (Supplier[]) this.enumClass.getEnumConstants();
+            for (Supplier o : objects) {
+                if (Objects.equals(value, o.get())) {
                     return o;
                 }
             }
         }
-        throw new IllegalArgumentException(Strings.lenientFormat("%s must impl EnumCodePersistence",this.enumClass.getName()));
+        throw new IllegalArgumentException(Strings.lenientFormat("%s must impl EnumCodePersistence", this.enumClass.getName()));
     }
 
     @Override
     public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
-        EnumCodePersistence code = (EnumCodePersistence) value;
-        st.setInt(index, code.getCode());
+        Supplier code = (Supplier) value;
+        st.setObject(index, code.get());
     }
 
 

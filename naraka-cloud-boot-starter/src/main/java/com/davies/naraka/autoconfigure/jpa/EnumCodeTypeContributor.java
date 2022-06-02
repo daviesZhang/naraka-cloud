@@ -1,6 +1,6 @@
 package com.davies.naraka.autoconfigure.jpa;
 
-import com.davies.naraka.autoconfigure.EnumCodePersistence;
+
 import com.davies.naraka.cloud.common.StringConstants;
 import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -64,7 +65,7 @@ public class EnumCodeTypeContributor implements TypeContributor {
             if (typeEnumsPackage.contains(StringConstants.STAR) && !typeEnumsPackage.contains(StringConstants.COMMA)
                     && !typeEnumsPackage.contains(StringConstants.SEMICOLON)) {
                 try {
-                    classes = this.scanClasses(typeEnumsPackage, EnumCodePersistence.class);
+                    classes = this.scanClasses(typeEnumsPackage, Supplier.class);
                 } catch (IOException e) {
                     throw new RuntimeException("Cannot scan class in '[" + typeEnumsPackage + "]' package", e);
                 }
@@ -78,7 +79,7 @@ public class EnumCodeTypeContributor implements TypeContributor {
                 Assert.notNull(typeEnumsPackageArray, "not find typeEnumsPackage:" + typeEnumsPackage);
                 Stream.of(typeEnumsPackageArray).forEach(typePackage -> {
                     try {
-                        Set<Class<?>> scanTypePackage = scanClasses(typePackage, EnumCodePersistence.class);
+                        Set<Class<?>> scanTypePackage = scanClasses(typePackage, Supplier.class);
                         if (scanTypePackage.isEmpty()) {
                             log.warn("Can't find class in '[" + typePackage + "]' package. Please check your configuration.");
                         } else {

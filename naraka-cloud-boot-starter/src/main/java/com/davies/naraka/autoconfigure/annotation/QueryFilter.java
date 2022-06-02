@@ -15,7 +15,7 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 public @interface QueryFilter {
 
-    QueryFilterType[] types() default {QueryFilterType.EQUALS};
+    QueryFilterType[] types() default {QueryFilterType.EQ};
 
 
 }

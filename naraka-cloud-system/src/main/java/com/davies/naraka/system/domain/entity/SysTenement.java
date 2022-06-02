@@ -1,13 +1,19 @@
 package com.davies.naraka.system.domain.entity;
 
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
+
+import static javax.persistence.ConstraintMode.NO_CONSTRAINT;
 
 @Builder
 @AllArgsConstructor
@@ -16,10 +22,13 @@ import java.time.LocalDateTime;
 @Setter
 @ToString(onlyExplicitlyIncluded = true)
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "sys_tenement")
 public class SysTenement implements Serializable {
     private static final long serialVersionUID = -5500911615012024438L;
     @Id
+    @GeneratedValue(generator = "id_generator")
+    @GenericGenerator(name = "id_generator", strategy = "com.davies.naraka.system.config.IdGenerator")
     @Column(name = "id", nullable = false, length = 64)
     private String id;
 
@@ -29,19 +38,35 @@ public class SysTenement implements Serializable {
     @Column(name = "`desc`")
     private String desc;
 
+    @ManyToMany(mappedBy = "tenements", fetch = FetchType.LAZY)
+    private List<SysUser> users;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "sys_tenement_role",
+            joinColumns = @JoinColumn(name = "tenement_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_code"),
+            foreignKey = @ForeignKey(NO_CONSTRAINT),
+            inverseForeignKey = @ForeignKey(NO_CONSTRAINT))
+    private List<SysRole> roles;
+
+
     @Column(name = "logic_delete", nullable = false)
     private Boolean logicDelete = false;
 
     @Column(name = "created_by", nullable = false, length = 64)
+    @CreatedBy
     private String createdBy;
 
     @Column(name = "created_date", nullable = false)
+    @CreatedDate
     private LocalDateTime createdDate;
 
     @Column(name = "updated_date")
+    @LastModifiedDate
     private LocalDateTime updatedDate;
 
     @Column(name = "updated_by", length = 64)
+    @LastModifiedBy
     private String updatedBy;
 
 }

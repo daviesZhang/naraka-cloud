@@ -19,38 +19,35 @@ import static com.davies.naraka.autoconfigure.enums.QueryFilterType.*;
 @Data
 public class AuthorityQueryDTO {
     @QueryFilter(types = {
-            ORDER_ASC,
-            ORDER_DESC,
-            EQUALS,
+            ASC,
+            DESC,
+            EQ,
             LIKE})
     private QueryField<String> resource;
 
 
-    @QueryFilter(types = {CONTAINS, ORDER_ASC,
-            ORDER_DESC})
+    @QueryFilter(types = {CONTAINS, ASC,
+            DESC})
     private QueryField<List<AuthorityProcessorType>> processor;
 
 
-    @QueryFilter(types = {CONTAINS, ORDER_ASC,
-            ORDER_DESC})
+    @QueryFilter(types = {CONTAINS, ASC,
+            DESC})
     private QueryField<List<ResourceType>> resourceType;
 
 
-
-
-
-    @QueryFilter(types = {STARTS_WITH,LIKE})
+    @QueryFilter(types = {STARTS_WITH, LIKE})
     private QueryField<String> processorValue;
 
 
     @QueryFilter(types = {
-            ORDER_ASC,
-            ORDER_DESC,
-            LESSTHAN,
-            EQUALS,
-            LESSTHANEQUAL,
-            GREATERTHANE,
-            GREATERTHANEQUAL})
+            ASC,
+            DESC,
+            LT,
+            EQ,
+            LE,
+            GT,
+            GE})
     private List<QueryField<LocalDateTime>> createdTime;
 
 

@@ -59,7 +59,7 @@ public class UserQueryDTO {
 
 
     @QueryFilter(types = {
-            EQUALS,
+            EQ,
             LIKE})
     @ColumnName("u.username")
     private QueryField<String> username;
@@ -73,39 +73,38 @@ public class UserQueryDTO {
     private QueryField<List<UserType>> type;
 
 
-
     @Crypto
-    @QueryFilter(types = {STARTS_WITH,EQUALS})
+    @QueryFilter(types = {STARTS_WITH, EQ})
     private QueryField<String> email;
 
     @Crypto
-    @QueryFilter(types = {STARTS_WITH,EQUALS})
+    @QueryFilter(types = {STARTS_WITH, EQ})
     private QueryField<String> phone;
 
     @QueryFilter(types = {
-            ORDER_ASC,
-            ORDER_DESC,
-            LESSTHAN,
-            EQUALS,
-            LESSTHANEQUAL,
-            GREATERTHANE,
-            GREATERTHANEQUAL})
+            ASC,
+            DESC,
+            LT,
+            EQ,
+            LE,
+            GT,
+            GE})
     @ColumnName("u.created_time")
     private List<QueryField<LocalDateTime>> createdTime;
 
     @QueryFilter(types = {
-            ORDER_ASC,
-            ORDER_DESC,
-            LESSTHAN,
-            EQUALS,
-            LESSTHANEQUAL,
-            GREATERTHANE,
-            GREATERTHANEQUAL})
+            ASC,
+            DESC,
+            LT,
+            EQ,
+            LE,
+            GT,
+            GE})
     private List<QueryField<LocalDateTime>> passwordExpireTime;
 
 
     @QueryFilter(types = {
-            EQUALS,
+            EQ,
             LIKE})
     @ColumnName("r.code")
     private QueryField<String> role;

@@ -53,9 +53,9 @@ class EncryptJpaQueryHandle implements JpaQueryHandle {
                 return likePredicate(column, root, cb, key, value.toString() + StringConstants.PERCENT);
             case ENDS_WITH:
                 return likePredicate(column, root, cb, key, StringConstants.PERCENT + value.toString());
-            case EQUALS:
+            case EQ:
                 return cb.equal(root.get(column), encrypt(value, key));
-            case NOT_EQUALS:
+            case NOT_EQ:
                 return cb.notEqual(root.get(column), encrypt(value, key));
             case CONTAINS:
                 return containsPredicate(column, root, key, value, null);

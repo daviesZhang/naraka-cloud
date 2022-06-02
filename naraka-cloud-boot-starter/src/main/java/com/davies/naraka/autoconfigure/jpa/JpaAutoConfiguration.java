@@ -1,7 +1,6 @@
 package com.davies.naraka.autoconfigure.jpa;
 
 import com.davies.naraka.autoconfigure.CurrentUserNameSupplier;
-import com.davies.naraka.autoconfigure.EnumCodePersistence;
 import com.davies.naraka.autoconfigure.properties.EncryptProperties;
 import org.hibernate.boot.model.TypeContributor;
 import org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl;
@@ -26,8 +25,7 @@ import java.util.List;
  *
  * @author davies
  * @see EnumCodeTypeContributor 自动枚举-code映射转换,需配置枚举所在包,多个用;隔开 naraka.jpa.typeEnumsPackage
- * @see EnumCodePersistence
- * 自定义枚举需实现EnumCodePersistence接口后
+ * 自定义枚举需实现Supplier接口后
  * //@Type(type = "Status") //type为枚举类的simpleName
  * // private Status scriptStatus;
  * @see CryptoStringTypeContributor 字符串出库入库加解密
@@ -76,9 +74,9 @@ public class JpaAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(SimpleQueryHelper.class)
-    public SimpleQueryHelper simpleQueryHelper(EntityManager entityManager) {
-        return new SimpleQueryHelper(entityManager);
+    @ConditionalOnMissingBean(SQLExecuteHelper.class)
+    public SQLExecuteHelper simpleQueryHelper(EntityManager entityManager) {
+        return new SQLExecuteHelper(entityManager);
     }
 
     @Bean

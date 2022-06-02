@@ -41,26 +41,26 @@ class DefaultJpaQueryHandle implements JpaQueryHandle {
                 return likePredicate(column, root, cb, value.toString() + StringConstants.PERCENT);
             case ENDS_WITH:
                 return likePredicate(column, root, cb, StringConstants.PERCENT + value.toString());
-            case EQUALS:
+            case EQ:
                 return cb.equal(root.get(column), value);
-            case NOT_EQUALS:
+            case NOT_EQ:
                 return cb.notEqual(root.get(column), value);
             case CONTAINS:
                 return containsPredicate(column, root, value, null);
             case NOT_CONTAINS:
                 return containsPredicate(column, root, value, Predicate::not);
-            case LESSTHAN:
+            case LT:
                 return comparablePredicate(root.get(column), value, cb::lessThan);
-            case LESSTHANEQUAL:
+            case LE:
                 return comparablePredicate(root.get(column), value, cb::lessThanOrEqualTo);
-            case GREATERTHANE:
+            case GT:
                 return comparablePredicate(root.get(column), value, cb::greaterThan);
-            case GREATERTHANEQUAL:
+            case GE:
                 return comparablePredicate(root.get(column), value, cb::greaterThanOrEqualTo);
-            case ORDER_ASC:
+            case ASC:
                 orders.add(cb.asc(root.get(column)));
                 return null;
-            case ORDER_DESC:
+            case DESC:
                 orders.add(cb.desc(root.get(column)));
                 return null;
             default:

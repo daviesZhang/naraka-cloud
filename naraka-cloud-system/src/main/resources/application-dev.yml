@@ -35,4 +35,6 @@ naraka:
   username:
     header: username
   jpa:
-    typeEnumsPackage: com.davies.naraka.puppeteer.domain.enums
+    typeEnumsPackage: com.davies.naraka.system.domain.enums
+server:
+  port: 8088

@@ -7,12 +7,24 @@ package com.davies.naraka.cloud.common.exception;
 public class NarakaException extends RuntimeException {
 
 
+    protected int code;
+
     public NarakaException() {
         super();
     }
 
     public NarakaException(String message) {
         super(message);
+    }
+
+    public NarakaException(String message, int code) {
+        super(message);
+        this.code = code;
+    }
+
+    public NarakaException(String message, int code, Throwable cause) {
+        super(message, cause);
+        this.code = code;
     }
 
     public NarakaException(String message, Throwable cause) {

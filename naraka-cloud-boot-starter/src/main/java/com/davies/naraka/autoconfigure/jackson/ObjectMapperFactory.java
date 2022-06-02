@@ -35,6 +35,8 @@ public class ObjectMapperFactory implements Function<CustomFieldBeanSerializerMo
     public ObjectMapper apply(CustomFieldBeanSerializerModifier customFieldBeanSerializerModifier) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        //关闭未定义属性反序列化时报错
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         if (this.smartConverter) {
             objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
         }

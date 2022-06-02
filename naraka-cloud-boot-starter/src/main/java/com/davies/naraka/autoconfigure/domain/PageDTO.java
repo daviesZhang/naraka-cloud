@@ -6,7 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author davies
@@ -18,13 +20,25 @@ import java.util.List;
 @NoArgsConstructor
 public class PageDTO<T> {
 
-    private Long current;
+    private Integer current;
 
-    private Long total;
+    private Integer total;
 
-    private Long size;
+    private Integer size;
 
     private List<T> items;
 
+    private Map<String, Object> statistics = new HashMap<>();
 
+
+    public PageDTO(Integer current, Integer total, Integer size, List<T> items) {
+        this.current = current;
+        this.total = total;
+        this.size = size;
+        this.items = items;
+    }
+
+    public void put(String key, Object value) {
+        this.statistics.put(key, value);
+    }
 }
