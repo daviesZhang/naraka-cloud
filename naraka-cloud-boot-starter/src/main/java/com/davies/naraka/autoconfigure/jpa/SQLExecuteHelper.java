@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * @date 2022/3/26 21:14
  */
 public class SQLExecuteHelper {
-    private static final Pattern FROM_PATTERN = Pattern.compile("select.*?from", Pattern.CASE_INSENSITIVE);
+    private static final Pattern FROM_PATTERN = Pattern.compile("SELECT.*?FROM", Pattern.CASE_INSENSITIVE);
 
     private static final String COUNT_FROM = "SELECT COUNT(*) FROM";
 

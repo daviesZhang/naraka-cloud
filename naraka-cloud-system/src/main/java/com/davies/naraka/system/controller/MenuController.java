@@ -20,7 +20,6 @@ public class MenuController {
 
     @GetMapping("/own")
     public List<String> menus() {
-
         return Lists.newArrayList();
     }
 }

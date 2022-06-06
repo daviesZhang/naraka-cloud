@@ -21,8 +21,12 @@ public interface TenementService {
     void deleteUserTenement(String userId);
 
 
+    void resetUserTenement(String userId, List<String> tenementId);
+
     void insertUserTenement(String userId, List<String> tenementId);
 
 
     void updateTenement(SysTenement tenement, List<String> roles);
+
+
 }

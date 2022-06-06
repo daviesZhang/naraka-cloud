@@ -86,6 +86,7 @@ public class SQLParamsProvider {
         return SQLParamsProvider.builder(o, true, pageable, sort, interceptor);
     }
 
+    @SuppressWarnings({"unchecked"})
     private static <T, R extends SQLParams> R builder(T o, boolean isQueryParams, Pageable pageable, Sort sort, QueryParamsInterceptor<T> interceptor) {
         StringBuilder builder = new StringBuilder();
         Function<Query, Query> queryConsumer;
@@ -108,7 +109,7 @@ public class SQLParamsProvider {
         }
         String join = isQueryParams ? SQL_AND : SQL_JOIN;
 
-        String prdfix = isQueryParams ? SQL_WHERE : SQL_SET;
+        String prefix = isQueryParams ? SQL_WHERE : SQL_SET;
 
         if (null != interceptor) {
             String sql = interceptor.afterByWhere(o, builder.toString());
@@ -124,7 +125,7 @@ public class SQLParamsProvider {
             });
         }
         if (builder.length() > 0) {
-            builder.insert(0, prdfix);
+            builder.insert(0, prefix);
         }
 
         if (sorts.isEmpty() && pageable != null) {
@@ -140,8 +141,6 @@ public class SQLParamsProvider {
 
         if (interceptor != null) {
             return (R) interceptor.after(o, new QuerySQLParams(builder.toString(), queryConsumer, pageable));
-
-
         }
         return (R) new QuerySQLParams(builder.toString(), queryConsumer, pageable);
     }

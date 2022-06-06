@@ -70,7 +70,7 @@ public class SecurityService {
         }
         for (SysTenement sysTenement : sysTenements) {
             CurrentTenement tenement = new CurrentTenement();
-            tenement.setId(sysTenement.getCode());
+            tenement.setCode(sysTenement.getCode());
             tenement.setName(sysTenement.getName());
             tenements.add(tenement);
         }

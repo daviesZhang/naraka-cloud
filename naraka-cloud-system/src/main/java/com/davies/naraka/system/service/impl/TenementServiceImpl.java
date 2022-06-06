@@ -13,7 +13,6 @@ import com.davies.naraka.system.repository.SysTenementRepository;
 import com.davies.naraka.system.repository.SysUserTenementRepository;
 import com.davies.naraka.system.service.RoleService;
 import com.davies.naraka.system.service.TenementService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,18 +27,18 @@ import java.util.List;
 public class TenementServiceImpl implements TenementService {
 
 
-    @Autowired
-    private SysTenementRepository tenementRepository;
-    @Autowired
-    private SysUserTenementRepository userTenementRepository;
+    private final SysTenementRepository tenementRepository;
+    private final SysUserTenementRepository userTenementRepository;
     private final SQLExecuteHelper executeHelper;
 
 
-    @Autowired
-    private RoleService roleService;
+    private final RoleService roleService;
 
-    public TenementServiceImpl(SQLExecuteHelper executeHelper) {
+    public TenementServiceImpl(SQLExecuteHelper executeHelper, RoleService roleService, SysTenementRepository tenementRepository, SysUserTenementRepository userTenementRepository) {
         this.executeHelper = executeHelper;
+        this.roleService = roleService;
+        this.tenementRepository = tenementRepository;
+        this.userTenementRepository = userTenementRepository;
     }
 
     @Override
@@ -51,6 +50,13 @@ public class TenementServiceImpl implements TenementService {
     @Override
     public void deleteUserTenement(String userId) {
         userTenementRepository.deleteByUserId(userId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void resetUserTenement(String userId, List<String> tenementId) {
+        deleteUserTenement(userId);
+        insertUserTenement(userId, tenementId);
     }
 
     @Override
