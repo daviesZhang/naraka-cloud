@@ -3,6 +3,7 @@ package com.davies.naraka.system.domain.dto;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 /**
  * @author davies
@@ -22,5 +23,9 @@ public class UserCreateDTO {
 
 
     private String phone;
+
+    private List<String> roles;
+
+    private List<String> tenements;
 
 }

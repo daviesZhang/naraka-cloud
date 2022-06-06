@@ -66,12 +66,12 @@ class UserServiceImplTest extends BaseTest {
         authorityRepository.save(authority);
         SysRole sysRole = new SysRole();
         sysRole.setName("超级管理员");
-        sysRole.setId("ADMIN");
+        sysRole.setCode("ADMIN");
         sysRole.setCreatedBy("root");
         // sysRole.setAuthorities(Collections.singletonList(authority));
         roleRepository.save(sysRole);
         SysRoleAuthority roleAuthority = new SysRoleAuthority();
-        SysRoleAuthorityId roleAuthorityId = new SysRoleAuthorityId(sysRole.getId(), authority.getId());
+        SysRoleAuthorityId roleAuthorityId = new SysRoleAuthorityId(sysRole.getCode(), authority.getId());
         roleAuthority.setId(roleAuthorityId);
         roleAuthority.setCreatedBy("root");
         roleAuthorityRepository.save(roleAuthority);
@@ -79,6 +79,7 @@ class UserServiceImplTest extends BaseTest {
         SysTenement tenement = new SysTenement();
         tenement.setDesc("总经销商");
         tenement.setName("总经销商");
+        tenement.setCode("LEVEL_1");
         tenement.setCreatedBy("root");
         tenementRepository.save(tenement);
         SysUser sysUser = new SysUser();
@@ -89,16 +90,16 @@ class UserServiceImplTest extends BaseTest {
         // sysUser.setTenements(Collections.singletonList(tenement));
         // sysUser.setRoles(Collections.singletonList(sysRole));
 
-        userService.createUser(sysUser);
+        userService.createUser(sysUser, null, null);
 
         SysUserRole sysUserRole = new SysUserRole();
-        SysUserRoleId userRoleId = new SysUserRoleId(sysUser.getId(), sysRole.getId());
+        SysUserRoleId userRoleId = new SysUserRoleId(sysUser.getId(), sysRole.getCode());
         sysUserRole.setId(userRoleId);
         sysUserRole.setCreatedBy("root");
         userRoleRepository.save(sysUserRole);
 
         SysUserTenement userTenement = new SysUserTenement();
-        SysUserTenementId userTenementId = new SysUserTenementId(sysUser.getId(), tenement.getId());
+        SysUserTenementId userTenementId = new SysUserTenementId(sysUser.getId(), tenement.getCode());
         userTenement.setId(userTenementId);
         userTenement.setCreatedBy("root");
         userTenementRepository.save(userTenement);

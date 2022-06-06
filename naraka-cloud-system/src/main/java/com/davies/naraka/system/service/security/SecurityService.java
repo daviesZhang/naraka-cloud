@@ -55,7 +55,7 @@ public class SecurityService {
         List<CurrentTenement> tenements = new ArrayList<>(sysTenements.size());
         for (SysRole sysRole : sysRoles) {
             CurrentRole role = new CurrentRole();
-            role.setId(sysRole.getId());
+            role.setCode(sysRole.getCode());
             role.setName(sysRole.getName());
             roles.add(role);
             for (SysAuthority authority : sysRole.getAuthorities()) {
@@ -70,7 +70,7 @@ public class SecurityService {
         }
         for (SysTenement sysTenement : sysTenements) {
             CurrentTenement tenement = new CurrentTenement();
-            tenement.setId(sysTenement.getId());
+            tenement.setId(sysTenement.getCode());
             tenement.setName(sysTenement.getName());
             tenements.add(tenement);
         }

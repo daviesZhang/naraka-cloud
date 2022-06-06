@@ -20,6 +20,15 @@ public interface RoleService {
      */
     void deleteUserRole(String userId);
 
+    void deleteRole(String code);
+
+    void deleteTenementRole(String tenementId);
+
+    void insertTenementRole(String tenementId, List<String> roles);
+
+    void resetTenementRole(String tenementId, List<String> roles);
+
+    void resetUserRole(String userId, List<String> roles);
 
     void insertUserRole(String userId, List<String> roles);
 }

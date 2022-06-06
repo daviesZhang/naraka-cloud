@@ -1,7 +1,6 @@
 package com.davies.naraka.system.domain.entity;
 
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -27,16 +26,17 @@ import static javax.persistence.ConstraintMode.NO_CONSTRAINT;
 public class SysTenement implements Serializable {
     private static final long serialVersionUID = -5500911615012024438L;
     @Id
-    @GeneratedValue(generator = "id_generator")
-    @GenericGenerator(name = "id_generator", strategy = "com.davies.naraka.system.config.IdGenerator")
-    @Column(name = "id", nullable = false, length = 64)
-    private String id;
+    @Column(name = "code", nullable = false, length = 64)
+    private String code;
 
     @Column(name = "name", nullable = false, length = 64)
     private String name;
 
     @Column(name = "`desc`")
     private String desc;
+
+    @Column(name = "parent_code", length = 64)
+    private String parentId;
 
     @ManyToMany(mappedBy = "tenements", fetch = FetchType.LAZY)
     private List<SysUser> users;

@@ -6,6 +6,8 @@ import com.davies.naraka.system.domain.dto.TokenRequestDTO;
 import com.davies.naraka.system.domain.entity.SysUser;
 import com.davies.naraka.system.repository.SysUserRepository;
 import com.davies.naraka.system.service.security.SecurityService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -38,24 +40,29 @@ public class TokenController {
     }
 
     @PostMapping()
-    public String token(@RequestBody @Validated TokenRequestDTO tokenRequest) {
-        String username = tokenRequest.getUsername();
+    public ResponseEntity<String> token(@RequestBody @Validated TokenRequestDTO tokenRequest
+    ) {
+        String username = tokenRequest.getPrincipal();
         SysUser sysUser = userRepository
-                .findByUsername(tokenRequest.getUsername())
+                .findByUsername(username)
                 .orElseThrow(() -> new NarakaException("用户不存在或密码错误~", 401));
         boolean success = passwordEncoder.matches(tokenRequest.getPassword(), sysUser.getPassword());
         if (success) {
             this.securityService.login(username);
-            return generatorToken.apply(username, null);
+            String token = generatorToken.apply(username, null);
+            return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, token)
+                    .body(token);
         }
         throw new NarakaException("用户不存在或密码错误~", 401);
     }
 
 
     @GetMapping("/refresh")
-    public String refresh(HttpServletRequest request) {
+    public ResponseEntity<String> refresh(HttpServletRequest request) {
         String username = request.getRemoteUser();
         this.securityService.login(username);
-        return generatorToken.apply(username, null);
+        String token = generatorToken.apply(username, null);
+        return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, token)
+                .body(token);
     }
 }

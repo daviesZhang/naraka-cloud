@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class TokenRequestDTO {
 
-    private String username;
+    private String principal;
 
     private String password;
 }

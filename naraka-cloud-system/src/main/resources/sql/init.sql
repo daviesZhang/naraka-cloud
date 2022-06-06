@@ -1,14 +1,14 @@
 drop table if exists sys_authority;
 CREATE TABLE `sys_authority`
 (
-    `id`               varchar(64)  NOT NULL,
-    `uri`              varchar(255) NOT NULL,
-    `authority_method` tinyint      NOT NULL COMMENT '访问,入参,响应',
-    `data`             text         NULL,
-    `created_by`       varchar(64)  NOT NULL,
-    `created_date`     datetime     NOT NULL,
-    `updated_date`     datetime     NULL,
-    `updated_by`       varchar(64)  NULL,
+    `id`            varchar(64)  NOT NULL,
+    `resource`      varchar(255) NOT NULL,
+    `resource_type` tinyint      NOT NULL COMMENT '',
+    `data`          text         NULL,
+    `created_by`    varchar(64)  NOT NULL,
+    `created_date`  datetime     NOT NULL,
+    `updated_date`  datetime     NULL,
+    `updated_by`    varchar(64)  NULL,
     PRIMARY KEY (`id`)
 );
 
@@ -38,7 +38,8 @@ CREATE TABLE `sys_role_authority`
 drop table if exists sys_tenement;
 CREATE TABLE `sys_tenement`
 (
-    `id`           varchar(64)  NOT NULL,
+    `code`         varchar(64)  NOT NULL,
+    `parent_code`  varchar(64),
     `name`         varchar(64)  NOT NULL,
     `desc`         varchar(255) NULL,
     `logic_delete` tinyint(1)   NOT NULL DEFAULT 0,
@@ -46,8 +47,23 @@ CREATE TABLE `sys_tenement`
     `created_date` datetime     NOT NULL,
     `updated_date` datetime     NULL,
     `updated_by`   varchar(64)  NULL,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`code`)
 );
+
+
+
+drop table if exists sys_tenement_tree;
+
+create table sys_tenement_tree
+(
+    descendant varchar(64) not null comment '代表后代节点',
+    ancestor   varchar(64) not null comment '代表祖先节点',
+    distance   int         not null comment '祖先距离后代的距离',
+    primary key (descendant, ancestor, distance)
+);
+alter table sys_tenement_tree
+    comment '课程评价树关系';
+
 
 
 drop table if exists sys_tenement_role;

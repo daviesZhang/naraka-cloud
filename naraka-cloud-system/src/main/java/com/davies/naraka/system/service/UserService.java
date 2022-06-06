@@ -11,7 +11,7 @@ import java.util.List;
 public interface UserService {
 
 
-    SysUser createUser(SysUser sysUser);
+    SysUser createUser(SysUser sysUser, List<String> roles, List<String> tenements);
 
 
     void updateUser(SysUser sysUser, List<String> roles, List<String> tenements);

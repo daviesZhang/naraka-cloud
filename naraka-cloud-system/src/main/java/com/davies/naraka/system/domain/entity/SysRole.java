@@ -27,7 +27,7 @@ public class SysRole implements Serializable {
     private static final long serialVersionUID = -1084181793580760342L;
     @Id
     @Column(name = "code", nullable = false, length = 64)
-    private String id;
+    private String code;
 
     @Column(name = "name", nullable = false, length = 64)
     private String name;

@@ -19,4 +19,8 @@ public interface SysUserRoleRepository extends JpaRepository<SysUserRole, SysUse
     @Query("delete from SysUserRole u where u.id.userId = ?1")
     void deleteByUserId(String userId);
 
+    @Modifying
+    @Query("delete from SysUserRole u where u.id.roleCode = ?1")
+    void deleteByRoleCode(String roleCode);
+
 }

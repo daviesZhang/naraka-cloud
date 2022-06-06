@@ -10,6 +10,7 @@ import com.davies.naraka.cloud.common.exception.ObjectAlreadyExistsException;
 import com.davies.naraka.system.domain.entity.SysUser;
 import com.davies.naraka.system.repository.SysUserRepository;
 import com.davies.naraka.system.service.RoleService;
+import com.davies.naraka.system.service.TenementService;
 import com.davies.naraka.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RoleService roleService;
-
+    @Autowired
+    private TenementService tenementService;
     @Autowired
     private SQLExecuteHelper executeHelper;
 
@@ -42,12 +44,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @DistributedLock(key = "'user:create:'+#user.username")
-    public SysUser createUser(SysUser user) {
+    public SysUser createUser(SysUser user, List<String> roles, List<String> tenements) {
         String username = user.getUsername();
         userRepository.findByUsername(username).ifPresent(sysUser -> {
             throw new ObjectAlreadyExistsException("用户名已存在~");
         });
         userRepository.save(user);
+        String userId = user.getId();
+        if (roles != null && !roles.isEmpty()) {
+            roleService.insertUserRole(userId, roles);
+        }
+        if (tenements != null && !tenements.isEmpty()) {
+            tenementService.insertUserTenement(userId, tenements);
+        }
         return user;
     }
 
@@ -64,7 +73,8 @@ public class UserServiceImpl implements UserService {
             roleService.insertUserRole(userId, roles);
         }
         if (tenements != null) {
-
+            tenementService.deleteUserTenement(userId);
+            tenementService.insertUserTenement(userId, tenements);
         }
 
     }

@@ -1,13 +1,14 @@
-package com.davies.naraka.system.service.security;
+package com.davies.naraka.system.domain.dto;
 
 import lombok.Data;
 
 /**
  * @author davies
- * @date 2022/6/1 15:55
+ * @date 2022/6/2 10:34
  */
 @Data
-public class CurrentRole {
+public class TenementCreateDTO {
+
 
     private String code;
 
