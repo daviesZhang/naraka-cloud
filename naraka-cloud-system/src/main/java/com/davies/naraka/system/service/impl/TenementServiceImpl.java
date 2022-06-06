@@ -13,6 +13,8 @@ import com.davies.naraka.system.repository.SysTenementRepository;
 import com.davies.naraka.system.repository.SysUserTenementRepository;
 import com.davies.naraka.system.service.RoleService;
 import com.davies.naraka.system.service.TenementService;
+import com.davies.naraka.system.service.TenementTreeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +36,9 @@ public class TenementServiceImpl implements TenementService {
 
     private final RoleService roleService;
 
+    @Autowired
+    private TenementTreeService tenementTreeService;
+
     public TenementServiceImpl(SQLExecuteHelper executeHelper, RoleService roleService, SysTenementRepository tenementRepository, SysUserTenementRepository userTenementRepository) {
         this.executeHelper = executeHelper;
         this.roleService = roleService;
@@ -44,6 +49,8 @@ public class TenementServiceImpl implements TenementService {
     @Override
     public SysTenement createTenement(SysTenement tenement) {
         tenementRepository.save(tenement);
+        tenementTreeService.insertNode(tenement.getCode(), tenement.getParentId());
+
         return tenement;
     }
 
@@ -85,4 +92,6 @@ public class TenementServiceImpl implements TenementService {
         }
 
     }
+
+
 }

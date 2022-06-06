@@ -8,8 +8,9 @@ import lombok.Data;
  */
 @Data
 public class CurrentTenement {
-    private String code;
 
+
+    private String code;
 
     private String name;
 }

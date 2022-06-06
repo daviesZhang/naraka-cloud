@@ -4,7 +4,10 @@ import com.davies.naraka.autoconfigure.jpa.QuerySQLParams;
 import com.davies.naraka.autoconfigure.jpa.SQLExecuteHelper;
 import com.davies.naraka.autoconfigure.jpa.SQLParams;
 import com.davies.naraka.autoconfigure.jpa.SQLParamsProvider;
+import com.davies.naraka.cloud.common.exception.NarakaException;
 import com.davies.naraka.system.domain.entity.SysAuthority;
+import com.davies.naraka.system.domain.entity.SysRoleAuthority;
+import com.davies.naraka.system.domain.entity.SysRoleAuthorityId;
 import com.davies.naraka.system.repository.SysAuthorityRepository;
 import com.davies.naraka.system.repository.SysRoleAuthorityRepository;
 import com.davies.naraka.system.service.AuthorityService;
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @author davies
@@ -55,5 +59,24 @@ public class AuthorityServiceImpl implements AuthorityService {
         SQLParams sqlParams = SQLParamsProvider.update(authority);
         executeHelper.update(querySQLParams, sqlParams, SysAuthority.class);
 
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void resetRoleAuthority(String code, List<String> authorities) {
+        roleAuthorityRepository.deleteByRoleCode(code);
+        insertRoleAuthority(code, authorities);
+    }
+
+    @Override
+    public void insertRoleAuthority(String code, List<String> authorities) {
+        for (String id : authorities) {
+            if (!authorityRepository.existsById(id)) {
+                throw new NarakaException("权限不存在~");
+            }
+            SysRoleAuthority roleAuthority = new SysRoleAuthority();
+            roleAuthority.setId(new SysRoleAuthorityId(code, id));
+            roleAuthorityRepository.save(roleAuthority);
+        }
     }
 }

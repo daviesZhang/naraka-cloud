@@ -1,6 +1,7 @@
 package com.davies.naraka.system.domain.entity;
 
 import lombok.*;
+import lombok.experimental.Accessors;
 import org.hibernate.Hibernate;
 
 import javax.persistence.Column;
@@ -13,6 +14,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @Getter
 @Setter
+@Accessors(chain = true)
 @ToString(onlyExplicitlyIncluded = true)
 @Embeddable
 public class SysTenementTreeId implements Serializable {

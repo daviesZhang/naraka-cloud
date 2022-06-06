@@ -6,9 +6,11 @@ import com.davies.naraka.autoconfigure.jpa.SQLExecuteHelper;
 import com.davies.naraka.system.domain.dto.*;
 import com.davies.naraka.system.domain.entity.SysUser;
 import com.davies.naraka.system.service.RoleService;
+import com.davies.naraka.system.service.TenementService;
 import com.davies.naraka.system.service.UserService;
 import com.davies.naraka.system.service.security.CurrentUser;
 import com.davies.naraka.system.service.security.SecurityService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
@@ -35,6 +37,9 @@ public class UserController extends BaseController {
     private final RoleService roleService;
 
     private final SecurityService securityService;
+
+    @Autowired
+    private TenementService tenementService;
 
     public UserController(UserService userService,
                           SQLExecuteHelper queryHelper,
@@ -73,6 +78,12 @@ public class UserController extends BaseController {
     @PostMapping("/role")
     public void assignRole(@RequestBody @Validated UserRoleAssignDTO assignDTO) {
         roleService.resetUserRole(assignDTO.getUserId(), assignDTO.getRoles());
+
+    }
+
+    @PostMapping("/tenement")
+    public void assignTenement(@RequestBody @Validated UserTenementAssignDTO assignDTO) {
+        tenementService.resetUserTenement(assignDTO.getUserId(), assignDTO.getTenement());
 
     }
 

@@ -40,8 +40,7 @@ public class TokenController {
     }
 
     @PostMapping()
-    public ResponseEntity<String> token(@RequestBody @Validated TokenRequestDTO tokenRequest
-    ) {
+    public ResponseEntity<String> token(@RequestBody @Validated TokenRequestDTO tokenRequest) {
         String username = tokenRequest.getPrincipal();
         SysUser sysUser = userRepository
                 .findByUsername(username)

@@ -32,7 +32,7 @@ class UserServiceImplTest extends BaseTest {
 
 
     @Autowired
-    private SysTenementRepository tenementRepository;
+    private TenementService tenementService;
 
     @Autowired
     private SysRoleRepository roleRepository;
@@ -81,7 +81,7 @@ class UserServiceImplTest extends BaseTest {
         tenement.setName("总经销商");
         tenement.setCode("LEVEL_1");
         tenement.setCreatedBy("root");
-        tenementRepository.save(tenement);
+        tenementService.createTenement(tenement);
         SysUser sysUser = new SysUser();
         sysUser.setUsername("root");
         sysUser.setPassword(passwordEncoder.encode("123456"));

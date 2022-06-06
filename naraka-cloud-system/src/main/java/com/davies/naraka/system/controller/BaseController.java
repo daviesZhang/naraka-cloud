@@ -14,6 +14,8 @@ public class BaseController {
 
 
     /**
+     * 附加逻辑删字段过滤的拦截器
+     *
      * @param page
      * @param <T>
      * @return

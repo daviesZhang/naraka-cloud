@@ -4,19 +4,14 @@ import com.davies.naraka.autoconfigure.ClassUtils;
 import com.davies.naraka.autoconfigure.domain.PageDTO;
 import com.davies.naraka.autoconfigure.jpa.SQLExecuteHelper;
 import com.davies.naraka.autoconfigure.jpa.SQLParamsProvider;
-import com.davies.naraka.system.domain.dto.QueryPageDTO;
-import com.davies.naraka.system.domain.dto.RoleCreateDTO;
-import com.davies.naraka.system.domain.dto.RoleDTO;
-import com.davies.naraka.system.domain.dto.RoleQueryDTO;
+import com.davies.naraka.system.domain.dto.*;
 import com.davies.naraka.system.domain.entity.SysRole;
 import com.davies.naraka.system.service.RoleService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author davies
@@ -27,12 +22,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/role")
 public class RoleController extends BaseController {
 
-    @Autowired
-    private RoleService roleService;
+    private final RoleService roleService;
 
 
-    @Autowired
-    private SQLExecuteHelper executeHelper;
+    private final SQLExecuteHelper executeHelper;
+
+    public RoleController(RoleService roleService, SQLExecuteHelper executeHelper) {
+        this.roleService = roleService;
+        this.executeHelper = executeHelper;
+    }
 
     @PostMapping
     public String createRole(@RequestBody @Validated RoleCreateDTO create) {
@@ -52,4 +50,16 @@ public class RoleController extends BaseController {
         return transform(userPage);
     }
 
+
+    @PutMapping()
+    public void update(@RequestBody @Validated RoleUpdateDTO update) {
+        SysRole role = ClassUtils.copyObject(update, new SysRole());
+        roleService.updateRole(role, update.getAuthorities());
+
+    }
+
+    @DeleteMapping()
+    public void delete(@RequestParam List<String> code) {
+        roleService.deleteRole(code);
+    }
 }

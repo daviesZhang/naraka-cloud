@@ -2,10 +2,10 @@ package com.davies.naraka.admin.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.google.common.base.Preconditions;
-import com.davies.naraka.autoconfigure.ClassUtils;
-import com.davies.naraka.admin.domain.enums.CategoryType;
 import com.davies.naraka.admin.domain.entity.CategoryTree;
+import com.davies.naraka.admin.domain.enums.CategoryType;
+import com.davies.naraka.autoconfigure.ClassUtils;
+import com.google.common.base.Preconditions;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -281,8 +281,8 @@ public interface ICategoryTreeService extends IService<CategoryTree> {
         return remove(new QueryWrapper<>(
                         new CategoryTree()
                                 .setCategoryType(type)
-                
-                
+
+
                 ).lambda().in(CategoryTree::getDescendant, descendants)
         );
 
